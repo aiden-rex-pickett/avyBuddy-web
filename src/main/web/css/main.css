@@ -1,0 +1,146 @@
+html{
+    font-family: "Arvo";
+    word-spacing: 0.12em;
+    overflow-x: hidden;
+}
+
+.main-header-wrap{
+    display: flex;
+    justify-content: space-between;
+    height: 90px;
+    position: relative;
+    background-color: #030f21;
+    width: 100vw;
+    margin-right: 10px;
+    h1{
+        margin-top: 0px;
+    }
+    .open-menu-button{
+        svg{
+            padding-right: 50px;
+        }
+        height: inherit;
+        position: relative;
+    }
+}
+
+.logo{
+    height: inherit;
+    img{
+        height: inherit;
+    }
+}
+
+.sidebar{
+    background-color: #65737e;
+    height: 100vh;
+    width: 190px;
+    z-index: 999;
+    position: fixed;
+    right: 0;
+    display: none;
+    text-align: right;
+    
+    ul{
+        margin-right: 1em;
+        list-style: none;
+        font-size: 1.4em;
+        li{
+            margin-top: 10%;
+            a{
+                text-decoration: none;
+                color: #fffff0;
+            }
+        }
+    }
+
+    .menu-close-button{
+        a{
+            width: 100%;
+        }
+        margin-bottom: 20px;
+        margin-top: 25px;
+        margin-right: 12px;
+    }
+}
+
+body{
+    margin: 0px;
+    background-color: #bbd2e9;
+}
+
+.main-body-wrap{
+    margin: 1.5em;
+    h4{
+        margin-top: 0px;
+        font-weight: lighter;
+        text-align: center;
+    }
+    hr{
+        height: 6px;
+        background-color: black;
+        border-style: none;
+    }
+}
+
+.home-screen-image-wrap{
+    width: 120vw;
+    right: 20vw;
+    bottom: 5vh;
+    position: relative;
+    z-index: -1;
+}
+
+.home-screen-image{
+    width: inherit;
+}
+
+.call-to-action{
+    display: block;
+    background-color: #030f21;
+    border-radius: 10% 10% 30%;
+    z-index: 999;
+    color: #fffff0;
+    bottom: -1em;
+    width: 40vw;
+    max-width: 280px;
+    min-width: 160px;
+    height: 13vw;
+    max-height: 70px;
+    min-height: 36px;
+    .call-button{
+        height: 100%;
+        width: 100%;
+        border-radius: inherit;
+        background-color: inherit;
+        color: inherit;
+        border-style: none;
+        font-family: inherit;
+        border-style: none;
+        text-align: center;
+        font-size: larger;
+    }
+}
+
+.description-section{
+    height: 1000px;
+    h2{
+        text-align: center;
+        padding-top: 50%;
+    }
+}
+
+.main-footer-wrap{
+    height: 120px;
+    color: 	#65737e;
+    background-color: #030f21;
+    text-align: center;
+    h4{
+        font-weight: lighter;
+        padding-top: 10px;
+        margin-bottom: 0px;
+    }
+    h5{
+        margin-top: 10px;
+    }
+}

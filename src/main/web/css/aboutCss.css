@@ -1,0 +1,43 @@
+body{
+    align-items: center;
+}
+
+.tribute{
+    text-align: center;
+    margin: 0px 0px;
+    h3{
+        margin: inherit;
+    }
+    h4{
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+    h5{
+        margin: inherit;
+        font-weight: lighter;
+    }
+}
+
+.tribute-image-wrapper{
+    width: 100%;
+    margin: 25px 0px;
+    img{
+        width: 65%;
+        max-width: 550px;
+        min-width: 245px;
+    }
+}
+
+.specifictations{
+    margin: 15px 0px;
+    h3{
+        text-align: center;
+    }
+    p{
+        text-indent: 2em;
+    }
+}
+
+.main-body-wrap{
+    padding: 0px 30px;
+}

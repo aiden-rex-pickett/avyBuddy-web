@@ -3,8 +3,6 @@ package com.aidenPersonal.avyBuddy.imageHandling;
 import org.jfree.graphics2d.svg.SVGGraphics2D;
 
 import java.awt.*;
-import java.awt.geom.Ellipse2D;
-import java.awt.geom.Line2D;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -40,8 +38,7 @@ public class SvgRoseGenerator {
      * into the creation of the rose is because a rose of width 94 creates no sub-pixel disturbances
      * that would be noticeable when scaling the .svg.
      *
-     * @param width desired with of the svg (Note this may fluctuate up or down depending on what the
-     *              perfect subpixel value width must be.)
+     * @param width desired with of the svg
      * @param roseValues A 24-length int array for the values of each of the aspects/elevations. This is
      *                   specified by the UAC API endpoint
      * @return A string which can be used as an SVG element in a html file
@@ -79,7 +76,7 @@ public class SvgRoseGenerator {
         }
 
         for (int i = 0; i < 3; i++) {
-            int x = 1 + 15 * i;
+            int x = 2 + 15 * i;
             int widthActual = 90 - 30 * i;
             for (int j = 0; j < 8; j++) {
                 svgGenerator.setColor(dangerValuesToColorsMap.get(reversedList.get((i * 8) + j)));
@@ -91,7 +88,7 @@ public class SvgRoseGenerator {
     }
 
     /**
-     * This method draws the outline of the rose. Somewhat imprecise, but forget about it
+     * This method draws the outline of the rose.
      *
      * @param svgGenerator SVGGraphics2D object that the rose will be drawn with
      */
@@ -101,46 +98,21 @@ public class SvgRoseGenerator {
         svgGenerator.setStroke(new BasicStroke(strokeWidth));
         svgGenerator.setColor(Color.BLACK);
 
-        for(int i = 0; i < 3; i++) {
-            svgGenerator.draw(new Ellipse2D.Double(
-                    (double) 1 + 15 * i,
-                    (double) 1 + 15 * i,
-                    (double) 90 - 30 * i,
-                    (double) 90 - 30 * i
-            ));
-        }
-
-        svgGenerator.fillOval(44, 44, 5, 4);
-
-        //Draws lines that show aspect
-        int middle = 47;
-
-        for(double i = 0.0; i < 2; i++) {
-            double xOffset = Math.cos(Math.toRadians(22.5 + 45 * i)) * 45;
-            double yOffset = Math.sin(Math.toRadians(22.5 + 45 * i)) * 45;
-            svgGenerator.draw(new Line2D.Double(
-                    middle + xOffset - 1,
-                    middle + yOffset - 1,
-                    middle - xOffset,
-                    middle - yOffset - 1)
-            );
-        }
-        for(double i = 2.0; i < 4; i++) {
-            double xOffset = Math.cos(Math.toRadians(22.5 + 45 * i)) * 45;
-            double yOffset = Math.sin(Math.toRadians(22.5 + 45 * i)) * 45;
-            svgGenerator.draw(new Line2D.Double(
-                    middle + xOffset - 1,
-                    middle + yOffset - 1,
-                    middle - xOffset - 1,
-                    middle - yOffset)
-            );
+        for (int i = 0; i < 3; i++) {
+            int x = 2 + 15 * i;
+            int widthActual = 90 - 30 * i;
+            for (int j = 0; j < 8; j++) {
+                int beginAngle = (int) ((90 + 22.5) + 45 * j);
+                int rotateAngle = 45;
+                svgGenerator.drawArc(x, x, widthActual, widthActual, beginAngle, rotateAngle);
+            }
         }
 
     }
 
     public static void main(String[] args) {
         int[] sampleData = new int[] {2, 4, 6, 16, 8, 2, 14, 4, 4, 6, 16, 8, 2, 14, 4, 2, 6, 16, 8, 2, 14, 4, 2, 4};
-        System.out.println(generateRose(400, sampleData));
+        System.out.println(generateRose(500, sampleData));
     }
 
 }

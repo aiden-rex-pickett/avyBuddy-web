@@ -4,6 +4,10 @@ html{
     overflow-x: hidden;
 }
 
+.svg{
+    background-color: #030f21;
+}
+
 .main-header-wrap{
     display: flex;
     justify-content: space-between;

@@ -11,7 +11,7 @@ import java.util.HashMap;
  * frontend.
  *
  * @author Aiden Pickett
- * @Version 2/21/25
+ * @version 2/21/25
  */
 public class SvgRoseGenerator {
 
@@ -108,11 +108,6 @@ public class SvgRoseGenerator {
             }
         }
 
-    }
-
-    public static void main(String[] args) {
-        int[] sampleData = new int[] {2, 4, 6, 16, 8, 2, 14, 4, 4, 6, 16, 8, 2, 14, 4, 2, 6, 16, 8, 2, 14, 4, 2, 4};
-        System.out.println(generateRose(500, sampleData));
     }
 
 }

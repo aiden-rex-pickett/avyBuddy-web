@@ -19,7 +19,7 @@ public class Route implements Comparable<Route>{
 	private boolean[] routePositions = new boolean[24];
 	
 	//region where the route exists, or what region to pull data from when analyzed
-	private String region;
+	private final String region;
 	
 	//name of the route
 	private String name;
@@ -84,11 +84,12 @@ public class Route implements Comparable<Route>{
 		//Changes corresponding indices in aspects array to the danger value of the forecast to 
 		//represent that they are a part of the tour
 		for (int i = 0; i < routePositions.length; i++) {
-			for(int j = 0; j < aspect.length; j++) {
-				if(i == elevation*8 + aspect[j]) {
-					routePositions[i] = true;
-				}
-			}
+        for (int k : aspect) {
+            if (i == elevation * 8 + k) {
+                routePositions[i] = true;
+                break;
+            }
+        }
 		}
 	}
 	
@@ -136,8 +137,8 @@ public class Route implements Comparable<Route>{
 			return returnArray;
 		}
 		
-		int[] mainRoseArray = forecast.getMainRoseArray();
-;		for(int i = 0; i < routePositions.length; i++) {
+		int[] mainRoseArray = forecast.getmain_rose_array();
+		for(int i = 0; i < routePositions.length; i++) {
 			if(routePositions[i]) {
 				returnArray[i] = mainRoseArray[i];
 			}
@@ -149,7 +150,7 @@ public class Route implements Comparable<Route>{
 	/**
 	 * getter for the region of where the route exists
 	 * 
-	 * @retun region described above
+	 * @return region described above
 	 */
 	public String getRegion() {
 		return region;
@@ -187,21 +188,12 @@ public class Route implements Comparable<Route>{
 	}
 
 	@Override
-	/**
-	 * Implements compareTo method from Comparable by comparing average danger of routes
-	 */
-	public int compareTo(Route other) {
+  public int compareTo(Route other) {
 		
 		double thisAverageDanger = averageDanger(this);
 		double otherAverageDanger = averageDanger(other);
 
-		if(thisAverageDanger > otherAverageDanger) {
-			return 1;
-		} else if (thisAverageDanger == otherAverageDanger){
-			return 0;
-		} else {
-			return -1;
-		}
+      return Double.compare(thisAverageDanger, otherAverageDanger);
 	}
 	
 	/**
@@ -218,7 +210,7 @@ public class Route implements Comparable<Route>{
 		
 		for (int num : routeOverallDanger) {
 			if (num != 0) {
-				routeTotalDanger += (double) num;
+				routeTotalDanger += num;
 				numberOfPositions++;
 			}
 		}

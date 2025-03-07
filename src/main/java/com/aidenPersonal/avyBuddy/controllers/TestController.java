@@ -1,4 +1,4 @@
-package com.aidenPersonal.avyBuddy;
+package com.aidenPersonal.avyBuddy.controllers;
 
 import com.aidenPersonal.avyBuddy.uacData.Forecast;
 import com.fasterxml.jackson.core.JsonProcessingException;

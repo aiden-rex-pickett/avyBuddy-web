@@ -4,6 +4,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>avyBuddy</title>
     <link rel = "stylesheet" href = "css/main.css">
+    <link rel = "stylesheet" href = "css/forecast.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Arvo:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
@@ -28,16 +29,18 @@
                 <li><a href = "index.html">Home</a></li>
                 <li><a href = "routes.html">Routes</a></li>
                 <li><a href = "about.html">About</a></li>
-                <li><a href = "https://github.com/VerticalHairline/avyBuddy">GitHub</a></li>
+                <li><a href = "https://github.com/VerticalHairline/avyBuddy-web">GitHub</a></li>
                 <li><a href = "https://utahavalanchecenter.org/">Utah Avalanche Center</a></li>
             </ul>
         </nav>
     </div>
 </header>
 <body>
-    <h1 id = "fetchDataTest">TEMPORARY</h1>
-    <script src = "javascript/test.js"></script>
-<div id="svgTest"><svg></svg></div></div>
+    <div class="headerWrap"><h1 class = "forecastHeader">Today's Forecast:</h1></div>
+    <div class = "mainRoseSvg" id="mainRoseSvg"><svg class = "svgActual"></svg>
+        <div class="forecastBottomLine"><h1>hello</h1></div>
+    </div>
+    <script src = "javascript/forecast.js"></script>
 </body>
 <footer>
     <div class="main-footer-wrap">

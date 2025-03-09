@@ -135,16 +135,14 @@ body{
 }
 
 .main-footer-wrap{
-    height: 120px;
+    height: fit-content;
+    padding: 20px;
     color: 	#65737e;
     background-color: #030f21;
     text-align: center;
-    h4{
-        font-weight: lighter;
-        padding-top: 10px;
-        margin-bottom: 0px;
-    }
-    h5{
-        margin-top: 10px;
-    }
+}
+
+.footer{
+    margin: 5px;
+    font-weight: lighter;
 }

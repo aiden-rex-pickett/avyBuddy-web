@@ -1,7 +1,8 @@
 
 .forecastHeader{
-    padding: .5em;
+    padding: 15px;
     margin: 0px;
+    font-size: 3em;
 }
 
 .headerWrap{
@@ -9,13 +10,34 @@
     height: 4em;
 }
 
-.svgTest{
+.forecastArea{
+    height: 1000px;
+    height: fit-content;
+}
+
+.forecastAreaMain{
     width: 100%;
     height: 400px;
+    display: flex;
+}
+
+.mainRoseSvg{
+    width:fit-content
 }
 
 .forecastBottomLine{
     text-align: left;
     float: right;
     width: calc(100% - 400px);
+    height: inherit;
+    padding-top: 10px;
+    p{
+        margin: 0px;
+        padding-left: 4%;
+        padding-right: 4%;
+        line-height: 1.6cap;
+        white-space: pre-wrap;
+        max-width: 600px;
+        min-width: 350px;
+    }
 }

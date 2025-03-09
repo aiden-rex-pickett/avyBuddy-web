@@ -9,6 +9,7 @@ const queryParams = {
 
 //document elements
 const mainRoseSvg = document.getElementById("mainRoseSvg");
+const bottomLine = document.getElementById("bottomLineText")
 
 getData(queryParams);
 
@@ -26,7 +27,10 @@ async function getData(queryParams) {
         .catch(error => console.error(error))
 }
 
-async function setupForecastPage(data) {
+function setupForecastPage(data) {
+    //Sets main rose svg
     mainRoseSvg.innerHTML = data.main_rose_svg;
 
+    //Sets bottoms line text that appears next to or under it
+    bottomLine.innerHTML = data.bottom_line;
 }

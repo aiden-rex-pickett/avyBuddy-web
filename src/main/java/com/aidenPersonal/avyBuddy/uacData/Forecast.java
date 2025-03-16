@@ -28,9 +28,9 @@ public class Forecast {
     //Named this way because that is how it is put in the Json endpoint,
     //Because I made this in the summer I am unsure what roses these values represent
     //Update: they likely represent the individual avalanche problem roses
-    AvalancheProblem avy_problem_1;
-    AvalancheProblem avy_problem_2;
-    AvalancheProblem avy_problem_3;
+    AvalancheProblem avy_problem_1 = null;
+    AvalancheProblem avy_problem_2 = null;
+    AvalancheProblem avy_problem_3 = null;
 
     private String overall_avy_danger;
     private String bottom_line;

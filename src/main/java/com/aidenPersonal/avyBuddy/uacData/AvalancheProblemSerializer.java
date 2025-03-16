@@ -16,8 +16,8 @@ public class AvalancheProblemSerializer extends JsonSerializer<AvalancheProblem>
     @Override
     public void serialize(AvalancheProblem avalancheProblem, JsonGenerator gen, SerializerProvider serializerProvider) throws IOException {
         gen.writeStartObject();
-        gen.writeStringField("problem_title", avalancheProblem.getProblemTitle());
-        gen.writeStringField("problem_description", avalancheProblem.getProblemDescription());
-        gen.writeArray(avalancheProblem.getDangerArray(), 0, avalancheProblem.getDangerArray().length);
+        gen.writeStringField("problem_title", avalancheProblem.getProblem_title());
+        gen.writeStringField("problem_description", avalancheProblem.getProblem_description());
+        gen.writeArray(avalancheProblem.getDanger_array(), 0, avalancheProblem.getDanger_array().length);
     }
 }

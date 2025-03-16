@@ -17,20 +17,21 @@ import java.io.IOException;
 @RestController
 public class ForecastController {
     /**
-     * This get mapping returns a JSON object representing the forecase
+     * This get mapping returns a JSON object representing the forecast
      *
      * @param region region to get forecast of
-     * @param svgWidth width of the svg of the roses that you want
+     * @param svgWidthMain width of the svg of the main rose
+     * @param svgWidthProblems width of the svg of the roses for the avalanche problems
      * @return string of JSON object
      */
     @CrossOrigin
     @GetMapping("/forecast")
-    public String forecast(@RequestParam String region, @RequestParam int svgWidth) {
+    public String forecast(@RequestParam String region, @RequestParam int svgWidthMain, @RequestParam int svgWidthProblems) {
 
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode forecastNode;
 
-        if (svgWidth < 1) {
+        if (svgWidthMain < 1 || svgWidthProblems < 1) {
             throw new IllegalArgumentException("svgWidth must be greater than 0");
         }
 
@@ -47,26 +48,26 @@ public class ForecastController {
             }
         }
 
-        forecastNode.put("main_rose_svg", SvgRoseGenerator.generateRose(svgWidth, forecast.getmain_rose_array()));
+        forecastNode.put("main_rose_svg", SvgRoseGenerator.generateRose(svgWidthMain, forecast.getmain_rose_array()));
         AvalancheProblem avalanche_problem_1;
         AvalancheProblem avalanche_problem_2;
         AvalancheProblem avalanche_problem_3;
         if (forecast.getavalanche_problem_1() != null) {
             avalanche_problem_1 = forecast.getavalanche_problem_1();
             ObjectNode avyProblem1Node = mapper.valueToTree(avalanche_problem_1);
-            avyProblem1Node.put("danger_rose_svg", avalanche_problem_1.getSvgOfRose(svgWidth));
+            avyProblem1Node.put("danger_rose_svg", avalanche_problem_1.getSvgOfRose(svgWidthProblems));
             forecastNode.set("avalanche_problem_1", avyProblem1Node);
         }
         if (forecast.getavalanche_problem_2() != null) {
             avalanche_problem_2 = forecast.getavalanche_problem_2();
             ObjectNode avyProblem2Node = mapper.valueToTree(avalanche_problem_2);
-            avyProblem2Node.put("danger_rose_svg", avalanche_problem_2.getSvgOfRose(svgWidth));
+            avyProblem2Node.put("danger_rose_svg", avalanche_problem_2.getSvgOfRose(svgWidthProblems));
             forecastNode.set("avalanche_problem_2", avyProblem2Node);
         }
         if (forecast.getavalanche_problem_3() != null) {
             avalanche_problem_3 = forecast.getavalanche_problem_3();
             ObjectNode avyProblem3Node = mapper.valueToTree(avalanche_problem_3);
-            avyProblem3Node.put("danger_rose_svg", avalanche_problem_3.getSvgOfRose(svgWidth));
+            avyProblem3Node.put("danger_rose_svg", avalanche_problem_3.getSvgOfRose(svgWidthProblems));
             forecastNode.set("avalanche_problem_3", avyProblem3Node);
         }
 

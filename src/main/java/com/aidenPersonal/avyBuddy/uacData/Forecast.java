@@ -9,7 +9,6 @@ import java.util.Scanner;
 import javax.net.ssl.HttpsURLConnection;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -133,7 +132,7 @@ public class Forecast {
         //Sets only important ones, namely all the forecast rose arrays and their meaning, overall danger,
         //bottom line text that appears at the top of the webpage and the date issued
         overall_avy_danger = dataNode.get("overall_danger_rating").asText();
-        bottom_line = dataNode.get("bottom_line").asText();
+        bottom_line = removeNBSPAtEndAndBeginning(dataNode.get("bottom_line").asText());
         date_issued = dataNode.get("date_issued").asText();
 
         mainRose = DataToStringConversions.commaSeperatedStringToIntArray(dataNode.get("overall_danger_rose"));
@@ -151,8 +150,51 @@ public class Forecast {
     private AvalancheProblem getAvalancheProblem(JsonNode dataNode, int problemId) throws IOException {
         int[] dangerArray = DataToStringConversions.commaSeperatedStringToIntArray(dataNode.get("danger_rose_" + problemId));
         String problemTitle = dataNode.get("avalanche_problem_" + problemId).asText();
-        String problemDescription = dataNode.get("avalanche_problem_" + problemId + "_description").asText();
+        String problemDescription = removeNBSPAtEndAndBeginning(dataNode.get("avalanche_problem_" + problemId + "_description").asText());
         return new AvalancheProblem(dangerArray, problemTitle, problemDescription);
+    }
+
+    /**
+     * This method removes all the annoying non-breaking spaces and \r escapes
+     * that the UAC puts at the end and beginning of their api endpoint
+     */
+    private String removeNBSPAtEndAndBeginning(String string) {
+        char[] expectedToken = new char[] {';', 'p', 's', 'b', 'n', '&'};
+        int pointer = string.length();
+        while (true) {
+            if (string.charAt(pointer - 1) != '\r' && string.charAt(pointer - 1) != ';') {
+                break;
+            }
+
+            if (string.charAt(pointer - 1) == expectedToken[0]) {
+                boolean nbspSequence = true;
+                for (int i = pointer - 2, j = 1; i > pointer - 1 - expectedToken.length; i--, j++) {
+                    if (string.charAt(i) != expectedToken[j]) {
+                         nbspSequence = false;
+                         break;
+                    }
+                }
+                if (nbspSequence) {
+                    pointer -= 6;
+                } else {
+                    break;
+                }
+            } else {
+                pointer--;
+            }
+        }
+
+        String strippedString = string.substring(0, pointer);
+
+        while (strippedString.charAt(0) == '\r' || strippedString.charAt(0) == '&') {
+            if (strippedString.charAt(0) == '&') {
+                strippedString = strippedString.replaceFirst("&nbsp;", "");
+            } else {
+                strippedString = strippedString.replaceFirst("\r", "");
+            }
+        }
+
+        return strippedString;
     }
 
     /**

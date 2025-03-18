@@ -10,11 +10,35 @@
     height: 4em;
 }
 
-.problemHeader{
+.problemHeaderMain{
     padding: 15px;
     margin: 0px;
     font-size: 2em;
     background-color: rgb(117, 186, 223);
+}
+
+.problemHeader{
+    padding: 15px;
+    padding-top: 11px;
+    margin: 0px;
+    font-size: 2em;
+    background-color: rgb(117, 186, 223);
+
+    transition: background-color;
+    transition-timing-function: cubic-bezier(0, 0.73, 0.45, 1.15);
+    transition-duration: 600ms;
+}
+
+.problemHeaderClicked{
+    padding: 15px;
+    padding-top: 11px;
+    margin: 0px;
+    font-size: 2em;
+    background-color: #bbd2e9;
+}
+
+.problemHeader:hover{
+    background-color: #bbd2e9;
 }
 
 .problemHeaderWrap{
@@ -70,6 +94,8 @@
     float: right;
     width: fit-content;
     height: fit-content;
+    padding-top: 10px;
+    padding-bottom: 10px;;
     p{
         margin: 0px;
         padding-left: 4%;

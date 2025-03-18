@@ -43,18 +43,20 @@ function setupForecastPage(data) {
             let divToClick = divList[1];
             let divToClose = divList[0];
             divToClick.addEventListener("click", function(e) {
-                toggleProblemDescription(divToClose)
+                toggleProblemDescription(divToClose, divToClick)
             });
         }
     }
 }
 
 //Wrapped function to use for event listener, closes proper div
-function toggleProblemDescription(divToClose) {
+function toggleProblemDescription(divToClose, divToSetBackground) {
     if (divToClose.style.display == "none") {
         divToClose.style.display = "flex";
+        divToSetBackground.classList = ["problemHeaderClicked"];
     } else {
-        divToClose.style.display = "none"
+        divToClose.style.display = "none";
+        divToSetBackground.classList = ["problemHeader"]
     }
 }
 

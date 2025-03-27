@@ -18,7 +18,7 @@ import java.util.Arrays;
 public class RouteDatabase {
 	
 	//connection string to database
-	static final String url = "jdbc:sqlite:C:\\Users\\ka7nq\\git\\avyBuddy\\avyBuddy\\avyBuddyData.db";
+	static final String url = "";
 	
 	/**
 	 * Writes state of passed route object to database for storage. This includes the name, region, and routePositions
@@ -60,7 +60,7 @@ public class RouteDatabase {
 	 */
 	public static Route getRoute(String routeName) {
 		
-		ResultSet result = null;
+		ResultSet result;
 		try {
 			var connection = DriverManager.getConnection(url);
 			var statement = connection.createStatement();
@@ -98,13 +98,13 @@ public class RouteDatabase {
 	 */
 	private static String stringedArray(boolean[] routePositions) {
 		String returnString = "";
-		for (int i = 0; i < routePositions.length; i++) {
-			if (routePositions[i]) {
-				returnString += "1, ";
-			} else {
-				returnString += "0, ";
-			}
-		}
+      for (boolean routePosition : routePositions) {
+          if (routePosition) {
+              returnString += "1, ";
+          } else {
+              returnString += "0, ";
+          }
+      }
 		
 		return returnString.substring(0, returnString.length() - 2);
 	}

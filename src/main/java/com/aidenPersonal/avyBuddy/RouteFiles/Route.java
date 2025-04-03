@@ -284,9 +284,7 @@ public class Route implements Comparable<Route> {
         }
         if (!region.equals(otherRoute.region))
             return false;
-        if (!name.equals(otherRoute.name))
-            return false;
-        return true;
+        return name.equals(otherRoute.name);
     }
 
 }

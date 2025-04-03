@@ -1,6 +1,10 @@
-//Main forcast fetch for the routes page
+//Main forcast fetch for the forecast page
+//TODO: Make selection region selection + disclaimer that full forecast should be read
 
 //Endpoint info
+//For running off of local server
+//const apiEndpoint = "http://localhost:8080/apis/forecast"
+//For running from IDE
 const apiEndpoint = "http://localhost:5501/forecast"
 const queryParams = {
     region: "salt-lake",

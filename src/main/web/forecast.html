@@ -4,7 +4,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>avyBuddy</title>
     <link rel = "stylesheet" href = "css/main.css">
-    <link rel = "stylesheet" href = "css/aboutCss.css">
+    <link rel = "stylesheet" href = "css/forecast.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Arvo:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
@@ -12,7 +12,7 @@
 <header>
     <div class="main-header-wrap">
         <a href="index.html" class = "logo">
-            <img src = "avyBuddyAiLogo.jpg" alt = "logo">
+            <img src = "avyBuddyAiLogo.jpg" alt = "Logo">
         </a>
         <a href = '#' id = "menuOpen" class = "open-menu-button">
             <svg class = "open-menu-button" fill="#FFFFF0" xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 50 50" width="50px" height="50px"><path id = "menuOpen" d="M 5 8 A 2.0002 2.0002 0 1 0 5 12 L 45 12 A 2.0002 2.0002 0 1 0 45 8 L 5 8 z M 5 23 A 2.0002 2.0002 0 1 0 5 27 L 45 27 A 2.0002 2.0002 0 1 0 45 23 L 5 23 z M 5 38 A 2.0002 2.0002 0 1 0 5 42 L 45 42 A 2.0002 2.0002 0 1 0 45 38 L 5 38 z"/></svg>
@@ -30,38 +30,22 @@
                 <li><a href = "forecast.html">Forecast</a></li>
                 <li><a href = "routes.html">Routes</a></li>
                 <li><a href = "about.html">About</a></li>
-                <li><a href = "https://github.com/VerticalHairline/avyBuddy">GitHub</a></li>
+                <li><a href = "https://github.com/VerticalHairline/avyBuddy-web">GitHub</a></li>
                 <li><a href = "https://utahavalanchecenter.org/">Utah Avalanche Center</a></li>
             </ul>
         </nav>
     </div>
 </header>
 <body>
-    <h3 style = "text-align: center;">This website is maintained by Aiden Pickett, and dedicated to:</h3>
-    <div class="main-body-wrap">
-        <div class="tribute">
-            <h2>Rex Pickett</h2>
-            <h4>June 14th 1958 - October 1st, 2024</h4>
-            <h5 style = "font-weight: lighter;">For the best Dad I could ask for, who got me into backcountry skiing</h5>
-            <div class="tribute-image-wrapper">
-                <img src="dadTribute.jpeg" alt="">
-            </div>
-            <h4>Psalm 121:1</h4>
-            <h5>"I lift up my eyes to the mountains— where does my help come from? My help comes from the Lord, the Maker of heaven and earth."</h5>
-        </div>
-        <hr style = "margin: 40px 0;">
-        <div class="specifictations">
-            <h3>About the Project:</h3>
-            <p> As noted in the GitHub, this is merely a side project of mine, 
-                and therefore should not be held to an insane standard of 
-                performance or optimization. This is my first full-stack coding endavour
-                so there is bound to be some errors and misses. If you find any bugs, please Contact
-                me at the email noted below. I am currently in college as well, so 
-                maintinece of the website and its features will be done on an 
-                if-I-have-time-basis.
-            </p>
-        </div>
+    <div class="headerWrap" style = "height: fit-content"><h1 class = "forecastHeader">Today's Forecast:</h1></div>
+    <div class = "forecastAreaMain">
+        <div class="mainRoseSvg" id="mainRoseSvg"><svg class = "svgActual"></svg></div>
+        <div class="forecastBottomLine"><p id = "bottomLineText"></p></div>
     </div>
+    <div class="problemArea" id = "problemArea">
+        <h1 class = "problemHeaderMain" style = "font-size: 3em">Avalanche Problems:</h1>
+    </div>
+    <script src = "javascript/forecast.js"></script>
 </body>
 <footer>
     <div class="main-footer-wrap">

@@ -1,0 +1,57 @@
+.headerWrap{
+    width: 100%;
+    height: 4em;
+}
+
+.forecastHeader{
+    padding: 15px;
+    margin: 0px;
+    font-size: 3em;
+}
+
+.routeButtonArea{
+    width: 65%;
+    min-width: 450px;
+    height: 20vw;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    margin: auto;
+}
+
+.routeButton{
+    height: 50%;
+    width: 30%;
+    min-width: 100px;
+    background-color: #030f21;
+    color: #bbd2e9;
+    font-family: "Arvo";
+    word-spacing: 0.12em;
+    border: none;
+    border-radius: 10%;
+    transition: cubic-bezier(0.42, 0.04, 0.41, 1.06);
+    transition-duration: 400ms;
+    transition-property: background-color, scale, color;
+    font-size: 1.4em;
+}
+
+.routeButton:hover{
+    background-color: rgb(117, 186, 223);
+    color: #030f21;
+    scale: 1.05;
+}
+
+.routeButton:focus{
+    outline: 0;
+}
+
+.dividingLine{
+    height: 6px;
+    background-color: black;
+    border-style: none;
+    margin: 10 0 10 0;
+}
+
+.routeList{
+
+}

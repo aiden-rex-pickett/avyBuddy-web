@@ -10,7 +10,7 @@ loadRoutesButton.addEventListener("click", loadRoutes);
 const routeListArea = document.getElementById('routeList');
 
 class Route {
-    constructor ()
+
 }
 
 function addRoute() {
@@ -23,4 +23,6 @@ function loadRoutes() {
     console.log("routes loaded")
 }
 
-function createChildElement(routeData)
+function createChildElement(routeData) {
+
+}

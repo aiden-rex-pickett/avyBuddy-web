@@ -112,8 +112,14 @@ public class Route implements Comparable<Route> {
      * @param newPositions int to be converted to binary to parse the positions from
      */
     public void setNewRoutePositionsBinary(int newPositions) {
+        newPositions = newPositions | 16777216;
+
         for (int i = 0; i < routePositions.length; i++) {
-            routePositions[i] = ((newPositions >> i + 1) & 1) == 1;
+            if (((1 << routePositions.length - i - 1) & newPositions) != 0) {
+                routePositions[i] = true;
+            } else {
+                routePositions[i] = false;
+            }
         }
     }
 

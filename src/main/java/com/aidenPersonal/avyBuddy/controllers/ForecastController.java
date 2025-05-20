@@ -13,6 +13,9 @@ import java.io.IOException;
 /**
  * This class is a rest controller that sends data from the UAC api to
  * the frontend, including forecast data and a svg of the avalanche rose
+ *
+ * @author Aiden Pickett
+ * @version 3/26/2025
  */
 @RestController
 public class ForecastController {

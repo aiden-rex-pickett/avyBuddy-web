@@ -1,7 +1,7 @@
 
 .forecastHeader{
     padding: 15px;
-    margin: 0px;
+    margin: 0;
     font-size: 3em;
 }
 
@@ -12,15 +12,14 @@
 
 .problemHeaderMain{
     padding: 15px;
-    margin: 0px;
+    margin: 0;
     font-size: 2em;
     background-color: rgb(117, 186, 223);
 }
 
 .problemHeader{
-    padding: 15px;
-    padding-top: 11px;
-    margin: 0px;
+    padding: 11px 15px 15px;
+    margin: 0;
     font-size: 2em;
     background-color: rgb(117, 186, 223);
 
@@ -30,9 +29,8 @@
 }
 
 .problemHeaderClicked{
-    padding: 15px;
-    padding-top: 11px;
-    margin: 0px;
+    padding: 11px 15px 15px;
+    margin: 0;
     font-size: 2em;
     background-color: #bbd2e9;
 }
@@ -68,7 +66,7 @@
     height: inherit;
     padding-top: 10px;
     p{
-        margin: 0px;
+        margin: 0;
         padding-left: 4%;
         padding-right: 4%;
         line-height: 1.6cap;
@@ -85,8 +83,11 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding-bottom: 10px;
-    padding-top: 10px;
+    /* padding-bottom: 10px;
+    padding-top: 10px; */
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s cubic-bezier(0, 0.73, 0.45, 1.15);
 }
 
 .problemDescription{
@@ -97,7 +98,7 @@
     padding-top: 10px;
     padding-bottom: 10px;;
     p{
-        margin: 0px;
+        margin: 0;
         padding-left: 4%;
         padding-right: 4%;
         line-height: 1.6cap;

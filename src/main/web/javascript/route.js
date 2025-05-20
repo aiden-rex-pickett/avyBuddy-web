@@ -5,12 +5,22 @@ const addRouteButton = document.getElementById("addRoute");
 addRouteButton.addEventListener("click", addRoute);
 
 const loadRoutesButton = document.getElementById("loadRoutes");
-loadRoutesButton.addEventListener("click", loadRoutes)
+loadRoutesButton.addEventListener("click", loadRoutes);
+
+const routeListArea = document.getElementById('routeList');
+
+class Route {
+    constructor ()
+}
 
 function addRoute() {
     console.log("route added");
 }
 
 function loadRoutes() {
+    
+
     console.log("routes loaded")
 }
+
+function createChildElement(routeData)

@@ -223,4 +223,31 @@ public class RouteDatabase {
         }
     }
 
+    /**
+     * Gets a list of the route names currently in the database, ordered by the date of creation (newest-to-oldest)
+     *
+     * @param numRoutes number of routes to be returned
+     * @return a list of route names currently in the database
+     */
+    public static List<Route> getRoutesOrderedByRecency(int numRoutes) {
+        ResultSet results;
+        try {
+            var connection = DriverManager.getConnection(url);
+            var statement = connection.createStatement();
+
+            results = statement.executeQuery("SELECT * FROM routes ORDER BY routes.dateCreated DESC LIMIT + " + numRoutes + ";");
+            ArrayList<Route> routes = new ArrayList<>();
+
+            while (results.next()) {
+                Route route = new Route(results.getString("region"), results.getString("name"));
+                route.setNewRoutePositionsBinary(results.getInt("routePositions"));
+                routes.add(route);
+            }
+
+            return routes;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }

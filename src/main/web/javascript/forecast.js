@@ -54,14 +54,21 @@ function setupForecastPage(data) {
 }
 
 //Wrapped function to use for event listener, closes proper div
-function toggleProblemDescription(divToClose, divToSetBackground) {
-    if (divToClose.style.display == "none") {
-        divToClose.style.display = "flex";
-        divToSetBackground.classList = ["problemHeaderClicked"];
+function toggleProblemDescription(divToClose, divClicked) {
+    if (divToClose.style.maxHeight) {
+        divToClose.style.maxHeight = null;
+        divToClose.style.padding = null;
     } else {
-        divToClose.style.display = "none";
-        divToSetBackground.classList = ["problemHeader"]
+        let textDivHeight = divToClose.querySelector('.problemDescription').scrollHeight;
+        let svgHeight = divToClose.querySelector('svg').scrollHeight;
+        let expandedHeight = Math.max(textDivHeight, svgHeight);
+
+        divToClose.style.maxHeight = expandedHeight
+        divToClose.style.paddingTop = 10;
+        divToClose.style.paddingBottom = 10;
     }
+    
+    divClicked.classList.toggle('problemHeaderClicked')
 }
 
 //Creates the avalanche problem dom, pretty ugly but works
@@ -81,7 +88,6 @@ function createProblemDom(problem) {
     problemTitleDiv.appendChild(problemTitle);
     problemWrapper.appendChild(problemTitleDiv);
 
-    problemDiv.style = "display: none"
     problemDiv.classList.add("problem");
 
     let problemTextWrapper = document.createElement("div");

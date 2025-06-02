@@ -2,7 +2,9 @@ package com.aidenPersonal.avyBuddy.controllers;
 
 import com.aidenPersonal.avyBuddy.RouteFiles.Route;
 import com.aidenPersonal.avyBuddy.RouteFiles.RouteDatabase;
+import com.aidenPersonal.avyBuddy.imageHandling.SvgRoseGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,10 +31,9 @@ public class RouteDatabaseController {
      */
     @CrossOrigin
     @GetMapping("/getRouteListRecency")
-    public String getRouteList(@RequestParam int numRoutes) {
-
+    public String getRouteList(@RequestParam int numRoutes, @RequestParam int svgWidth) {
         ObjectMapper mapper = new ObjectMapper();
-        ObjectNode route;
+        ArrayNode routesNode = mapper.createArrayNode();
 
         if (numRoutes < 1) {
             throw new IllegalArgumentException("numRoutes must be greater than 0");
@@ -40,6 +41,27 @@ public class RouteDatabaseController {
 
         List<Route> routes = RouteDatabase.getRoutesOrderedByRecency(numRoutes);
 
-        return null;
+        for (Route route : routes) {
+            routesNode.add(makeRouteNode(route, mapper, svgWidth));
+        }
+
+        return routesNode.toString();
+    }
+
+    private static ObjectNode makeRouteNode(Route route, ObjectMapper mapper, int svgWidth) {
+        ObjectNode routeNode = mapper.createObjectNode();
+        routeNode.put("name", route.getName());
+        routeNode.put("region", route.getRegion());
+        boolean[] routePositions = route.getRoutePositions();
+        ArrayNode routePositionsNode = mapper.createArrayNode();
+        for (int i = 0; i < 24; i++) {
+            routePositionsNode.add(routePositions[i]);
+        }
+        routeNode.put("positions", routePositionsNode);
+        routeNode.put("positionsSvg", SvgRoseGenerator.generateRose(svgWidth, route.getRoutePositions()));
+        System.out.println(SvgRoseGenerator.generateRose(svgWidth, route.getRoutePositions()));
+        routeNode.put("dateCreated", route.getDateCreated());
+
+        return routeNode;
     }
 }

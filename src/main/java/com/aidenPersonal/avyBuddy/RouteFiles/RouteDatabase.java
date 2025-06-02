@@ -71,12 +71,13 @@ public class RouteDatabase {
 
             String name = results.getString("name");
             String region = results.getString("region");
+            String dateCreated = results.getString("dateCreated");
             int routePositions = results.getInt("routePositions");
             if (name == null) {
                 return null;
             }
 
-            returnRoute = new Route(region, name);
+            returnRoute = new Route(region, name, dateCreated);
             returnRoute.setNewRoutePositionsBinary(routePositions);
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -239,7 +240,7 @@ public class RouteDatabase {
             ArrayList<Route> routes = new ArrayList<>();
 
             while (results.next()) {
-                Route route = new Route(results.getString("region"), results.getString("name"));
+                Route route = new Route(results.getString("region"), results.getString("name"), results.getString("dateCreated"));
                 route.setNewRoutePositionsBinary(results.getInt("routePositions"));
                 routes.add(route);
             }

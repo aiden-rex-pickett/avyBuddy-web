@@ -24,13 +24,16 @@ public class Route implements Comparable<Route> {
     //name of the route
     private String name;
 
+    //date the route was created, as a string
+    private String dateCreated;
+
     /**
      * Default constructor, for creating hollow Route Objects. Not to be used by user as it would conflict with compareTo method
      *
      * @param region region of where to get avalanche forecast data from
      * @param name   string name of the Route
      */
-    public Route(String region, String name) {
+    public Route(String region, String name, String dateCreated) {
         //checks that region is valid
         if (!Arrays.asList(Forecast.validRegions).contains(region)) {
             throw new IllegalArgumentException("Invalid region name, only logan, ogden, uintas, salt-lake, provo, skyline, moab, abajos, and southwest are valid region names, default forecast created instead");
@@ -39,6 +42,7 @@ public class Route implements Comparable<Route> {
         }
 
         this.name = name;
+        this.dateCreated = dateCreated;
     }
 
     /**
@@ -293,4 +297,11 @@ public class Route implements Comparable<Route> {
         return name.equals(otherRoute.name);
     }
 
+    public String getDateCreated() {
+        return dateCreated;
+    }
+
+    public void setDateCreated(String dateCreated) {
+        this.dateCreated = dateCreated;
+    }
 }

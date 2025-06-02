@@ -5,10 +5,8 @@ import java.util.List;
 public class RouteDatabaseTest {
 
     public static void main(String[] args) {
-        List<Route> routes = RouteDatabase.getRoutesOrderedByRecency(1000);
-        for (Route route : routes) {
-            System.out.println(route + "\n");
-        }
+        Route route = new Route("salt-lake", "Baldy Chutes", 0, 0, 1);
+        RouteDatabase.addRoute(route);
     }
 
 }

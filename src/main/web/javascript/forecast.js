@@ -18,7 +18,9 @@ const bottomLine = document.getElementById("bottomLineText")
 //used to select region
 const regionTitle = document.getElementById("regionTitle");
 const regionTitleWrapper = document.getElementById("regionTitleWrapper");
-
+const regionHoverDiv = document.getElementById("regionHoverDiv");
+const regionList = document.getElementById('regionList');
+const regions = ["Salt Lake", "Ogden", "Uintas", "Logan", "Provo", "Skyline", "Moab", "Abajos", "Southwest"]
 
 getData(queryParams);
 
@@ -112,18 +114,25 @@ function createProblemDom(problem) {
     return [problemDiv, problemTitle];
 }
 
-regionTitle.addEventListener('mouseenter', function () {
+regionHoverDiv.addEventListener('mouseenter', function () {
     regionTitle.style.backgroundColor = "#bbd2e9"
     toggleRegionPanel();
 })
 
-regionTitle.addEventListener('mouseleave', function () {
+regionHoverDiv.addEventListener('mouseleave', function () {
     regionTitle.style.backgroundColor = "rgb(117, 186, 223)"
     toggleRegionPanel();
 })
 
 function setupTabsTransition(){
     regionTitleWrapper.classList.add('regionTitleWrapper');
+    
+    regions.forEach(region => {
+        let regionText = document.createElement('h2');
+        regionText.textContent = region;
+
+        regionList.appendChild(regionText);
+    })
 }
 
 setupTabsTransition();
@@ -131,9 +140,10 @@ setupTabsTransition();
 function toggleRegionPanel() {
     if (regionTitleWrapper.style.maxHeight) {
         regionTitleWrapper.style.maxHeight = null;
+        regionHoverDiv.style.maxHeight = 100;
     } else {
         regionTitleWrapper.style.maxHeight = 500;
+        regionHoverDiv.style.maxHeight = 600;
     }
 }
 
-//TODO FINISH THIS!!!

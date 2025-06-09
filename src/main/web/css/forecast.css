@@ -14,20 +14,12 @@
 }
 
 .regionTitleWrapper{
+    position: relative;
+    z-index: 1000;
     max-height: 0;
     overflow: hidden;
+    background-color: rgb(117, 186, 223);
     transition: max-height 0.4s cubic-bezier(0, 0.73, 0.45, 1.15);
-}
-
-.regionsShown{
-    background-color: red;
-}
-
-.regionTitleOptions{
-    background-color: red;
-    margin: 0;
-    z-index: 1;
-    position: relative;
 }
 
 .problemHeaderMain{

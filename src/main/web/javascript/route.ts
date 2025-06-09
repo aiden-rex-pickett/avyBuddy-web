@@ -12,32 +12,17 @@ class Route {
     positions:boolean[];
     positionsSVG:string;
     dateCreated:string;
+    description:string
 
-    constructor(name:string, region:string, positions:boolean[], positionsSVG:string, dateCreated:string) {
+    constructor(name:string, region:string, positions:boolean[], positionsSVG:string, dateCreated:string, description:string) {
         this.name = name;
         this.region = region;
         this.positions = positions;
         this.positionsSVG = positionsSVG;
         this.dateCreated = dateCreated;
+        this.description = description;
     }
 }
-
-document.addEventListener("DOMContentLoaded" , function () {
-    loadRoutes();
-
-    //TODO this currently loads the same routes over and over, make it so it loads new ones
-    let observer:IntersectionObserver = new IntersectionObserver(function (entries) {
-        entries.forEach(element => {
-            if (element.isIntersecting) {
-                loadRoutes();
-            }
-        });
-    })
-
-    observer.observe(document.getElementById("footer"));
-})
-
-
 
 function addRoute() {
 
@@ -52,8 +37,9 @@ function loadRoutes() {
     //const apiEndpoint = "http://localhost:8080/apis/getRouteListRecency"
     //For running from IDE
     const apiEndpoint = "http://localhost:5501/getRouteListRecency"
-    const queryParams = {
+    let queryParams = {
         numRoutes: 10,
+        numRoutesLoaded: 0,
         svgWidth: 250
     }
 
@@ -61,13 +47,50 @@ function parseRoutes() {
     getRoutesByRecency(apiEndpoint, queryParams).then(routesList => {
         routesList.forEach(route => {
             injectRouteIntoDOM(route);
+            queryParams.numRoutesLoaded++;
         });
     });
 }
 
 function injectRouteIntoDOM(route:Route) {
+    //creates the container for the route object
     let routeDiv:HTMLDivElement = document.createElement('div');
-    routeDiv.style = "display: flex; justify-content: right";
+    routeDiv.classList.add('routeContainer');
+
+    let informationDiv:HTMLDivElement = document.createElement('div');
+    informationDiv.classList.add('routeInformationContainer');
+
+    let routeInformationContainers:HTMLDivElement[] = createRouteInformationContainers();
+        function createRouteInformationContainers() {
+            let nameDiv = document.createElement('div');
+            let dateDiv = document.createElement('div');
+            let descriptionDiv = document.createElement('div');
+            let regionDiv = document.createElement('div');
+
+            let nameText = document.createElement('h1');
+            let dateText = document.createElement('p');
+            let descriptionText = document.createElement('h2');
+            let regionText = document.createElement('p');
+
+            nameText.textContent = route.name;
+            dateText.textContent = 'created on ' + route.dateCreated;
+            descriptionText.textContent = route.description;
+            regionText.textContent = 'for the ' + route.region + ' region';
+
+            nameDiv.appendChild(nameText);
+            dateDiv.appendChild(dateText);
+            descriptionDiv.appendChild(descriptionText);
+            regionDiv.appendChild(regionText);
+
+            return [nameDiv, descriptionDiv, dateDiv, regionDiv];
+        }
+
+    routeInformationContainers.forEach(container => {
+        container.classList.add('routeInformationTextContainer');
+        informationDiv.appendChild(container);
+    })
+
+    routeDiv.appendChild(informationDiv);
 
     //creates svg container div
     let svgContainer:HTMLDivElement = document.createElement('div');
@@ -100,10 +123,22 @@ function getRoutesByRecency(apiEndpoint, queryParams) {
         let routesList:Route[] = [];
         for (let i = 0; i < data.length; i++) {
             let currentRoute = data[i];
-            let route:Route = new Route(currentRoute.name, currentRoute.region, currentRoute.positions, currentRoute.positionsSvg, currentRoute.dateCreated);
+            let route:Route = new Route(currentRoute.name, currentRoute.region, currentRoute.positions, currentRoute.positionsSvg, currentRoute.dateCreated, currentRoute.description);
             routesList[i] = route;
         }
 
         return routesList;
     })
 }
+
+document.addEventListener("DOMContentLoaded", function () {
+    let observer:IntersectionObserver = new IntersectionObserver(function (entries) {
+        entries.forEach(element => {
+            if (element.isIntersecting) {
+                loadRoutes();
+            }
+        });
+    })
+
+    observer.observe(document.getElementById("footer"));
+})

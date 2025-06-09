@@ -4,27 +4,16 @@ var addRouteButton = document.getElementById("addRoute");
 addRouteButton.addEventListener("click", addRoute);
 var routeListArea = document.getElementById('routeList');
 var Route = /** @class */ (function () {
-    function Route(name, region, positions, positionsSVG, dateCreated) {
+    function Route(name, region, positions, positionsSVG, dateCreated, description) {
         this.name = name;
         this.region = region;
         this.positions = positions;
         this.positionsSVG = positionsSVG;
         this.dateCreated = dateCreated;
+        this.description = description;
     }
     return Route;
 }());
-document.addEventListener("DOMContentLoaded", function () {
-    loadRoutes();
-    //TODO this currently loads the same routes over and over, make it so it loads new ones
-    var observer = new IntersectionObserver(function (entries) {
-        entries.forEach(function (element) {
-            if (element.isIntersecting) {
-                loadRoutes();
-            }
-        });
-    });
-    observer.observe(document.getElementById("footer"));
-});
 function addRoute() {
 }
 function loadRoutes() {
@@ -37,18 +26,48 @@ function loadRoutes() {
 var apiEndpoint = "http://localhost:5501/getRouteListRecency";
 var queryParams = {
     numRoutes: 10,
+    numRoutesLoaded: 0,
     svgWidth: 250
 };
 function parseRoutes() {
     getRoutesByRecency(apiEndpoint, queryParams).then(function (routesList) {
         routesList.forEach(function (route) {
             injectRouteIntoDOM(route);
+            queryParams.numRoutesLoaded++;
         });
     });
 }
 function injectRouteIntoDOM(route) {
+    //creates the container for the route object
     var routeDiv = document.createElement('div');
-    routeDiv.style = "display: flex; justify-content: right";
+    routeDiv.classList.add('routeContainer');
+    var informationDiv = document.createElement('div');
+    informationDiv.classList.add('routeInformationContainer');
+    var routeInformationContainers = createRouteInformationContainers();
+    function createRouteInformationContainers() {
+        var nameDiv = document.createElement('div');
+        var dateDiv = document.createElement('div');
+        var descriptionDiv = document.createElement('div');
+        var regionDiv = document.createElement('div');
+        var nameText = document.createElement('h1');
+        var dateText = document.createElement('p');
+        var descriptionText = document.createElement('h2');
+        var regionText = document.createElement('p');
+        nameText.textContent = route.name;
+        dateText.textContent = 'created on ' + route.dateCreated;
+        descriptionText.textContent = route.description;
+        regionText.textContent = 'for the ' + route.region + ' region';
+        nameDiv.appendChild(nameText);
+        dateDiv.appendChild(dateText);
+        descriptionDiv.appendChild(descriptionText);
+        regionDiv.appendChild(regionText);
+        return [nameDiv, descriptionDiv, dateDiv, regionDiv];
+    }
+    routeInformationContainers.forEach(function (container) {
+        container.classList.add('routeInformationTextContainer');
+        informationDiv.appendChild(container);
+    });
+    routeDiv.appendChild(informationDiv);
     //creates svg container div
     var svgContainer = document.createElement('div');
     svgContainer.style = "width: fit-content;";
@@ -74,10 +93,20 @@ function getRoutesByRecency(apiEndpoint, queryParams) {
         var routesList = [];
         for (var i = 0; i < data.length; i++) {
             var currentRoute = data[i];
-            var route = new Route(currentRoute.name, currentRoute.region, currentRoute.positions, currentRoute.positionsSvg, currentRoute.dateCreated);
+            var route = new Route(currentRoute.name, currentRoute.region, currentRoute.positions, currentRoute.positionsSvg, currentRoute.dateCreated, currentRoute.description);
             routesList[i] = route;
         }
         return routesList;
     });
 }
+document.addEventListener("DOMContentLoaded", function () {
+    var observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (element) {
+            if (element.isIntersecting) {
+                loadRoutes();
+            }
+        });
+    });
+    observer.observe(document.getElementById("footer"));
+});
 //# sourceMappingURL=route.js.map

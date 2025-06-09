@@ -1,9 +1,12 @@
 package com.aidenPersonal.avyBuddy.RouteFiles;
 
+import com.aidenPersonal.avyBuddy.uacData.Forecast;
+
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -41,8 +44,8 @@ public class RouteDatabase {
             var statement = connection.createStatement();
 
             //Writes state of passed Route object to database
-            String sql = "INSERT INTO routes (name, region, routePositions)"
-                    + "VALUES ('" + route.getName() + "', '" + route.getRegion() + "', '" + route.getRoutePositionsBinary() + "')";
+            String sql = "INSERT INTO routes (name, region, routePositions, description)"
+                    + "VALUES ('" + route.getName() + "', '" + route.getRegion() + "', '" + route.getRoutePositionsBinary() + "', '" + route.getDescription() + "')";
 
             statement.execute(sql);
             connection.close();
@@ -72,12 +75,13 @@ public class RouteDatabase {
             String name = results.getString("name");
             String region = results.getString("region");
             String dateCreated = results.getString("dateCreated");
+            String description = results.getString("description");
             int routePositions = results.getInt("routePositions");
             if (name == null) {
                 return null;
             }
 
-            returnRoute = new Route(region, name, dateCreated);
+            returnRoute = new Route(region, name, dateCreated, description);
             returnRoute.setNewRoutePositionsBinary(routePositions);
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -135,14 +139,18 @@ public class RouteDatabase {
      * Edits the region of a route already in the database, by route name.
      *
      * @param routeName         name of the route to edit in the database
-     * @param newRoutePositions the new positions of the route, encoded to an integer
+     * @param newRegion         The new region to be set
      */
-    public static void editRoute(String routeName, String newRoutePositions) {
+    public static void editRoute(String routeName, String newRegion) {
+        if (!Arrays.asList(Forecast.validRegions).contains(newRegion)) {
+            throw new IllegalArgumentException("Invalid region name, only logan, ogden, uintas, salt-lake, provo, skyline, moab, abajos, and southwest are valid region names, default forecast created instead");
+        }
+
         try {
             var connection = DriverManager.getConnection(url);
             var statement = connection.createStatement();
 
-            String sql = "UPDATE routes SET region = '" + newRoutePositions + "' WHERE name = '" + routeName + "';";
+            String sql = "UPDATE routes SET region = '" + newRegion + "' WHERE name = '" + routeName + "';";
             statement.execute(sql);
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -228,19 +236,21 @@ public class RouteDatabase {
      * Gets a list of the route names currently in the database, ordered by the date of creation (newest-to-oldest)
      *
      * @param numRoutes number of routes to be returned
+     * @param offset the offset, as in the number of routes to skip from the top (used by frontend to make sure already loaded routes
+     *               are not loaded again)
      * @return a list of route names currently in the database
      */
-    public static List<Route> getRoutesOrderedByRecency(int numRoutes) {
+    public static List<Route> getRoutesOrderedByRecency(int numRoutes, int offset) {
         ResultSet results;
         try {
             var connection = DriverManager.getConnection(url);
             var statement = connection.createStatement();
 
-            results = statement.executeQuery("SELECT * FROM routes ORDER BY routes.dateCreated DESC LIMIT + " + numRoutes + ";");
+            results = statement.executeQuery("SELECT * FROM routes ORDER BY routes.dateCreated DESC LIMIT + " + numRoutes + " OFFSET " + offset + ";");
             ArrayList<Route> routes = new ArrayList<>();
 
             while (results.next()) {
-                Route route = new Route(results.getString("region"), results.getString("name"), results.getString("dateCreated"));
+                Route route = new Route(results.getString("region"), results.getString("name"), results.getString("dateCreated"), results.getString("description"));
                 route.setNewRoutePositionsBinary(results.getInt("routePositions"));
                 routes.add(route);
             }

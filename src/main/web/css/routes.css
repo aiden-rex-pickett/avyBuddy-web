@@ -49,9 +49,35 @@
     height: 6px;
     background-color: black;
     border-style: none;
-    margin: 10 0 10 0;
+    margin: 0;
 }
 
-.routeList{
+.routeContainer{
+    display: flex; 
+    justify-content: space-between;
+    align-items: center;
 
+    transition-timing-function: cubic-bezier(0, 0.73, 0.45, 1.15);
+    transition-duration: 600ms;
+}
+
+.routeContainer:hover{
+    background-color: rgb(117, 186, 223);;
+}
+
+.routeInformationContainer{
+    display: flex; 
+    flex-direction: column;
+    padding: 10
+}
+
+.routeInformationTextContainer{
+    height: fit-content;
+}
+
+/* h1, h2, and p are the element types currently used, if changed in the typescript
+file change here*/
+.routeInformationTextContainer > h1, h2, p{
+    margin: 0;
+    padding-bottom: 5%;
 }

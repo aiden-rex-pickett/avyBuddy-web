@@ -27,13 +27,34 @@ public class Route implements Comparable<Route> {
     //date the route was created, as a string
     private String dateCreated;
 
+    //string description of the route
+    private String description;
+
     /**
      * Default constructor, for creating hollow Route Objects. Not to be used by user as it would conflict with compareTo method
      *
      * @param region region of where to get avalanche forecast data from
      * @param name   string name of the Route
      */
-    public Route(String region, String name, String dateCreated) {
+    public Route(String region, String name) {
+        //checks that region is valid
+        if (!Arrays.asList(Forecast.validRegions).contains(region)) {
+            throw new IllegalArgumentException("Invalid region name, only logan, ogden, uintas, salt-lake, provo, skyline, moab, abajos, and southwest are valid region names, default forecast created instead");
+        } else {
+            this.region = region;
+        }
+
+        this.name = name;
+    }
+
+    /**
+     * Database constructor, for creating hollow Route Objects. Not to be used by user as it would conflict with compareTo method
+     *
+     * @param region region of where to get avalanche forecast data from
+     * @param name   string name of the Route
+     * @param dateCreated The string of the date of creation
+     */
+    public Route(String region, String name, String dateCreated, String description) {
         //checks that region is valid
         if (!Arrays.asList(Forecast.validRegions).contains(region)) {
             throw new IllegalArgumentException("Invalid region name, only logan, ogden, uintas, salt-lake, provo, skyline, moab, abajos, and southwest are valid region names, default forecast created instead");
@@ -43,6 +64,7 @@ public class Route implements Comparable<Route> {
 
         this.name = name;
         this.dateCreated = dateCreated;
+        this.description = description;
     }
 
     /**
@@ -303,5 +325,13 @@ public class Route implements Comparable<Route> {
 
     public void setDateCreated(String dateCreated) {
         this.dateCreated = dateCreated;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

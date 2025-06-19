@@ -3,11 +3,10 @@
 
 //Endpoint info
 //For running off of local server
-//const apiEndpoint = "http://localhost:8080/apis/forecast"
+// const apiEndpoint = "http://localhost:8080/apis/forecast"
 //For running from IDE
 const apiEndpoint = "http://localhost:5501/forecast"
 const queryParams = {
-    region: "salt-lake",
     svgWidthMain: 500,
     svgWidthProblems: 250
 }
@@ -20,11 +19,12 @@ const regionTitle = document.getElementById("regionTitle");
 const regionTitleWrapper = document.getElementById("regionTitleWrapper");
 const regionHoverDiv = document.getElementById("regionHoverDiv");
 const regionList = document.getElementById('regionList');
-const regions = ["Salt Lake", "Ogden", "Uintas", "Logan", "Provo", "Skyline", "Moab", "Abajos", "Southwest"]
+const regions = ["Salt Lake", "Ogden", "Uintas", "Logan", "Provo", "Skyline", "Moab", "Abajos"]
 
-getData(queryParams);
+getData(queryParams, 'salt-lake');
 
-async function getData(queryParams) {
+async function getData(queryParams, region) {
+    queryParams['region'] = region;
     const requestUrl = new URL(apiEndpoint);
     const requestParams = new URLSearchParams(queryParams);
     requestUrl.search = requestParams.toString();
@@ -47,6 +47,12 @@ function setupForecastPage(data) {
 
     //Sets all the individual avalanche problems
     let problemArray = [data.avalanche_problem_1, data.avalanche_problem_2, data.avalanche_problem_3]
+    
+    //Clears any previous problems
+    let problemArea = document.getElementById('problemArea');
+    while(problemArea.firstChild) {
+        problemArea.removeChild(problemArea.firstChild);
+    }
     for (let i = 0; i < problemArray.length; i++) {
         if (problemArray[i] != null) {
             let divList = createProblemDom(problemArray[i]);
@@ -130,6 +136,15 @@ function setupTabsTransition(){
     regions.forEach(region => {
         let regionText = document.createElement('h2');
         regionText.textContent = region;
+        regionText.addEventListener('click', () => {
+            if (region === "Salt Lake") {
+                 getData(queryParams, "salt-lake");
+            } else {
+                getData(queryParams, region.toLowerCase());
+            }
+            regionTitle.textContent = ' ' + region;
+        })
+        regionText.classList.add('regionOption');
 
         regionList.appendChild(regionText);
     })

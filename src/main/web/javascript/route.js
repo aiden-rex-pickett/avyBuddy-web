@@ -21,13 +21,14 @@ function loadRoutes() {
 }
 //Endpoint info
 //For running off of local server
-//const apiEndpoint = "http://localhost:8080/apis/getRouteListRecency"
+// const apiEndpoint = "http://localhost:8080/apis/getRouteListRecency"
 //For running from IDE
 var apiEndpoint = "http://localhost:5501/getRouteListRecency";
 var queryParams = {
     numRoutes: 10,
     numRoutesLoaded: 0,
-    svgWidth: 250
+    svgWidth: 250,
+    region: 'salt-lake'
 };
 function parseRoutes() {
     getRoutesByRecency(apiEndpoint, queryParams).then(function (routesList) {

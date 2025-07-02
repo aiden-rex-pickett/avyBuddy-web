@@ -3,9 +3,9 @@
 
 //Endpoint info
 //For running off of local server
-// const apiEndpoint = "http://localhost:8080/apis/forecast"
+const apiEndpoint = "http://localhost:8080/apis/forecast"
 //For running from IDE
-const apiEndpoint = "http://localhost:5501/forecast"
+// const apiEndpoint = "http://localhost:5501/forecast"
 const queryParams = {
     svgWidthMain: 500,
     svgWidthProblems: 250
@@ -58,7 +58,7 @@ function setupForecastPage(data) {
             let divList = createProblemDom(problemArray[i]);
             let divToClick = divList[1];
             let divToClose = divList[0];
-            divToClick.addEventListener("click", function(e) {
+            divToClick.addEventListener("click", function() {
                 toggleProblemDescription(divToClose, divToClick)
             });
         }
@@ -73,9 +73,8 @@ function toggleProblemDescription(divToClose, divClicked) {
     } else {
         let textDivHeight = divToClose.querySelector('.problemDescription').scrollHeight;
         let svgHeight = divToClose.querySelector('svg').scrollHeight;
-        let expandedHeight = Math.max(textDivHeight, svgHeight);
 
-        divToClose.style.maxHeight = expandedHeight
+        divToClose.style.maxHeight = Math.max(textDivHeight, svgHeight);
         divToClose.style.paddingTop = 10;
         divToClose.style.paddingBottom = 10;
     }

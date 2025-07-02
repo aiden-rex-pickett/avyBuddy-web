@@ -141,11 +141,7 @@ public class Route implements Comparable<Route> {
         newPositions = newPositions | 16777216;
 
         for (int i = 0; i < routePositions.length; i++) {
-            if (((1 << routePositions.length - i - 1) & newPositions) != 0) {
-                routePositions[i] = true;
-            } else {
-                routePositions[i] = false;
-            }
+            routePositions[i] = ((1 << routePositions.length - i - 1) & newPositions) != 0;
         }
     }
 
@@ -288,7 +284,6 @@ public class Route implements Comparable<Route> {
      * @return double type value which represents the average danger
      */
     private double averageDanger(Route route) {
-
         double routeTotalDanger = 0.0;
         double numberOfPositions = 0.0;
         int[] routeOverallDanger = route.getOverallDangerPositionsForRoute();

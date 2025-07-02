@@ -21,9 +21,9 @@ function loadRoutes() {
 }
 //Endpoint info
 //For running off of local server
-// const apiEndpoint = "http://localhost:8080/apis/getRouteListRecency"
+var apiEndpoint = "http://localhost:8080/apis/getRouteListRecency";
 //For running from IDE
-var apiEndpoint = "http://localhost:5501/getRouteListRecency";
+// const apiEndpoint = "http://localhost:5501/getRouteListRecency"
 var queryParams = {
     numRoutes: 10,
     numRoutesLoaded: 0,
@@ -94,8 +94,7 @@ function getRoutesByRecency(apiEndpoint, queryParams) {
         var routesList = [];
         for (var i = 0; i < data.length; i++) {
             var currentRoute = data[i];
-            var route = new Route(currentRoute.name, currentRoute.region, currentRoute.positions, currentRoute.positionsSvg, currentRoute.dateCreated, currentRoute.description);
-            routesList[i] = route;
+            routesList[i] = new Route(currentRoute.name, currentRoute.region, currentRoute.positions, currentRoute.positionsSvg, currentRoute.dateCreated, currentRoute.description);
         }
         return routesList;
     });

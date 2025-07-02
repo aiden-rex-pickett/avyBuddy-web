@@ -34,9 +34,9 @@ function loadRoutes() {
 
 //Endpoint info
     //For running off of local server
-    // const apiEndpoint = "http://localhost:8080/apis/getRouteListRecency"
+    const apiEndpoint = "http://localhost:8080/apis/getRouteListRecency"
     //For running from IDE
-    const apiEndpoint = "http://localhost:5501/getRouteListRecency"
+    // const apiEndpoint = "http://localhost:5501/getRouteListRecency"
     let queryParams = {
         numRoutes: 10,
         numRoutesLoaded: 0,
@@ -95,7 +95,7 @@ function injectRouteIntoDOM(route:Route) {
 
     //creates svg container div
     let svgContainer:HTMLDivElement = document.createElement('div');
-    svgContainer.style = "width: fit-content;"
+    svgContainer.style.width = "fit-content;"
     let svg = document.createElement('svg');
     svg.innerHTML = route.positionsSVG;
     svgContainer.appendChild(svg);
@@ -124,8 +124,7 @@ function getRoutesByRecency(apiEndpoint, queryParams) {
         let routesList:Route[] = [];
         for (let i = 0; i < data.length; i++) {
             let currentRoute = data[i];
-            let route:Route = new Route(currentRoute.name, currentRoute.region, currentRoute.positions, currentRoute.positionsSvg, currentRoute.dateCreated, currentRoute.description);
-            routesList[i] = route;
+            routesList[i] = new Route(currentRoute.name, currentRoute.region, currentRoute.positions, currentRoute.positionsSvg, currentRoute.dateCreated, currentRoute.description);
         }
 
         return routesList;

@@ -2,11 +2,17 @@ package com.aidenPersonal.avyBuddy.RouteFiles;
 
 import com.aidenPersonal.avyBuddy.uacData.Forecast;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.sql.DataSource;
+import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -19,12 +25,26 @@ import java.util.List;
 public class RouteDatabase {
 
     //connection string to database
-    private static final String url = "jdbc:sqlite:C:/Users/ka7nq/Desktop/avyBuddy/src/main/resources/database.db";
+    private static final String url = "jdbc:sqlite:C:/apache-tomcat-11.0.5/lib/database.db";
 
     /**
      * Makes sure objects of this class cannot be created.
      */
     private RouteDatabase() {}
+
+    /**
+     * Gets a database connection for the routes database, used by server
+     *
+     * @return  A connection to the database
+     * @throws SQLException If database connection fails
+     * @throws NamingException If namespace doesnt exist in context
+     */
+    private static Connection getConnection() throws SQLException, NamingException {
+        Context initalContext = new InitialContext();
+        Context environemntContext = (Context) initalContext.lookup("java:comp/env");
+        DataSource dataSource = (DataSource) environemntContext.lookup("jdbc/routesDatabase");
+        return dataSource.getConnection();
+    }
 
     /**
      * Writes state of passed route object to database for storage. This includes the name, region, and routePositions
@@ -66,6 +86,7 @@ public class RouteDatabase {
         ResultSet results;
 
         try {
+//            Connection connection = getConnection();
             var connection = DriverManager.getConnection(url);
             var statement = connection.createStatement();
 
@@ -85,7 +106,9 @@ public class RouteDatabase {
             returnRoute.setNewRoutePositionsBinary(routePositions);
         } catch (SQLException e) {
             throw new RuntimeException(e);
-        }
+        } //catch (NamingException e) {
+//            throw new RuntimeException(e);
+//        }
 
         return returnRoute;
     }
@@ -243,7 +266,8 @@ public class RouteDatabase {
     public static List<Route> getRoutesOrderedByRecency(int numRoutes, int offset) {
         ResultSet results;
         try {
-            var connection = DriverManager.getConnection(url);
+            Connection connection = getConnection();
+//            var connection = DriverManager.getConnection(url);
             var statement = connection.createStatement();
 
             results = statement.executeQuery("SELECT * FROM routes ORDER BY routes.dateCreated DESC LIMIT + " + numRoutes + " OFFSET " + offset + ";");
@@ -256,6 +280,47 @@ public class RouteDatabase {
             }
 
             return routes;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } catch (NamingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Sorts the routes of a given region by the forecast data
+     *
+     * @param numRoutes number of routes to return
+     * @param offset number of routes already returned
+     * @param region the region to get the forecast to sort the routes by
+     * @return A list of the routes
+     */
+    public static List<Route> getRoutesOrderedByForecast(int numRoutes, int offset, String region) {
+        ResultSet results;
+        try {
+            var connection = DriverManager.getConnection(url);
+            var statement = connection.createStatement();
+
+            results = statement.executeQuery("SELECT * FROM routes" + ";");
+            ArrayList<Route> routes = new ArrayList<>();
+
+            while (results.next()) {
+                Route route = new Route(results.getString("region"), results.getString("name"), results.getString("dateCreated"), results.getString("description"));
+                route.setNewRoutePositionsBinary(results.getInt("routePositions"));
+                routes.add(route);
+            }
+
+            routes.sort(new RouteComparator(region));
+
+            int startIndex = offset;
+            if (startIndex > routes.size()) {
+                startIndex = routes.size();
+            }
+            int endIndex = offset + numRoutes + 1;
+            if (endIndex > routes.size()) {
+                endIndex = routes.size();
+            }
+            return routes.subList(offset, endIndex);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

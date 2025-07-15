@@ -46,6 +46,24 @@ public class RouteDatabaseController {
     }
 
     /**
+     * This controller returns all the routes in the database for a given region, sorted by the forecast data
+     */
+    @CrossOrigin
+    @GetMapping("/getRouteListForecast")
+    public String getRouteListForecast(@RequestParam int svgWidth, @RequestParam String region) {
+        ObjectMapper mapper = new ObjectMapper();
+        ArrayNode routesNode = mapper.createArrayNode();
+
+        List<Route> routes = RouteDatabase.getRoutesOrderedByForecast(region);
+
+        for (Route route : routes) {
+            routesNode.add(makeRouteNode(route, mapper, svgWidth));
+        }
+
+        return routesNode.toString();
+    }
+
+    /**
      * This helper method makes an {@code ObjectNode} that represents the route that is passed to it.
      *
      * @param route The route to be represented

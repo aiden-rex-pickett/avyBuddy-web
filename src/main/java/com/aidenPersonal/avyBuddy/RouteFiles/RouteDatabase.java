@@ -288,18 +288,16 @@ public class RouteDatabase {
     /**
      * Sorts the routes of a given region by the forecast data
      *
-     * @param numRoutes number of routes to return
-     * @param offset number of routes already returned
      * @param region the region to get the forecast to sort the routes by
      * @return A list of the routes
      */
-    public static List<Route> getRoutesOrderedByForecast(int numRoutes, int offset, String region) {
+    public static List<Route> getRoutesOrderedByForecast(String region) {
         ResultSet results;
         try {
             var connection = DriverManager.getConnection(url);
             var statement = connection.createStatement();
 
-            results = statement.executeQuery("SELECT * FROM routes" + ";");
+            results = statement.executeQuery("SELECT * FROM routes WHERE region is '" +  region + "' ORDER BY routes.dateCreated DESC");
             ArrayList<Route> routes = new ArrayList<>();
 
             while (results.next()) {
@@ -310,15 +308,7 @@ public class RouteDatabase {
 
             routes.sort(new RouteComparator(region));
 
-            int startIndex = offset;
-            if (startIndex > routes.size()) {
-                startIndex = routes.size();
-            }
-            int endIndex = offset + numRoutes + 1;
-            if (endIndex > routes.size()) {
-                endIndex = routes.size();
-            }
-            return routes.subList(offset, endIndex);
+            return routes;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

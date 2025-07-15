@@ -25,14 +25,18 @@ function setupRegionSelector() {
         var regionText = document.createElement('p');
         regionText.textContent = region;
         regionText.addEventListener('click', function () {
-            while (routeListArea.firstChild) {
-                routeListArea.removeChild(routeListArea.firstChild);
-            }
+            clearRouteArea();
+            currentRegionTitle.textContent = region;
             parseRoutes(region);
         });
         regionText.classList.add('regionOption');
         regionList.appendChild(regionText);
     });
+}
+function clearRouteArea() {
+    while (routeListArea.firstChild) {
+        routeListArea.removeChild(routeListArea.firstChild);
+    }
 }
 function toggleRegionPanel() {
     if (regionSelectorDiv.style.maxHeight) {
@@ -59,8 +63,25 @@ var Route = /** @class */ (function () {
 function addRoute() {
     console.log("add");
 }
+//Endpoint info
+//For running off of local server
+// const apiEndpointSort = "http://localhost:8080/apis/getRouteListForecast"
+//For running from IDE
+var apiEndpointSort = "http://localhost:5501/getRouteListForecast";
 function loadRoutes() {
-    console.log("load");
+    clearRouteArea();
+    var region = currentRegionTitle.textContent;
+    if (region == "Salt Lake") {
+        region = "salt-lake";
+    }
+    else {
+        region = region.toLowerCase();
+    }
+    getRoutesByRecency(apiEndpointSort, { svgWidth: 250, region: region }).then(function (routesList) {
+        routesList.forEach(function (route) {
+            injectRouteIntoDOM(route);
+        });
+    });
 }
 //Endpoint info
 //For running off of local server
@@ -68,8 +89,6 @@ function loadRoutes() {
 //For running from IDE
 var apiEndpoint = "http://localhost:5501/getRouteListRecency";
 var queryParams = {
-    numRoutes: 10,
-    numRoutesLoaded: 0,
     svgWidth: 250,
     region: 'logan'
 };
@@ -83,7 +102,6 @@ function parseRoutes(region) {
     getRoutesByRecency(apiEndpoint, queryParams).then(function (routesList) {
         routesList.forEach(function (route) {
             injectRouteIntoDOM(route);
-            queryParams.numRoutesLoaded++;
         });
     });
 }
@@ -91,6 +109,9 @@ function injectRouteIntoDOM(route) {
     //creates the container for the route object
     var routeDiv = document.createElement('div');
     routeDiv.classList.add('routeContainer');
+    routeDiv.addEventListener("click", function () {
+        createRoutePage(route);
+    });
     var informationDiv = document.createElement('div');
     informationDiv.classList.add('routeInformationContainer');
     var routeInformationContainers = createRouteInformationContainers();
@@ -132,6 +153,18 @@ function injectRouteIntoDOM(route) {
     var listDividingLine = document.createElement('hr');
     listDividingLine.classList.add("dividingLine");
     routeListArea.appendChild(listDividingLine);
+}
+function createRoutePage(route) {
+    var buttonArea = document.getElementById('routeButtonArea');
+    var routesTitleArea = document.getElementById('routeHeaderArea');
+    clearRouteArea();
+    buttonArea.style.display = 'none';
+    routesTitleArea.style.display = 'none';
+    setTimeout(function () {
+        routesTitleArea.style.display = '';
+        buttonArea.style.display = '';
+        parseRoutes('salt-lake');
+    }, 2000);
 }
 function getRoutesByRecency(apiEndpoint, queryParams) {
     var requestURL = new URL(apiEndpoint);

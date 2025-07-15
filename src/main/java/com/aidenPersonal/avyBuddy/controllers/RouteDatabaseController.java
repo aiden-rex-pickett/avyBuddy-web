@@ -26,21 +26,17 @@ public class RouteDatabaseController {
     /**
      * This controller returns the top-{@code numRoutes} most recent routes in the database by creation
      *
-     * @param numRoutes the number of routes to load and return
-     * @param numRoutesLoaded the number of routes already loaded on the page
+     * @param svgWidth width of the svg image for the route
+     * @param region region of the routes to be returned
      * @return String of JSON object, where each route is in its own object named "1", then "2", etc. up to "{@code numRoutes}"
      */
     @CrossOrigin
     @GetMapping("/getRouteListRecency")
-    public String getRouteList(@RequestParam int numRoutes, @RequestParam int numRoutesLoaded, @RequestParam int svgWidth) {
+    public String getRouteList(@RequestParam int svgWidth, @RequestParam String region) {
         ObjectMapper mapper = new ObjectMapper();
         ArrayNode routesNode = mapper.createArrayNode();
 
-        if (numRoutes < 1) {
-            throw new IllegalArgumentException("numRoutes must be greater than 0");
-        }
-
-        List<Route> routes = RouteDatabase.getRoutesOrderedByRecency(numRoutes, numRoutesLoaded);
+        List<Route> routes = RouteDatabase.getRoutesOrderedByRecency(region);
 
         for (Route route : routes) {
             routesNode.add(makeRouteNode(route, mapper, svgWidth));

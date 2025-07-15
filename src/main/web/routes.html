@@ -40,7 +40,14 @@
     <div class="headerWrap" style = "height: fit-content"><h1 class = "forecastHeader">Routes</h1></div>
     <div class="routeButtonArea">
         <button class="routeButton" id = "addRoute">Add Route</button>
-        <button class="routeButton" id = "searchRoutes">Search Routes</button>
+        <button class="routeButton" id = "searchRoutes">Sort By Forecast</button>
+        <div id = "regionButton" class = "regionSelector">
+            <p class = 'regionHeader' id = 'regionTitle'> Salt Lake:</p>
+            <div class = "regionOptionsDiv" id = "regionTitleWrapper">
+                <ul style = "padding: 0; margin: 10" id = "regionList">
+                </ul>
+            </div>
+        </div>
     </div>
     <hr class = "dividingLine">
     <div class = "routeList" id = "routeList">

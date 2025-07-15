@@ -10,7 +10,7 @@
 }
 
 .routeButtonArea{
-    width: 65%;
+    width: 100%;
     min-width: 450px;
     height: 20vw;
     display: flex;
@@ -21,7 +21,7 @@
 
 .routeButton{
     height: 50%;
-    width: 30%;
+    width: 15%;
     min-width: 100px;
     background-color: #030f21;
     color: #bbd2e9;
@@ -33,6 +33,56 @@
     transition-duration: 400ms;
     transition-property: background-color, scale, color;
     font-size: 1.4em;
+}
+
+.regionSelector{
+    height: 50%;
+    width: 25%;
+    min-width: 100px;
+    background-color: rgb(117, 186, 223);
+    color: #030f21;
+    font-family: "Arvo";
+    word-spacing: 0.12em;
+    border: none;
+    border-radius: 10%;
+    transition: cubic-bezier(0.42, 0.04, 0.41, 1.06);
+    transition-duration: 400ms;
+    font-size: 1.4em;
+    align-content: center;
+    text-align: center;
+}
+
+.regionSelector:hover{
+    background-color: #030f21;
+    color: #bbd2e9;
+    scale: 1.05;
+}
+
+.regionHeader{
+    padding: 0;
+    margin: 0;
+    transition-timing-function: cubic-bezier(0, 0.73, 0.45, 1.15);
+    transition-duration: 600ms;
+}
+
+.regionOptionsDiv{
+    position: relative;
+    z-index: 1000;
+    max-height: 0;
+    overflow: hidden;
+    background-color: #030f21;
+    transition: max-height 0.4s cubic-bezier(0, 0.73, 0.45, 1.15);
+}
+
+.regionOption{
+    background-color: inherit;
+    transition-timing-function: cubic-bezier(0, 0.73, 0.45, 1.15);
+    transition-duration: 600ms;
+}
+
+.regionOption:hover{
+    background-color: rgb(117, 186, 223);
+    color: #030f21;
 }
 
 .routeButton:hover{

@@ -258,19 +258,17 @@ public class RouteDatabase {
     /**
      * Gets a list of the route names currently in the database, ordered by the date of creation (newest-to-oldest)
      *
-     * @param numRoutes number of routes to be returned
-     * @param offset the offset, as in the number of routes to skip from the top (used by frontend to make sure already loaded routes
-     *               are not loaded again)
+     * @param region region of the routes to be returned
      * @return a list of route names currently in the database
      */
-    public static List<Route> getRoutesOrderedByRecency(int numRoutes, int offset) {
+    public static List<Route> getRoutesOrderedByRecency(String region) {
         ResultSet results;
         try {
-            Connection connection = getConnection();
-//            var connection = DriverManager.getConnection(url);
+//            Connection connection = getConnection();
+            var connection = DriverManager.getConnection(url);
             var statement = connection.createStatement();
 
-            results = statement.executeQuery("SELECT * FROM routes ORDER BY routes.dateCreated DESC LIMIT + " + numRoutes + " OFFSET " + offset + ";");
+            results = statement.executeQuery("SELECT * FROM routes WHERE region is '" + region + "' ORDER BY routes.dateCreated DESC");
             ArrayList<Route> routes = new ArrayList<>();
 
             while (results.next()) {
@@ -282,9 +280,9 @@ public class RouteDatabase {
             return routes;
         } catch (SQLException e) {
             throw new RuntimeException(e);
-        } catch (NamingException e) {
-            throw new RuntimeException(e);
-        }
+        } //catch (NamingException e) {
+//            throw new RuntimeException(e);
+//        }
     }
 
     /**

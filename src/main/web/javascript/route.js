@@ -2,6 +2,48 @@
 //Adds all the event listeners
 var addRouteButton = document.getElementById("addRoute");
 addRouteButton.addEventListener("click", addRoute);
+var sortByForecastButton = document.getElementById("searchRoutes");
+sortByForecastButton.addEventListener("click", loadRoutes);
+var currentRegionDiv = document.getElementById("regionButton");
+var currentRegionTitle = document.getElementById("regionTitle");
+var regionSelectorDiv = document.getElementById("regionTitleWrapper");
+var regionList = document.getElementById("regionList");
+var regions = ["Salt Lake", "Ogden", "Uintas", "Logan", "Provo", "Skyline", "Moab", "Abajos"];
+setupRegionSelector();
+function setupRegionSelector() {
+    currentRegionDiv.addEventListener("mouseenter", function () {
+        currentRegionDiv.style.backgroundColor = "#030f21";
+        currentRegionDiv.style.color = "#bbd2e9";
+        toggleRegionPanel();
+    });
+    currentRegionDiv.addEventListener("mouseleave", function () {
+        currentRegionDiv.style.backgroundColor = "rgb(117, 186, 223)";
+        currentRegionDiv.style.color = "#030f21";
+        toggleRegionPanel();
+    });
+    regions.forEach(function (region) {
+        var regionText = document.createElement('p');
+        regionText.textContent = region;
+        regionText.addEventListener('click', function () {
+            while (routeListArea.firstChild) {
+                routeListArea.removeChild(routeListArea.firstChild);
+            }
+            parseRoutes(region);
+        });
+        regionText.classList.add('regionOption');
+        regionList.appendChild(regionText);
+    });
+}
+function toggleRegionPanel() {
+    if (regionSelectorDiv.style.maxHeight) {
+        regionSelectorDiv.style.maxHeight = null;
+        currentRegionDiv.style.maxHeight = "100";
+    }
+    else {
+        regionSelectorDiv.style.maxHeight = "500";
+        currentRegionDiv.style.maxHeight = "600";
+    }
+}
 var routeListArea = document.getElementById('routeList');
 var Route = /** @class */ (function () {
     function Route(name, region, positions, positionsSVG, dateCreated, description) {
@@ -15,22 +57,29 @@ var Route = /** @class */ (function () {
     return Route;
 }());
 function addRoute() {
+    console.log("add");
 }
 function loadRoutes() {
-    parseRoutes();
+    console.log("load");
 }
 //Endpoint info
 //For running off of local server
-var apiEndpoint = "http://localhost:8080/apis/getRouteListRecency";
+// const apiEndpoint = "http://localhost:8080/apis/getRouteListRecency"
 //For running from IDE
-// const apiEndpoint = "http://localhost:5501/getRouteListRecency"
+var apiEndpoint = "http://localhost:5501/getRouteListRecency";
 var queryParams = {
     numRoutes: 10,
     numRoutesLoaded: 0,
     svgWidth: 250,
-    region: 'salt-lake'
+    region: 'logan'
 };
-function parseRoutes() {
+function parseRoutes(region) {
+    if (region == "Salt Lake") {
+        queryParams['region'] = 'salt-lake';
+    }
+    else {
+        queryParams['region'] = region.toLowerCase();
+    }
     getRoutesByRecency(apiEndpoint, queryParams).then(function (routesList) {
         routesList.forEach(function (route) {
             injectRouteIntoDOM(route);
@@ -71,7 +120,7 @@ function injectRouteIntoDOM(route) {
     routeDiv.appendChild(informationDiv);
     //creates svg container div
     var svgContainer = document.createElement('div');
-    svgContainer.style = "width: fit-content;";
+    svgContainer.style.width = "fit-content;";
     var svg = document.createElement('svg');
     svg.innerHTML = route.positionsSVG;
     svgContainer.appendChild(svg);
@@ -99,14 +148,5 @@ function getRoutesByRecency(apiEndpoint, queryParams) {
         return routesList;
     });
 }
-document.addEventListener("DOMContentLoaded", function () {
-    var observer = new IntersectionObserver(function (entries) {
-        entries.forEach(function (element) {
-            if (element.isIntersecting) {
-                loadRoutes();
-            }
-        });
-    });
-    observer.observe(document.getElementById("footer"));
-});
+parseRoutes("salt-lake");
 //# sourceMappingURL=route.js.map

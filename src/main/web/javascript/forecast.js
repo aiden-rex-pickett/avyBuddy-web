@@ -3,9 +3,9 @@
 
 //Endpoint info
 //For running off of local server
-const apiEndpoint = "http://localhost:8080/apis/forecast"
+// const apiEndpoint = "http://localhost:8080/apis/forecast"
 //For running from IDE
-// const apiEndpoint = "http://localhost:5501/forecast"
+const apiEndpoint = "http://localhost:5501/forecast"
 const queryParams = {
     svgWidthMain: 500,
     svgWidthProblems: 250

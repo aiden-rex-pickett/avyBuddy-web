@@ -131,3 +131,72 @@ file change here*/
     margin: 0;
     padding-bottom: 5%;
 }
+
+.routePageContainerClosed{
+    display: none;
+}
+
+.routePageContainer{
+    height: fit-content;
+}
+
+.routePageButton{
+    min-width: 100px;
+    background-color: #030f21;
+    color: #bbd2e9;
+    font-family: "Arvo";
+    word-spacing: 0.12em;
+    border: none;
+    border-radius: 10%;
+    margin: 3%;
+    transition: cubic-bezier(0.42, 0.04, 0.41, 1.06);
+    transition-duration: 400ms;
+    transition-property: background-color, scale, color;
+}
+
+.routePageButton:hover{
+    background-color: rgb(117, 186, 223);
+    color: #030f21;
+    scale: 1.05;
+}
+
+.routePageTextContainer{
+    height: fit-content;
+    padding: 10px 2% 10px 2%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: auto;
+}
+
+.routePageButtonContainer {
+    display: flex;
+    align-items: center;
+}
+
+.routePageEditButton {
+    height: 100%;
+    width: 10%;
+    max-width: 50px;
+    font-size: 1.3em;
+}
+
+.routePageExitButton{
+    height: 100%;
+    width: 10%;
+    max-width: 50px;
+    font-size: 1.1em;    
+}
+
+.routePageHeader{
+    margin: 0;
+}
+
+.routePageDescription {
+    padding: 0;
+    margin: 0
+}
+
+.routePageSvgContainer {
+    height: 250;
+}

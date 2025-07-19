@@ -4,7 +4,10 @@
 const addRouteButton:HTMLButtonElement = document.getElementById("addRoute") as HTMLButtonElement;
 addRouteButton.addEventListener("click", addRoute);
 const sortByForecastButton:HTMLButtonElement = document.getElementById("searchRoutes") as HTMLButtonElement
-sortByForecastButton.addEventListener("click", loadRoutes)
+sortByForecastButton.addEventListener("click", loadSortedRoutes)
+
+const buttonArea = document.getElementById('routeButtonArea');
+const routesTitleArea = document.getElementById('routeHeaderArea');
 
 const currentRegionDiv:HTMLDivElement = document.getElementById("regionButton") as HTMLDivElement
 const currentRegionTitle:HTMLParagraphElement = document.getElementById("regionTitle") as HTMLParagraphElement
@@ -12,8 +15,8 @@ const regionSelectorDiv:HTMLDivElement = document.getElementById("regionTitleWra
 const regionList:HTMLUListElement = document.getElementById("regionList") as HTMLUListElement
 
 const regions = ["Salt Lake", "Ogden", "Uintas", "Logan", "Provo", "Skyline", "Moab", "Abajos"]
-
-setupRegionSelector();
+let lastSortingType;
+let lastSortingRegion;
 
 function setupRegionSelector() {
     currentRegionDiv.addEventListener("mouseenter", function() {
@@ -34,7 +37,7 @@ function setupRegionSelector() {
         regionText.addEventListener('click', () => {
             clearRouteArea(); 
             currentRegionTitle.textContent = region; 
-            parseRoutes(region);
+            loadTimeOrdredRoutes(region);
         })
 
         regionText.classList.add('regionOption');
@@ -82,26 +85,45 @@ function addRoute() {
     console.log("add")
 }
 
+async function getRouteListFromEndpoint(apiEndpoint:URL, searchParams:URLSearchParams) {
+    apiEndpoint.search = searchParams.toString();
+    return await fetch(apiEndpoint).then(response => response.json()).then(data => {
+        let routeList:Route[] = new Array(data.length);
+        for (let i = 0; i < data.length; i++){
+            let currentData = data[i]
+            routeList[i] = new Route(currentData["name"], currentData["region"], currentData["positions"], currentData["positionsSvg"], currentData["dateCreated"], currentData["description"]);
+        }
+
+        return routeList
+    })
+}
+
 //Endpoint info
     //For running off of local server
     // const apiEndpointSort = "http://localhost:8080/apis/getRouteListForecast"
     //For running from IDE
     const apiEndpointSort = "http://localhost:5501/getRouteListForecast"
-function loadRoutes() {
+    const queryParamsSort = {
+        svgWidth: "250",
+    }
+function loadSortedRoutes(String) {
     clearRouteArea()
     let region = currentRegionTitle.textContent;
-    
-    if (region == "Salt Lake") {
-        region = "salt-lake"
-    } else {
-        region = region.toLowerCase();
-    }
 
-    getRoutesByRecency(apiEndpointSort, {svgWidth: 250, region: region}).then(routesList => {
-        routesList.forEach(route => {
+    if(region == "Salt Lake"){
+        queryParamsSort['region'] = 'salt-lake'
+    } else {
+        queryParamsSort['region'] = region.toLowerCase();
+    }   
+
+    getRouteListFromEndpoint(new URL(apiEndpointSort), new URLSearchParams(queryParamsSort)).then(routeList => {
+        routeList.forEach(route => {
             injectRouteIntoDOM(route);
         })
-    })
+    });
+
+    lastSortingType = loadSortedRoutes;
+    lastSortingRegion = region;
 }
 
 //Endpoint info
@@ -110,22 +132,23 @@ function loadRoutes() {
     //For running from IDE
     const apiEndpoint = "http://localhost:5501/getRouteListRecency"
     let queryParams = {
-        svgWidth: 250,
-        region: 'logan'
+        svgWidth: "250",
     }
-
-function parseRoutes(region:String) {
+function loadTimeOrdredRoutes(region:String) {
     if(region == "Salt Lake"){
         queryParams['region'] = 'salt-lake'
     } else {
         queryParams['region'] = region.toLowerCase();
     }
 
-    getRoutesByRecency(apiEndpoint, queryParams).then(routesList => {
-        routesList.forEach(route => {
+    getRouteListFromEndpoint(new URL(apiEndpoint), new URLSearchParams(queryParams)).then(routeList => {
+        routeList.forEach(route => {
             injectRouteIntoDOM(route);
-        });
+        })
     });
+    
+    lastSortingType = loadTimeOrdredRoutes;
+    lastSortingRegion = region;
 }
 
 function injectRouteIntoDOM(route:Route) {
@@ -133,7 +156,7 @@ function injectRouteIntoDOM(route:Route) {
     let routeDiv:HTMLDivElement = document.createElement('div');
     routeDiv.classList.add('routeContainer');
     routeDiv.addEventListener("click", function () {
-        createRoutePage(route);
+        clearRoutePage(route);
     });
 
     let informationDiv:HTMLDivElement = document.createElement('div');
@@ -146,10 +169,10 @@ function injectRouteIntoDOM(route:Route) {
             let descriptionDiv = document.createElement('div');
             let regionDiv = document.createElement('div');
 
-            let nameText = document.createElement('h1');
             let dateText = document.createElement('p');
             let descriptionText = document.createElement('h2');
             let regionText = document.createElement('p');
+            let nameText = document.createElement('h1'); 
 
             nameText.textContent = route.name;
             dateText.textContent = 'created on ' + route.dateCreated;
@@ -190,37 +213,44 @@ function injectRouteIntoDOM(route:Route) {
     routeListArea.appendChild(listDividingLine);
 }
 
-function createRoutePage(route:Route) {
-    const buttonArea = document.getElementById('routeButtonArea');
-    const routesTitleArea = document.getElementById('routeHeaderArea');
+function clearRoutePage(route:Route) {
 
-    clearRouteArea();
     buttonArea.style.display = 'none';
     routesTitleArea.style.display = 'none';
 
-    setTimeout(function () {
-        routesTitleArea.style.display = '';
-        buttonArea.style.display = '';
-        parseRoutes('salt-lake');
-    }, 2000);
+    clearRouteArea();
+    
+    buildRoutePage(route);
 }
 
-function getRoutesByRecency(apiEndpoint, queryParams) {
-    const requestURL = new URL(apiEndpoint);
-    const requestParams = new URLSearchParams(queryParams);
-    requestURL.search = requestParams.toString();
+function buildRoutePage(route:Route) {
+    const routePageDiv = document.getElementById("routePageContainer")
+    routePageDiv.classList.remove("routePageContainerClosed")
+    
+    const headerField = document.getElementById("routeHeader")
+    const dateField = document.getElementById("dateCreated")
+    const regionField = document.getElementById("region")
+    const descriptionField = document.getElementById("routeDescription")
+    const svgContainer = document.getElementById("routePageSvgContainer")
 
-    return fetch(requestURL)
-        .then(response => response.json())
-        .then(data => {            
-        let routesList:Route[] = [];
-        for (let i = 0; i < data.length; i++) {
-            let currentRoute = data[i];
-            routesList[i] = new Route(currentRoute.name, currentRoute.region, currentRoute.positions, currentRoute.positionsSvg, currentRoute.dateCreated, currentRoute.description);
+    headerField.textContent = route.name
+    dateField.textContent = "Created on " + route.dateCreated
+    regionField.textContent = "For the " + route.region + " region"
+    descriptionField.textContent = route.description
+    svgContainer.innerHTML = route.positionsSVG;
+
+    const backButton = document.getElementById("exitButton")
+    backButton.addEventListener("click", function () {
+        routePageDiv.classList.add("routePageContainerClosed")
+        buttonArea.style.display = ""
+        routesTitleArea.style.display = "" 
+        if (lastSortingType == loadSortedRoutes) {
+            lastSortingType()
+        } else {
+            lastSortingType(lastSortingRegion)
         }
-
-        return routesList;
     })
 }
 
-parseRoutes("salt-lake");
+loadTimeOrdredRoutes("salt-lake");
+setupRegionSelector();

@@ -3,15 +3,17 @@ package com.aidenPersonal.avyBuddy.controllers;
 import com.aidenPersonal.avyBuddy.RouteFiles.Route;
 import com.aidenPersonal.avyBuddy.RouteFiles.RouteDatabase;
 import com.aidenPersonal.avyBuddy.imageHandling.SvgRoseGenerator;
+import com.aidenPersonal.avyBuddy.uacData.Forecast;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * This class provides endpoints for the frontend to interact with the database, including fetching specific data, lists of
@@ -61,6 +63,45 @@ public class RouteDatabaseController {
         }
 
         return routesNode.toString();
+    }
+
+    private static class RouteDTO {
+        Optional<String> region;
+        Optional<boolean[]> routePositions;
+        Optional<String> description;
+
+        RouteDTO (String region, int routePositions, String description) {
+            this.region = Optional.ofNullable(region);
+
+            if (routePositions == 0) {
+                this.routePositions = Optional.empty();
+            } else {
+                routePositions = routePositions | 16777216;
+                boolean[] routePositionsArray = new boolean[24];
+                for (int i = 0; i < routePositionsArray.length; i++) {
+                    routePositionsArray[i] = ((1 << routePositionsArray.length - i - 1) & routePositions) != 0;
+                }
+                this.routePositions = Optional.of(routePositionsArray);
+            }
+
+            this.description = Optional.ofNullable(description);
+        }
+    }
+
+    @CrossOrigin
+    @PatchMapping("/editRoute/{routeName}")
+    public ResponseEntity<?> editRoute(@PathVariable String routeName, @RequestBody RouteDTO route) {
+        if (route.routePositions.isPresent() && route.routePositions.get().length != 24)
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        if (route.region.isPresent() && !Arrays.asList(Forecast.validRegions).contains(route.region.get()))
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+        try {
+            RouteDatabase.editRoute(routeName, route.region.orElse(null), route.routePositions.orElse(null), route.description.orElse(null));
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
     }
 
     /**

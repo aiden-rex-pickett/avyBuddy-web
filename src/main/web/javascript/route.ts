@@ -39,7 +39,7 @@ function setupRegionSelector() {
             currentRegionTitle.textContent = region; 
             loadTimeOrdredRoutes(region);
         })
-
+        
         regionText.classList.add('regionOption');
         regionList.appendChild(regionText);
     })
@@ -50,12 +50,7 @@ function clearRouteArea() {
         routeListArea.removeChild(routeListArea.firstChild);
     } 
 }
-
-function toggleRegionPanel() {
-    if (regionSelectorDiv.style.maxHeight) {
-        regionSelectorDiv.style.maxHeight = null;
-        currentRegionDiv.style.maxHeight = "100";
-    } else {
+function toggleRegionPanel() { if (regionSelectorDiv.style.maxHeight) { regionSelectorDiv.style.maxHeight = null; currentRegionDiv.style.maxHeight = "100"; } else {
         regionSelectorDiv.style.maxHeight = "500";
         currentRegionDiv.style.maxHeight = "600";
     }
@@ -106,7 +101,7 @@ async function getRouteListFromEndpoint(apiEndpoint:URL, searchParams:URLSearchP
     const queryParamsSort = {
         svgWidth: "250",
     }
-function loadSortedRoutes(String) {
+function loadSortedRoutes() {
     clearRouteArea()
     let region = currentRegionTitle.textContent;
 
@@ -250,7 +245,27 @@ function buildRoutePage(route:Route) {
             lastSortingType(lastSortingRegion)
         }
     })
+
+    const editButton = document.getElementById("editButton");
+    editButton.addEventListener("click", function () {
+        setupEditButtonPage(route);
+        console.log('hey');
+    })
 }
+
+function setupEditButtonPage(route:Route) {
+    fetch("http://localhost:5501/editRoute/test0", {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            'region': route.region,
+            'routePositions': route.positions,
+            'description': route.description
+        })
+    })
+} 
 
 loadTimeOrdredRoutes("salt-lake");
 setupRegionSelector();

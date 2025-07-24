@@ -1,18 +1,11 @@
 package com.aidenPersonal.avyBuddy.RouteFiles;
 
-import com.aidenPersonal.avyBuddy.uacData.Forecast;
-
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -106,74 +99,42 @@ public class RouteDatabase {
             returnRoute.setNewRoutePositionsBinary(routePositions);
         } catch (SQLException e) {
             throw new RuntimeException(e);
-        } //catch (NamingException e) {
-//            throw new RuntimeException(e);
-//        }
+        }
 
         return returnRoute;
     }
 
     /**
-     * Edits the positions and region of a route already in the database, by route name.
+     * Edits a route already in the database
      *
      * @param routeName         name of the route to edit in the database
-     * @param newRegion         the new region of the route
-     * @param newRoutePositions the new positions of the route, encoded to an integer
+     * @param newRegion         the new region for this route
+     * @param newRoutePositions the new route positions for this route
+     * @param newDescription    the new description for this route
+     * @implNote Everything except for routeName can be a null value and still be valid, this allows
+     * for patch requests to work
      */
-    public static void editRoute(String routeName, String newRegion, boolean[] newRoutePositions) {
-        if (newRoutePositions.length != 24)
-            throw new IllegalArgumentException("the length of the newRoutePositions array must be 24");
-        try {
-            var connection = DriverManager.getConnection(url);
-            var statement = connection.createStatement();
-
-            int newRoutePositionsBinary = getBinaryRoutePositions(newRoutePositions);
-
-            String sql = "UPDATE routes SET routePositions = " + newRoutePositionsBinary + ", region = '" + newRegion + "' WHERE name = '" + routeName + "';";
-            statement.execute(sql);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+    public static void editRoute(String routeName, String newRegion, boolean[] newRoutePositions, String newDescription) {
+        if (newRegion == null && newRoutePositions == null && newDescription == null) {
+            return;
         }
-    }
-
-    /**
-     * Edits the positions of a route already in the database, by route name.
-     *
-     * @param routeName         name of the route to edit in the database
-     * @param newRoutePositions the new positions of the route, encoded to an integer
-     */
-    public static void editRoute(String routeName, boolean[] newRoutePositions) {
-        if (newRoutePositions.length != 24)
-            throw new IllegalArgumentException("the length of the newRoutePositions array must be 24");
         try {
+            //var connection = getConnection();
             var connection = DriverManager.getConnection(url);
+
             var statement = connection.createStatement();
-
-            int newRoutePositionsBinary = getBinaryRoutePositions(newRoutePositions);
-
-            String sql = "UPDATE routes SET routePositions = " + newRoutePositionsBinary + " WHERE name = '" + routeName + "';";
-            statement.execute(sql);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    /**
-     * Edits the region of a route already in the database, by route name.
-     *
-     * @param routeName         name of the route to edit in the database
-     * @param newRegion         The new region to be set
-     */
-    public static void editRoute(String routeName, String newRegion) {
-        if (!Arrays.asList(Forecast.validRegions).contains(newRegion)) {
-            throw new IllegalArgumentException("Invalid region name, only logan, ogden, uintas, salt-lake, provo, skyline, moab, abajos, and southwest are valid region names, default forecast created instead");
-        }
-
-        try {
-            var connection = DriverManager.getConnection(url);
-            var statement = connection.createStatement();
-
-            String sql = "UPDATE routes SET region = '" + newRegion + "' WHERE name = '" + routeName + "';";
+            String sql = "UPDATE routes SET ";
+            if (newRegion != null) {
+                sql += "region = '" + newRegion + "' , ";
+            }
+            if (newRoutePositions != null) {
+                sql += "routePositions = '" + getBinaryRoutePositions(newRoutePositions) + "' , ";
+            }
+            if (newDescription != null) {
+                sql += "description = '" + newDescription + "' , ";
+            }
+            sql = sql.substring(0, sql.length() - 2);
+            sql += "WHERE name = '" + routeName + "';";
             statement.execute(sql);
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -232,30 +193,6 @@ public class RouteDatabase {
     }
 
     /**
-     * Gets a list of the route names currently in the database
-     *
-     * @return a list of route names currently in the database
-     */
-    public static List<String> getRouteNamesInDatabase() {
-        ResultSet results;
-        try {
-            var connection = DriverManager.getConnection(url);
-            var statement = connection.createStatement();
-
-            results = statement.executeQuery("SELECT name FROM routes;");
-            ArrayList<String> routeNames = new ArrayList<>();
-
-            while (results.next()) {
-                routeNames.add(results.getString("name"));
-            }
-
-            return routeNames;
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    /**
      * Gets a list of the route names currently in the database, ordered by the date of creation (newest-to-oldest)
      *
      * @param region region of the routes to be returned
@@ -280,9 +217,7 @@ public class RouteDatabase {
             return routes;
         } catch (SQLException e) {
             throw new RuntimeException(e);
-        } //catch (NamingException e) {
-//            throw new RuntimeException(e);
-//        }
+        }
     }
 
     /**

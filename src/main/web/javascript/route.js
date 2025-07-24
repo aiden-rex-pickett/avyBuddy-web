@@ -249,6 +249,13 @@ function buildRoutePage(route) {
             lastSortingType(lastSortingRegion);
         }
     });
+    var editButton = document.getElementById("editButton");
+    editButton.addEventListener("click", function () {
+        setupEditButtonPage(route);
+        console.log('hey');
+    });
+}
+function setupEditButtonPage(route) {
 }
 loadTimeOrdredRoutes("salt-lake");
 setupRegionSelector();

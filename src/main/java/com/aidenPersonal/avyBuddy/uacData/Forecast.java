@@ -123,7 +123,7 @@ public class Forecast {
             rootNode = (ArrayNode) object.readTree(input).path("advisories");
             dataNode = rootNode.get(0).path("advisory");
         } catch (JsonProcessingException e) {
-            System.out.println("Internal error, please try again");
+            System.err.println("Internal error, please try again");
             e.printStackTrace();
             return;
         }

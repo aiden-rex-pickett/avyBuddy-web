@@ -166,7 +166,7 @@ public class Route implements Comparable<Route> {
 
     /**
      * This gets the route position integer, and constructs its binary. For use with the database, as the positions
-     * are stored as integer binary
+     * are stored in a binary representation
      *
      * @return the integer binary representing the route position
      */
@@ -217,7 +217,6 @@ public class Route implements Comparable<Route> {
             //In case of IOException it returns the array described in the Javadoc
             return returnArray;
         }
-
         int[] mainRoseArray = forecast.getmain_rose_array();
         for (int i = 0; i < routePositions.length; i++) {
             if (routePositions[i]) {

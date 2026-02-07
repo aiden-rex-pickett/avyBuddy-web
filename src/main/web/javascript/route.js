@@ -49,6 +49,19 @@ var regionList = document.getElementById("regionList");
 var regions = ["Salt Lake", "Ogden", "Uintas", "Logan", "Provo", "Skyline", "Moab", "Abajos"];
 var lastSortingType;
 var lastSortingRegion;
+var routeListArea = document.getElementById('routeList');
+var Route = /** @class */ (function () {
+    function Route(name, region, positions, positionsSVG, dateCreated, description) {
+        this.name = name;
+        this.region = region;
+        this.positions = positions;
+        this.positionsSVG = positionsSVG;
+        this.dateCreated = dateCreated;
+        this.description = description;
+    }
+    return Route;
+}());
+// This function simply sets up some nice animations for the top panel
 function setupRegionSelector() {
     currentRegionDiv.addEventListener("mouseenter", function () {
         currentRegionDiv.style.backgroundColor = "#030f21";
@@ -72,11 +85,6 @@ function setupRegionSelector() {
         regionList.appendChild(regionText);
     });
 }
-function clearRouteArea() {
-    while (routeListArea.firstChild) {
-        routeListArea.removeChild(routeListArea.firstChild);
-    }
-}
 function toggleRegionPanel() {
     if (regionSelectorDiv.style.maxHeight) {
         regionSelectorDiv.style.maxHeight = null;
@@ -87,49 +95,52 @@ function toggleRegionPanel() {
         currentRegionDiv.style.maxHeight = "600";
     }
 }
-var routeListArea = document.getElementById('routeList');
-var Route = /** @class */ (function () {
-    function Route(name, region, positions, positionsSVG, dateCreated, description) {
-        this.name = name;
-        this.region = region;
-        this.positions = positions;
-        this.positionsSVG = positionsSVG;
-        this.dateCreated = dateCreated;
-        this.description = description;
-    }
-    return Route;
-}());
 function addRoute() {
     console.log("add");
 }
 function getRouteListFromEndpoint(apiEndpoint, searchParams) {
     return __awaiter(this, void 0, void 0, function () {
+        var result;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     apiEndpoint.search = searchParams.toString();
-                    return [4 /*yield*/, fetch(apiEndpoint).then(function (response) { return response.json(); }).then(function (data) {
-                            var routeList = new Array(data.length);
-                            for (var i = 0; i < data.length; i++) {
-                                var currentData = data[i];
-                                routeList[i] = new Route(currentData["name"], currentData["region"], currentData["positions"], currentData["positionsSvg"], currentData["dateCreated"], currentData["description"]);
+                    return [4 /*yield*/, fetch(apiEndpoint).then(function (response) {
+                            if (!response.ok) {
+                                return response.status;
                             }
-                            return routeList;
+                            return response.json().then(function (serverArray) {
+                                var routeList = new Array(serverArray.length);
+                                for (var i = 0; i < routeList.length; i++) {
+                                    var currRoute = serverArray[i];
+                                    routeList[i] = new Route(currRoute["name"], currRoute["region"], currRoute["positions"], currRoute["positionsSvg"], currRoute["dateCreated"], currRoute["description"]);
+                                }
+                                return routeList;
+                            })
+                                .catch(function () { return 1; });
                         })];
-                case 1: return [2 /*return*/, _a.sent()];
+                case 1:
+                    result = _a.sent();
+                    if (Array.isArray(result)) {
+                        return [2 /*return*/, result];
+                    }
+                    else {
+                        console.error(result);
+                    }
+                    return [2 /*return*/];
             }
         });
     });
 }
-//Endpoint info
-//For running off of local server
-// const apiEndpointSort = "http://localhost:8080/apis/getRouteListForecast"
-//For running from IDE
-var apiEndpointSort = "http://localhost:5501/getRouteListForecast";
-var queryParamsSort = {
-    svgWidth: "250",
-};
-function loadSortedRoutes(String) {
+function loadSortedRoutes() {
+    //Endpoint info
+    //For running off of local server
+    // const apiEndpointSort = "http://localhost:8080/apis/getRouteListForecast"
+    //For running from IDE
+    var apiEndpointSort = "http://localhost:5501/getRouteListForecast";
+    var queryParamsSort = {
+        svgWidth: "250",
+    };
     clearRouteArea();
     var region = currentRegionTitle.textContent;
     if (region == "Salt Lake") {
@@ -138,23 +149,22 @@ function loadSortedRoutes(String) {
     else {
         queryParamsSort['region'] = region.toLowerCase();
     }
+    clearRouteArea();
     getRouteListFromEndpoint(new URL(apiEndpointSort), new URLSearchParams(queryParamsSort)).then(function (routeList) {
-        routeList.forEach(function (route) {
-            injectRouteIntoDOM(route);
-        });
+        routeList.forEach(function (route) { return injectRouteIntoDOM(route); });
     });
     lastSortingType = loadSortedRoutes;
     lastSortingRegion = region;
 }
-//Endpoint info
-//For running off of local server
-// const apiEndpoint = "http://localhost:8080/apis/getRouteListRecency"
-//For running from IDE
-var apiEndpoint = "http://localhost:5501/getRouteListRecency";
-var queryParams = {
-    svgWidth: "250",
-};
 function loadTimeOrdredRoutes(region) {
+    //Endpoint info
+    //For running off of local server
+    // const apiEndpoint = "http://localhost:8080/apis/getRouteListRecency"
+    //For running from IDE
+    var apiEndpoint = "http://localhost:5501/getRouteListRecency";
+    var queryParams = {
+        svgWidth: "250",
+    };
     if (region == "Salt Lake") {
         queryParams['region'] = 'salt-lake';
     }
@@ -162,13 +172,12 @@ function loadTimeOrdredRoutes(region) {
         queryParams['region'] = region.toLowerCase();
     }
     getRouteListFromEndpoint(new URL(apiEndpoint), new URLSearchParams(queryParams)).then(function (routeList) {
-        routeList.forEach(function (route) {
-            injectRouteIntoDOM(route);
-        });
+        routeList.forEach(function (route) { return injectRouteIntoDOM(route); });
     });
     lastSortingType = loadTimeOrdredRoutes;
     lastSortingRegion = region;
 }
+// This function simply injects a single route into the DOM, into the the route area hard-coded into the HTML
 function injectRouteIntoDOM(route) {
     //creates the container for the route object
     var routeDiv = document.createElement('div');
@@ -224,6 +233,12 @@ function clearRoutePage(route) {
     clearRouteArea();
     buildRoutePage(route);
 }
+function clearRouteArea() {
+    while (routeListArea.firstChild) {
+        routeListArea.removeChild(routeListArea.firstChild);
+    }
+}
+// This builds the route page for when you click on a route
 function buildRoutePage(route) {
     var routePageDiv = document.getElementById("routePageContainer");
     routePageDiv.classList.remove("routePageContainerClosed");
@@ -242,6 +257,7 @@ function buildRoutePage(route) {
         routePageDiv.classList.add("routePageContainerClosed");
         buttonArea.style.display = "";
         routesTitleArea.style.display = "";
+        clearRouteArea();
         if (lastSortingType == loadSortedRoutes) {
             lastSortingType();
         }
@@ -251,12 +267,8 @@ function buildRoutePage(route) {
     });
     var editButton = document.getElementById("editButton");
     editButton.addEventListener("click", function () {
-        setupEditButtonPage(route);
         console.log('hey');
     });
 }
-function setupEditButtonPage(route) {
-}
 loadTimeOrdredRoutes("salt-lake");
 setupRegionSelector();
-//# sourceMappingURL=route.js.map

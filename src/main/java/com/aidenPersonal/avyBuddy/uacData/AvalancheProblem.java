@@ -10,9 +10,9 @@ import com.aidenPersonal.avyBuddy.imageHandling.SvgRoseGenerator;
  */
 public class AvalancheProblem {
 
-    private final int[] dangerArray;
-    private final String problemTitle;
-    private final String problemDescription;
+    private final int[] danger_array;
+    private final String problem_title;
+    private final String problem_description;
 
     /**
      * Initalizes AvalancheProblem object
@@ -22,9 +22,9 @@ public class AvalancheProblem {
      * @param problemDescription problem description, or bottom line for main rose
      */
     public AvalancheProblem(int[] dangerArray, String problemTitle, String problemDescription) {
-        this.dangerArray = dangerArray;
-        this.problemTitle = problemTitle;
-        this.problemDescription = problemDescription;
+        this.danger_array = dangerArray;
+        this.problem_title = problemTitle;
+        this.problem_description = problemDescription;
     }
 
     /**
@@ -33,19 +33,19 @@ public class AvalancheProblem {
      * @return string according to svg standard representing the above
      */
     public String getSvgOfRose(int width) {
-        return SvgRoseGenerator.generateRose(width, dangerArray);
+        return SvgRoseGenerator.generateRose(width, danger_array);
     }
 
-    public String getProblemTitle() {
-        return problemTitle;
+    public String getProblem_title() {
+        return problem_title;
     }
 
-    public String getProblemDescription() {
-        return problemDescription;
+    public String getProblem_description() {
+        return problem_description;
     }
 
-    public int[] getDangerArray() {
-        return dangerArray;
+    public int[] getDanger_array() {
+        return danger_array;
     }
 
 }

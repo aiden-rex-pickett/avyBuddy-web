@@ -1,7 +1,11 @@
 
 .forecastHeader{
-    padding: .5em;
-    margin: 0px;
+    padding: 15px;
+    margin: 0;
+    font-size: 3em;
+
+    transition-timing-function: cubic-bezier(0, 0.73, 0.45, 1.15);
+    transition-duration: 600ms;
 }
 
 .headerWrap{
@@ -9,13 +13,117 @@
     height: 4em;
 }
 
-.svgTest{
+.regionTitleWrapper{
+    position: relative;
+    z-index: 1000;
+    max-height: 0;
+    overflow: hidden;
+    background-color: rgb(117, 186, 223);
+    transition: max-height 0.4s cubic-bezier(0, 0.73, 0.45, 1.15);
+}
+
+.regionOption{
+    transition: background-color, color 0.6s cubic-bezier(0, 0.73, 0.45, 1.15);
+}
+
+.regionoption:hover{
+    background-color: #030f21;
+    color: whitesmoke;
+}
+
+.problemHeaderMain{
+    padding: 15px;
+    margin: 0;
+    font-size: 2em;
+    background-color: rgb(117, 186, 223);
+}
+
+.problemHeader{
+    padding: 11px 15px 15px;
+    margin: 0;
+    font-size: 2em;
+    background-color: rgb(117, 186, 223);
+
+    transition: background-color;
+    transition-timing-function: cubic-bezier(0, 0.73, 0.45, 1.15);
+    transition-duration: 600ms;
+}
+
+.problemHeaderClicked{
+    padding: 11px 15px 15px;
+    margin: 0;
+    font-size: 2em;
+    background-color: #bbd2e9;
+}
+
+.problemHeader:hover{
+    background-color: #bbd2e9;
+}
+
+.problemHeaderWrap{
     width: 100%;
-    height: 400px;
+    height: 4em;
+}
+
+.forecastAreaMain{
+    width: 100%;
+    height: fit-content;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border-bottom: 4px solid #030f21;
+}
+
+.mainRoseSvg{
+    width:fit-content
 }
 
 .forecastBottomLine{
     text-align: left;
     float: right;
-    width: calc(100% - 400px);
+    width: fit-content;
+    height: inherit;
+    padding-top: 10px;
+    p{
+        margin: 0;
+        padding-left: 4%;
+        padding-right: 4%;
+        line-height: 1.6cap;
+        white-space: pre-wrap;
+        max-width: 600px;
+        min-width: 350px;
+        font-size: x-large;
+    }
+}
+
+.problem{
+    width: 100%;
+    height: fit-content;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s cubic-bezier(0, 0.73, 0.45, 1.15);
+}
+
+.problemDescription{
+    text-align: left;
+    float: right;
+    width: fit-content;
+    height: fit-content;
+    padding-top: 10px;
+    padding-bottom: 10px;;
+    p{
+        margin: 0;
+        padding-left: 4%;
+        padding-right: 4%;
+        line-height: 1.6cap;
+        white-space: pre-wrap;
+        max-width: 600px;
+        min-width: 350px;
+        font-size: large;
+    }
 }

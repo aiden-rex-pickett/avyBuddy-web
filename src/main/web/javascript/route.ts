@@ -1,4 +1,10 @@
-//Handles interaction with the backend as it pertains to the routes page
+// TODO: It's so over for this design. This must go. We are going to refactor
+//      - Rewrite all of this. It is garbage.
+//      - Rewrite the HTML for the associated routes page too. Also garbage
+//      - Instead of refilling the route area each time you click on a route,
+//        have the route page be a seperate page. We will have to add another endpoint with
+//        a get parameter that is the route name but that's okay. Better seperation of concerns
+//      - Time ordering and sorting stuff is good, we will continue to use that
 
 //Adds all the event listeners
 const addRouteButton: HTMLButtonElement = document.getElementById("addRoute") as HTMLButtonElement;
@@ -157,7 +163,6 @@ function injectRouteIntoDOM(route: Route) {
     let routeDiv: HTMLDivElement = document.createElement('div');
     routeDiv.classList.add('routeContainer');
     routeDiv.addEventListener("click", function() {
-        // TODO: Redo route page
     });
 
     let informationDiv: HTMLDivElement = document.createElement('div');

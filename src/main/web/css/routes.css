@@ -96,10 +96,11 @@
 }
 
 .dividingLine{
-    height: 6px;
-    background-color: black;
-    border-style: none;
-    margin: 0;
+  height: 6px;
+  background-color: black;
+  border-style: none;
+  margin: 0;
+  width: 100%;
 }
 
 .routeContainer{
@@ -199,4 +200,39 @@ file change here*/
 
 .routePageSvgContainer {
     height: 250;
+}
+
+.routeContainer {
+  display: flex;
+  flex-direction: column;
+}
+
+.routeListDisplay {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+
+  transition-timing-function: cubic-bezier(0, 0.73, 0.45, 1.15);
+  transition-duration: 600ms;
+}
+
+.routeListDisplay:hover {
+  background-color: rgb(117, 186, 223);;
+}
+
+.routeListDisplay div {
+  max-width: 50%
+}
+
+.routeListDisplay div p{
+  padding: 5 10 5 10px;
+  max-width: 50%;
+  margin: 0;
+}
+
+.routeListDisplay div h1, .routeListDisplay div h2{
+  padding: 10px;
+  max-width: 80%;
+  margin: 0;
 }

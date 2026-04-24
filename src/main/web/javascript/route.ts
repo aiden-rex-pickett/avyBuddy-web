@@ -19,12 +19,11 @@ const currentRegionDiv: HTMLDivElement = document.getElementById("regionButton")
 const currentRegionTitle: HTMLParagraphElement = document.getElementById("regionTitle") as HTMLParagraphElement
 const regionSelectorDiv: HTMLDivElement = document.getElementById("regionTitleWrapper") as HTMLDivElement
 const regionList: HTMLUListElement = document.getElementById("regionList") as HTMLUListElement
+const routeContainer: HTMLElement = document.querySelector("#routeContainer")
 
 const regions = ["Salt Lake", "Ogden", "Uintas", "Logan", "Provo", "Skyline", "Moab", "Abajos"]
 let lastSortingType;
 let lastSortingRegion;
-
-const routeListArea: HTMLDivElement = document.getElementById('routeList') as HTMLDivElement;
 
 class Route {
     name: string;
@@ -62,7 +61,6 @@ function setupRegionSelector() {
         let regionText = document.createElement('p');
         regionText.textContent = region;
         regionText.addEventListener('click', () => {
-            clearRouteArea();
             currentRegionTitle.textContent = region;
             loadTimeOrdredRoutes(region);
         })
@@ -116,7 +114,6 @@ function loadSortedRoutes() {
     const queryParamsSort = {
         svgWidth: "250",
     }
-    clearRouteArea()
     let region = currentRegionTitle.textContent;
 
     if (region == "Salt Lake") {
@@ -125,9 +122,11 @@ function loadSortedRoutes() {
         queryParamsSort['region'] = region.toLowerCase();
     }
 
-    clearRouteArea();
     getRouteListFromEndpoint(new URL(apiEndpointSort), new URLSearchParams(queryParamsSort)).then(routeList => {
-        routeList.forEach(route => injectRouteIntoDOM(route))
+        routeList.forEach(route => {
+            routeContainer.appendChild(makeRouteContainer(route))
+            routeContainer.appendChild(makeDividingLine());
+        })
     });
     lastSortingType = loadSortedRoutes;
     lastSortingRegion = region;
@@ -150,79 +149,59 @@ function loadTimeOrdredRoutes(region: String) {
     }
 
     getRouteListFromEndpoint(new URL(apiEndpoint), new URLSearchParams(queryParams)).then(routeList => {
-        routeList.forEach(route => injectRouteIntoDOM(route))
+        routeList.forEach(route => {
+            routeContainer.appendChild(makeRouteContainer(route))
+            routeContainer.appendChild(makeDividingLine());
+        })
     });
 
     lastSortingType = loadTimeOrdredRoutes;
     lastSortingRegion = region;
 }
 
-// This function simply injects a single route into the DOM, into the the route area hard-coded into the HTML
-function injectRouteIntoDOM(route: Route) {
-    //creates the container for the route object
-    let routeDiv: HTMLDivElement = document.createElement('div');
-    routeDiv.classList.add('routeContainer');
-    routeDiv.addEventListener("click", function() {
-    });
+// Creates and returns a html element which holds all the route information for a single route
+function makeRouteContainer(route: Route): HTMLElement {
+    // Outer container
+    const routeContainer = document.createElement('section');
+    routeContainer.classList.add('routeInformationSection')
 
-    let informationDiv: HTMLDivElement = document.createElement('div');
-    informationDiv.classList.add('routeInformationContainer');
+    // Text contianer to go in outer container
+    const textContainer = document.createElement('div');
 
-    let routeInformationContainers: HTMLDivElement[] = createRouteInformationContainers();
-    function createRouteInformationContainers() {
-        let nameDiv = document.createElement('div');
-        let dateDiv = document.createElement('div');
-        let descriptionDiv = document.createElement('div');
-        let regionDiv = document.createElement('div');
+    // Title and descriton to go in text container
+    const title = document.createElement('h1');
+    title.textContent = route.name;
+    const description = document.createElement('h4');
+    description.textContent = route.description;
 
-        let dateText = document.createElement('p');
-        let descriptionText = document.createElement('h2');
-        let regionText = document.createElement('p');
-        let nameText = document.createElement('h1');
+    textContainer.appendChild(title);
+    textContainer.appendChild(description);
 
-        nameText.textContent = route.name;
-        dateText.textContent = 'created on ' + route.dateCreated;
-        descriptionText.textContent = route.description;
-        regionText.textContent = 'for the ' + route.region + ' region';
+    // Date and region
+    const date = document.createElement('p');
+    date.textContent = route.dateCreated
+    const region = document.createElement('p');
+    region.textContent = route.region
 
-        nameDiv.appendChild(nameText);
-        dateDiv.appendChild(dateText);
-        descriptionDiv.appendChild(descriptionText);
-        regionDiv.appendChild(regionText);
+    textContainer.appendChild(date);
+    textContainer.appendChild(region);
 
-        return [nameDiv, descriptionDiv, dateDiv, regionDiv];
-    }
+    // Image to go in outer container
+    const image = document.createElement('svg')
+    image.classList.add('routeRoseSvg')
+    image.innerHTML = route.positionsSVG
 
-    routeInformationContainers.forEach(container => {
-        container.classList.add('routeInformationTextContainer'); informationDiv.appendChild(container);
-    })
+    routeContainer.appendChild(textContainer);
+    routeContainer.appendChild(image);
 
-    routeDiv.appendChild(informationDiv);
-
-    //creates svg container div
-    let svgContainer: HTMLDivElement = document.createElement('div');
-    svgContainer.style.width = "fit-content;"
-    let svg = document.createElement('svg');
-    svg.innerHTML = route.positionsSVG;
-    svgContainer.appendChild(svg);
-
-    //adds svg container to route container
-    routeDiv.appendChild(svgContainer);
-
-    //adds route container to the overall list area (hard-coded into dom in html)
-    routeListArea.appendChild(routeDiv);
-
-    //adds dividing line to overall list area
-    let listDividingLine: HTMLHRElement = document.createElement('hr');
-    listDividingLine.classList.add("dividingLine");
-
-    routeListArea.appendChild(listDividingLine);
+    return routeContainer
 }
 
-function clearRouteArea() {
-    while (routeListArea.firstChild) {
-        routeListArea.removeChild(routeListArea.firstChild);
-    }
+// Creates and returns a simple dividing line to divide route sections
+function makeDividingLine(): HTMLHRElement {
+    const divider: HTMLHRElement = document.createElement('hr')
+    divider.classList.add('dividingLine')
+    return divider;
 }
 
 loadTimeOrdredRoutes("salt-lake");

@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
-    "target": "es5",
-    "module": "CommonJS",
-    "sourceMap": true,
-    "lib": ["es5", "es2015.promise", "DOM"]
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "lib": ["ESNext", "DOM"]
   }
 }

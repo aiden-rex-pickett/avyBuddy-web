@@ -1,10 +1,20 @@
-// TODO: It's so over for this design. This must go. We are going to refactor
-//      - Rewrite all of this. It is garbage.
-//      - Rewrite the HTML for the associated routes page too. Also garbage
-//      - Instead of refilling the route area each time you click on a route,
-//        have the route page be a seperate page. We will have to add another endpoint with
-//        a get parameter that is the route name but that's okay. Better seperation of concerns
-//      - Time ordering and sorting stuff is good, we will continue to use that
+// TODO: More to be done now that inital crap is cleaned up. I want to make this stateless
+// it might be a bit slower but we should.
+// HTML:
+//   - Make it so that this endpoint now is postpended by the region to search in.
+//     - This will involve directing all routes/salt-lake, routes/logan, routes/uintas, etc to routes
+//     - Will have to start running off of apache/nginx for this to work, plus make a rule like the above
+//     - Have to also make urls in nginx to return 404 for pages that are not valid
+//       - Probably will have seperate .map file which the authoritative truth on the list of regions to search for
+//   - Make dropdown buttons now just a links to the respective endpoints
+//   - Make a simple 404 page for nginx to serve when any route page that is not well defined in the .map file
+// JS:
+//   1. Read the end of the url to see which route to search for
+//   2. fetch the endpoint with that name
+//   3. Buttons for the specific route will not just redirect to the other pages
+//   This way the whole thing is stateless
+// I will finally stop prematurely optimizing by not pulling all the routes, not doing xyz, whatever.
+// All that is great but I just gotta finish this project bruh its been too long
 
 //Adds all the event listeners
 const addRouteButton: HTMLButtonElement = document.getElementById("addRoute") as HTMLButtonElement;
@@ -24,24 +34,6 @@ const routeContainer: HTMLElement = document.querySelector("#routeContainer")
 const regions = ["Salt Lake", "Ogden", "Uintas", "Logan", "Provo", "Skyline", "Moab", "Abajos"]
 let lastSortingType;
 let lastSortingRegion;
-
-class Route {
-    name: string;
-    region: string;
-    positions: boolean[];
-    positionsSVG: string;
-    dateCreated: string;
-    description: string
-
-    constructor(name: string, region: string, positions: boolean[], positionsSVG: string, dateCreated: string, description: string) {
-        this.name = name;
-        this.region = region;
-        this.positions = positions;
-        this.positionsSVG = positionsSVG;
-        this.dateCreated = dateCreated;
-        this.description = description;
-    }
-}
 
 // This function simply sets up some nice animations for the top panel
 function setupRegionSelector() {
@@ -79,6 +71,24 @@ function toggleRegionPanel() {
 
 function addRoute() {
     console.log("add")
+}
+
+class Route {
+    name: string;
+    region: string;
+    positions: boolean[];
+    positionsSVG: string;
+    dateCreated: string;
+    description: string
+
+    constructor(name: string, region: string, positions: boolean[], positionsSVG: string, dateCreated: string, description: string) {
+        this.name = name;
+        this.region = region;
+        this.positions = positions;
+        this.positionsSVG = positionsSVG;
+        this.dateCreated = dateCreated;
+        this.description = description;
+    }
 }
 
 async function getRouteListFromEndpoint(apiEndpoint: URL, searchParams: URLSearchParams): Promise<Route[]> {

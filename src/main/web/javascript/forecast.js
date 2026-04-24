@@ -141,7 +141,7 @@ function setupTabsTransition(){
             } else {
                 getData(queryParams, region.toLowerCase());
             }
-            regionTitle.textContent = ' ' + region;
+            regionTitle.textContent = '\u00A0' + region;
         })
         regionText.classList.add('regionOption');
 

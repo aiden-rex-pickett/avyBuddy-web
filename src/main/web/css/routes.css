@@ -103,19 +103,6 @@
   width: 100%;
 }
 
-.routeContainer{
-    display: flex; 
-    justify-content: space-between;
-    align-items: center;
-
-    transition-timing-function: cubic-bezier(0, 0.73, 0.45, 1.15);
-    transition-duration: 600ms;
-}
-
-.routeContainer:hover{
-    background-color: rgb(117, 186, 223);;
-}
-
 .routeInformationContainer{
     display: flex; 
     flex-direction: column;
@@ -124,13 +111,6 @@
 
 .routeInformationTextContainer{
     height: fit-content;
-}
-
-/* h1, h2, and p are the element types currently used, if changed in the typescript
-file change here*/
-.routeInformationTextContainer > h1, h2, p{
-    margin: 0;
-    padding-bottom: 5%;
 }
 
 .routePageContainerClosed{
@@ -189,25 +169,12 @@ file change here*/
     font-size: 1.1em;    
 }
 
-.routePageHeader{
-    margin: 0;
-}
-
-.routePageDescription {
-    padding: 0;
-    margin: 0
-}
-
-.routePageSvgContainer {
-    height: 250;
-}
-
 .routeContainer {
   display: flex;
   flex-direction: column;
 }
 
-.routeListDisplay {
+.routeInformationSection {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -217,22 +184,32 @@ file change here*/
   transition-duration: 600ms;
 }
 
-.routeListDisplay:hover {
-  background-color: rgb(117, 186, 223);;
+.routeInformationSection:hover {
+  background-color: rgb(117, 186, 223);
 }
 
-.routeListDisplay div {
-  max-width: 50%
+.routeInformationSection div {
+  max-width: 40%
 }
 
-.routeListDisplay div p{
+.routeInformationSection div p{
   padding: 5 10 5 10px;
-  max-width: 50%;
+  max-width: 100%;
   margin: 0;
 }
 
-.routeListDisplay div h1, .routeListDisplay div h2{
-  padding: 10px;
-  max-width: 80%;
+.routeInformationSection div h1{
+  padding: 10 10 5 10px;
+  max-width: 100%;
   margin: 0;
+}
+
+.routeInformationSection div h4{
+  padding: 5 10 10 10px;
+  max-width: 100%;
+  margin: 0;
+}
+
+.routeRoseSvg {
+  padding: 15 5 15 5px;
 }

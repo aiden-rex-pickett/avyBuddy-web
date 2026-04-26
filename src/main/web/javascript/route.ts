@@ -1,29 +1,28 @@
 // TODO: More to be done now that inital crap is cleaned up. I want to make this stateless
 // it might be a bit slower but we should.
-// HTML:
-//   - Make a simple 404 page for nginx to serve when any route page that is not well defined in the .map file
 // JS:
-//   1. Read the end of the url to see which route to search for
-//   2. fetch the endpoint with that name
-//   3. Buttons for the specific route will not just redirect to the other pages
-//   This way the whole thing is stateless
+//   1. fetch the endpoint with that name, load the routes just for that
+//   2. if they click the sort by forecast, simply clear route sections and hit that endpoint, and fill again
+//   This way the whole thing has much less state
 // I will finally stop prematurely optimizing by not pulling all the routes, not doing xyz, whatever.
 // All that is great but I just gotta finish this project bruh its been too long
 
-const addRouteButton: HTMLButtonElement = document.getElementById("addRoute") as HTMLButtonElement;
+// HACK: This could possibly get out of sync with the map of valid regions in the nginx config
+// maybe look into this and find some way to do the check of if we are on a valid page without
+// this list, maybe by some huristic about the state of the dom to see the differences between 
+// a valid and invalid page idk
+const validRegions = ["Salt Lake", "Ogden", "Uintas", "Logan", "Provo", "Skyline", "Moab", "Abajos"]
 
+// The region for this page, based off the URL
+const region = getRegionFromUrl();
 
-const buttonArea = document.getElementById('routeButtonArea');
-const routesTitleArea = document.getElementById('routeHeaderArea');
-
-const currentRegion = getRegionFromUrl();
-
-const regionDiv: HTMLDivElement = document.getElementById("regionButton") as HTMLDivElement
-
+// The HTML element where the route sections will be injected into
 const routeContainer: HTMLElement = document.querySelector("#routeContainer")
 
-const regions = ["Salt Lake", "Ogden", "Uintas", "Logan", "Provo", "Skyline", "Moab", "Abajos"]
+// The HTML element where the region for the page is displayed
+const currentRegionDiv: HTMLDivElement = document.getElementById("regionButton") as HTMLDivElement
 
+// Simple struct-like container for a single route object, for use in constructing the route sections
 class Route {
     name: string;
     region: string;
@@ -139,11 +138,11 @@ function makeRouteContainer(route: Route): HTMLElement {
     // Date and region
     const date = document.createElement('p');
     date.textContent = route.dateCreated
-    const region = document.createElement('p');
-    region.textContent = route.region
+    const routeRegion = document.createElement('p');
+    routeRegion.textContent = route.region
 
     textContainer.appendChild(date);
-    textContainer.appendChild(region);
+    textContainer.appendChild(routeRegion);
 
     // Image to go in outer container
     const image = document.createElement('svg')
@@ -167,29 +166,29 @@ function makeDividingLine(): HTMLHRElement {
 function setupRegionSelector() {
     const regionList: HTMLUListElement = document.getElementById("regionList") as HTMLUListElement
     const regionTitle = document.getElementById("regionTitle")
-    if (regions.includes(currentRegion)) {
-        regionTitle.textContent = currentRegion;
+    if (validRegions.includes(region)) {
+        regionTitle.textContent = region;
     } else {
         regionTitle.textContent = "Salt Lake";
     }
 
-    regionDiv.addEventListener("mouseenter", function() {
-        regionDiv.style.backgroundColor = "#030f21"
-        regionDiv.style.color = "#bbd2e9"
+    currentRegionDiv.addEventListener("mouseenter", function() {
+        currentRegionDiv.style.backgroundColor = "#030f21"
+        currentRegionDiv.style.color = "#bbd2e9"
         toggleRegionPanel();
     });
 
-    regionDiv.addEventListener("mouseleave", function() {
-        regionDiv.style.backgroundColor = "rgb(117, 186, 223)"
-        regionDiv.style.color = "#030f21"
+    currentRegionDiv.addEventListener("mouseleave", function() {
+        currentRegionDiv.style.backgroundColor = "rgb(117, 186, 223)"
+        currentRegionDiv.style.color = "#030f21"
         toggleRegionPanel();
     })
 
-    regions.forEach(region => {
+    validRegions.forEach(validRegion => {
         const regionLink = document.createElement('a');
-        regionLink.textContent = region;
-        region = region.split(" ").join("-"); // Change here to dashes for link
-        regionLink.href = "/routes/" + region;
+        regionLink.textContent = validRegion;
+        validRegion = validRegion.split(" ").join("-"); // Change here to dashes for link
+        regionLink.href = "/routes/" + validRegion;
 
         regionLink.classList.add('regionOption');
         regionList.appendChild(regionLink);
@@ -200,9 +199,9 @@ function toggleRegionPanel() {
     const regionSelectorDiv: HTMLDivElement = document.getElementById("regionTitleWrapper") as HTMLDivElement
 
     if (regionSelectorDiv.style.maxHeight) {
-        regionSelectorDiv.style.maxHeight = null; regionDiv.style.maxHeight = "100";
+        regionSelectorDiv.style.maxHeight = null; currentRegionDiv.style.maxHeight = "100";
     } else {
         regionSelectorDiv.style.maxHeight = "500";
-        regionDiv.style.maxHeight = "600";
+        currentRegionDiv.style.maxHeight = "600";
     }
 }

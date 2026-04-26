@@ -1,11 +1,6 @@
 // TODO: More to be done now that inital crap is cleaned up. I want to make this stateless
 // it might be a bit slower but we should.
 // HTML:
-//   - Make it so that this endpoint now is postpended by the region to search in.
-//     - This will involve directing all routes/salt-lake, routes/logan, routes/uintas, etc to routes
-//     - Will have to start running off of apache/nginx for this to work, plus make a rule like the above
-//     - Have to also make urls in nginx to return 404 for pages that are not valid
-//       - Probably will have seperate .map file which the authoritative truth on the list of regions to search for
 //   - Make dropdown buttons now just a links to the respective endpoints
 //   - Make a simple 404 page for nginx to serve when any route page that is not well defined in the .map file
 // JS:
@@ -53,55 +48,11 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 //Adds all the event listeners
 var addRouteButton = document.getElementById("addRoute");
-addRouteButton.addEventListener("click", addRoute);
-var sortByForecastButton = document.getElementById("searchRoutes");
-sortByForecastButton.addEventListener("click", loadSortedRoutes);
 var buttonArea = document.getElementById('routeButtonArea');
 var routesTitleArea = document.getElementById('routeHeaderArea');
 var currentRegionDiv = document.getElementById("regionButton");
-var currentRegionTitle = document.getElementById("regionTitle");
-var regionSelectorDiv = document.getElementById("regionTitleWrapper");
-var regionList = document.getElementById("regionList");
 var routeContainer = document.querySelector("#routeContainer");
 var regions = ["Salt Lake", "Ogden", "Uintas", "Logan", "Provo", "Skyline", "Moab", "Abajos"];
-var lastSortingType;
-var lastSortingRegion;
-// This function simply sets up some nice animations for the top panel
-function setupRegionSelector() {
-    currentRegionDiv.addEventListener("mouseenter", function () {
-        currentRegionDiv.style.backgroundColor = "#030f21";
-        currentRegionDiv.style.color = "#bbd2e9";
-        toggleRegionPanel();
-    });
-    currentRegionDiv.addEventListener("mouseleave", function () {
-        currentRegionDiv.style.backgroundColor = "rgb(117, 186, 223)";
-        currentRegionDiv.style.color = "#030f21";
-        toggleRegionPanel();
-    });
-    regions.forEach(function (region) {
-        var regionText = document.createElement('p');
-        regionText.textContent = region;
-        regionText.addEventListener('click', function () {
-            currentRegionTitle.textContent = region;
-            loadTimeOrdredRoutes(region);
-        });
-        regionText.classList.add('regionOption');
-        regionList.appendChild(regionText);
-    });
-}
-function toggleRegionPanel() {
-    if (regionSelectorDiv.style.maxHeight) {
-        regionSelectorDiv.style.maxHeight = null;
-        currentRegionDiv.style.maxHeight = "100";
-    }
-    else {
-        regionSelectorDiv.style.maxHeight = "500";
-        currentRegionDiv.style.maxHeight = "600";
-    }
-}
-function addRoute() {
-    console.log("add");
-}
 var Route = /** @class */ (function () {
     function Route(name, region, positions, positionsSVG, dateCreated, description) {
         this.name = name;
@@ -113,6 +64,7 @@ var Route = /** @class */ (function () {
     }
     return Route;
 }());
+setupRegionSelector();
 function getRouteListFromEndpoint(apiEndpoint, searchParams) {
     return __awaiter(this, void 0, void 0, function () {
         var result;
@@ -147,12 +99,11 @@ function getRouteListFromEndpoint(apiEndpoint, searchParams) {
         });
     });
 }
-function loadSortedRoutes() {
+function loadSortedRoutes(region) {
     var apiEndpoint = "/apis/getRouteListForecast";
     var queryParamsSort = {
         svgWidth: "250",
     };
-    var region = currentRegionTitle.textContent;
     if (region == "Salt Lake") {
         queryParamsSort['region'] = 'salt-lake';
     }
@@ -165,8 +116,6 @@ function loadSortedRoutes() {
             routeContainer.appendChild(makeDividingLine());
         });
     });
-    lastSortingType = loadSortedRoutes;
-    lastSortingRegion = region;
 }
 function loadTimeOrdredRoutes(region) {
     var apiEndpoint = "/apis/getRouteListRecency";
@@ -185,8 +134,6 @@ function loadTimeOrdredRoutes(region) {
             routeContainer.appendChild(makeDividingLine());
         });
     });
-    lastSortingType = loadTimeOrdredRoutes;
-    lastSortingRegion = region;
 }
 // Creates and returns a html element which holds all the route information for a single route
 function makeRouteContainer(route) {
@@ -223,5 +170,36 @@ function makeDividingLine() {
     divider.classList.add('dividingLine');
     return divider;
 }
-loadTimeOrdredRoutes("salt-lake");
-setupRegionSelector();
+// These functions simply sets up some nice animations for the top panel
+function setupRegionSelector() {
+    var regionList = document.getElementById("regionList");
+    currentRegionDiv.addEventListener("mouseenter", function () {
+        currentRegionDiv.style.backgroundColor = "#030f21";
+        currentRegionDiv.style.color = "#bbd2e9";
+        toggleRegionPanel();
+    });
+    currentRegionDiv.addEventListener("mouseleave", function () {
+        currentRegionDiv.style.backgroundColor = "rgb(117, 186, 223)";
+        currentRegionDiv.style.color = "#030f21";
+        toggleRegionPanel();
+    });
+    regions.forEach(function (region) {
+        var regionLink = document.createElement('a');
+        region = region.split(" ").join("-");
+        regionLink.textContent = region;
+        regionLink.href = "/routes/" + region;
+        regionLink.classList.add('regionOption');
+        regionList.appendChild(regionLink);
+    });
+}
+function toggleRegionPanel() {
+    var regionSelectorDiv = document.getElementById("regionTitleWrapper");
+    if (regionSelectorDiv.style.maxHeight) {
+        regionSelectorDiv.style.maxHeight = null;
+        currentRegionDiv.style.maxHeight = "100";
+    }
+    else {
+        regionSelectorDiv.style.maxHeight = "500";
+        currentRegionDiv.style.maxHeight = "600";
+    }
+}

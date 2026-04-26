@@ -75,6 +75,10 @@
 }
 
 .regionOption{
+    display: block;
+    text-decoration: none;
+    color: #bbd2e9;
+    margin: 10 0 10 0px;
     background-color: inherit;
     transition-timing-function: cubic-bezier(0, 0.73, 0.45, 1.15);
     transition-duration: 600ms;

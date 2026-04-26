@@ -116,11 +116,7 @@ async function getRouteListFromEndpoint(apiEndpoint: URL, searchParams: URLSearc
 }
 
 function loadSortedRoutes() {
-    //Endpoint info
-    //For running off of local server
-    // const apiEndpointSort = "http://localhost:8080/apis/getRouteListForecast"
-    //For running from IDE
-    const apiEndpointSort = "http://localhost:5501/getRouteListForecast"
+    const apiEndpoint = "/apis/getRouteListForecast"
     const queryParamsSort = {
         svgWidth: "250",
     }
@@ -132,7 +128,7 @@ function loadSortedRoutes() {
         queryParamsSort['region'] = region.toLowerCase();
     }
 
-    getRouteListFromEndpoint(new URL(apiEndpointSort), new URLSearchParams(queryParamsSort)).then(routeList => {
+    getRouteListFromEndpoint(new URL(apiEndpoint, window.location.origin), new URLSearchParams(queryParamsSort)).then(routeList => {
         routeList.forEach(route => {
             routeContainer.appendChild(makeRouteContainer(route))
             routeContainer.appendChild(makeDividingLine());
@@ -143,11 +139,7 @@ function loadSortedRoutes() {
 }
 
 function loadTimeOrdredRoutes(region: String) {
-    //Endpoint info
-    //For running off of local server
-    // const apiEndpoint = "http://localhost:8080/apis/getRouteListRecency"
-    //For running from IDE
-    const apiEndpoint = "http://localhost:5501/getRouteListRecency"
+    const apiEndpoint = "/apis/getRouteListRecency"
     let queryParams = {
         svgWidth: "250",
     }
@@ -158,7 +150,7 @@ function loadTimeOrdredRoutes(region: String) {
         queryParams['region'] = region.toLowerCase();
     }
 
-    getRouteListFromEndpoint(new URL(apiEndpoint), new URLSearchParams(queryParams)).then(routeList => {
+    getRouteListFromEndpoint(new URL(apiEndpoint, window.location.origin), new URLSearchParams(queryParams)).then(routeList => {
         routeList.forEach(route => {
             routeContainer.appendChild(makeRouteContainer(route))
             routeContainer.appendChild(makeDividingLine());

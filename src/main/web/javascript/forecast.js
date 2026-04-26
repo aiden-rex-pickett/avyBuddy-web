@@ -1,11 +1,7 @@
 //Main forcast fetch for the forecast page
 //TODO: Make selection region selection + disclaimer that full forecast should be read
 
-//Endpoint info
-//For running off of local server
-// const apiEndpoint = "http://localhost:8080/apis/forecast"
-//For running from IDE
-const apiEndpoint = "http://localhost:5501/forecast"
+const apiEndpoint = "/apis/forecast"
 const queryParams = {
     svgWidthMain: 500,
     svgWidthProblems: 250
@@ -25,7 +21,7 @@ getData(queryParams, 'salt-lake');
 
 async function getData(queryParams, region) {
     queryParams['region'] = region;
-    const requestUrl = new URL(apiEndpoint);
+    const requestUrl = new URL(apiEndpoint, window.location.origin);
     const requestParams = new URLSearchParams(queryParams);
     requestUrl.search = requestParams.toString();
     

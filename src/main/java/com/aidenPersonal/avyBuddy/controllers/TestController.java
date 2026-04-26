@@ -13,7 +13,6 @@ import java.io.IOException;
 @RestController
 public class TestController {
 
-    @CrossOrigin
     @GetMapping("/Forecast/{region}")
     public String hey(@PathVariable String region) {
         Forecast forecast;

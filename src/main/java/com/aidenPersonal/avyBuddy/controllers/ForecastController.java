@@ -27,7 +27,6 @@ public class ForecastController {
      * @param svgWidthProblems width of the svg of the roses for the avalanche problems
      * @return string of JSON object
      */
-    @CrossOrigin
     @GetMapping("/forecast")
     public String forecast(@RequestParam String region, @RequestParam int svgWidthMain, @RequestParam int svgWidthProblems) {
 
@@ -73,6 +72,8 @@ public class ForecastController {
             avyProblem3Node.put("danger_rose_svg", avalanche_problem_3.getSvgOfRose(svgWidthProblems));
             forecastNode.set("avalanche_problem_3", avyProblem3Node);
         }
+
+        System.out.println("LKEJEKLSJ");
 
         return forecastNode.toString();
     }

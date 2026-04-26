@@ -13,7 +13,7 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<name>avyBuddy</name>
 	<description>avyBuddyBackend</description>
-	<packaging>war</packaging>
+	<packaging>jar</packaging>
 	<url/>
 	<licenses>
 		<license/>

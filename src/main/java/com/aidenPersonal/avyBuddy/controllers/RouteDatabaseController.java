@@ -32,7 +32,6 @@ public class RouteDatabaseController {
      * @param region region of the routes to be returned
      * @return String of JSON object, where each route is in its own object named "1", then "2", etc. up to "{@code numRoutes}"
      */
-    @CrossOrigin
     @GetMapping("/getRouteListRecency")
     public String getRouteList(@RequestParam int svgWidth, @RequestParam String region) {
         ObjectMapper mapper = new ObjectMapper();
@@ -50,7 +49,6 @@ public class RouteDatabaseController {
     /**
      * This controller returns all the routes in the database for a given region, sorted by the forecast data
      */
-    @CrossOrigin
     @GetMapping("/getRouteListForecast")
     public String getRouteListForecast(@RequestParam int svgWidth, @RequestParam String region) {
         ObjectMapper mapper = new ObjectMapper();
@@ -88,7 +86,6 @@ public class RouteDatabaseController {
         }
     }
 
-    @CrossOrigin
     @PatchMapping("/editRoute/{routeName}")
     public ResponseEntity<?> editRoute(@PathVariable String routeName, @RequestBody RouteDTO route) {
         if (route.routePositions.isPresent() && route.routePositions.get().length != 24)

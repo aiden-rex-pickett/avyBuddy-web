@@ -10,13 +10,15 @@
 // I will finally stop prematurely optimizing by not pulling all the routes, not doing xyz, whatever.
 // All that is great but I just gotta finish this project bruh its been too long
 
-//Adds all the event listeners
 const addRouteButton: HTMLButtonElement = document.getElementById("addRoute") as HTMLButtonElement;
+
 
 const buttonArea = document.getElementById('routeButtonArea');
 const routesTitleArea = document.getElementById('routeHeaderArea');
 
-const currentRegionDiv: HTMLDivElement = document.getElementById("regionButton") as HTMLDivElement
+const currentRegion = getRegionFromUrl();
+
+const regionDiv: HTMLDivElement = document.getElementById("regionButton") as HTMLDivElement
 
 const routeContainer: HTMLElement = document.querySelector("#routeContainer")
 
@@ -41,6 +43,16 @@ class Route {
 }
 
 setupRegionSelector();
+
+// Note: we can assume the url contains a valid region because if it did not
+// the nginx server would have redirected to the error page 
+function getRegionFromUrl(): string {
+    let urlRegion: string = window.location.pathname.split("/").pop()
+    urlRegion = urlRegion.trim();
+    urlRegion = urlRegion.split("-").join(" ");
+    urlRegion = urlRegion.charAt(0).toUpperCase() + urlRegion.substring(1).toLowerCase();
+    return urlRegion;
+}
 
 async function getRouteListFromEndpoint(apiEndpoint: URL, searchParams: URLSearchParams): Promise<Route[]> {
     apiEndpoint.search = searchParams.toString();
@@ -154,23 +166,29 @@ function makeDividingLine(): HTMLHRElement {
 // These functions simply sets up some nice animations for the top panel
 function setupRegionSelector() {
     const regionList: HTMLUListElement = document.getElementById("regionList") as HTMLUListElement
+    const regionTitle = document.getElementById("regionTitle")
+    if (regions.includes(currentRegion)) {
+        regionTitle.textContent = currentRegion;
+    } else {
+        regionTitle.textContent = "Salt Lake";
+    }
 
-    currentRegionDiv.addEventListener("mouseenter", function() {
-        currentRegionDiv.style.backgroundColor = "#030f21"
-        currentRegionDiv.style.color = "#bbd2e9"
+    regionDiv.addEventListener("mouseenter", function() {
+        regionDiv.style.backgroundColor = "#030f21"
+        regionDiv.style.color = "#bbd2e9"
         toggleRegionPanel();
     });
 
-    currentRegionDiv.addEventListener("mouseleave", function() {
-        currentRegionDiv.style.backgroundColor = "rgb(117, 186, 223)"
-        currentRegionDiv.style.color = "#030f21"
+    regionDiv.addEventListener("mouseleave", function() {
+        regionDiv.style.backgroundColor = "rgb(117, 186, 223)"
+        regionDiv.style.color = "#030f21"
         toggleRegionPanel();
     })
 
     regions.forEach(region => {
         const regionLink = document.createElement('a');
-        region = region.split(" ").join("-");
         regionLink.textContent = region;
+        region = region.split(" ").join("-"); // Change here to dashes for link
         regionLink.href = "/routes/" + region;
 
         regionLink.classList.add('regionOption');
@@ -182,9 +200,9 @@ function toggleRegionPanel() {
     const regionSelectorDiv: HTMLDivElement = document.getElementById("regionTitleWrapper") as HTMLDivElement
 
     if (regionSelectorDiv.style.maxHeight) {
-        regionSelectorDiv.style.maxHeight = null; currentRegionDiv.style.maxHeight = "100";
+        regionSelectorDiv.style.maxHeight = null; regionDiv.style.maxHeight = "100";
     } else {
         regionSelectorDiv.style.maxHeight = "500";
-        currentRegionDiv.style.maxHeight = "600";
+        regionDiv.style.maxHeight = "600";
     }
 }

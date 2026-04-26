@@ -1,7 +1,6 @@
 // TODO: More to be done now that inital crap is cleaned up. I want to make this stateless
 // it might be a bit slower but we should.
 // HTML:
-//   - Make dropdown buttons now just a links to the respective endpoints
 //   - Make a simple 404 page for nginx to serve when any route page that is not well defined in the .map file
 // JS:
 //   1. Read the end of the url to see which route to search for
@@ -46,11 +45,11 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-//Adds all the event listeners
 var addRouteButton = document.getElementById("addRoute");
 var buttonArea = document.getElementById('routeButtonArea');
 var routesTitleArea = document.getElementById('routeHeaderArea');
-var currentRegionDiv = document.getElementById("regionButton");
+var currentRegion = getRegionFromUrl();
+var regionDiv = document.getElementById("regionButton");
 var routeContainer = document.querySelector("#routeContainer");
 var regions = ["Salt Lake", "Ogden", "Uintas", "Logan", "Provo", "Skyline", "Moab", "Abajos"];
 var Route = /** @class */ (function () {
@@ -65,6 +64,15 @@ var Route = /** @class */ (function () {
     return Route;
 }());
 setupRegionSelector();
+// Note: we can assume the url contains a valid region because if it did not
+// the nginx server would have redirected to the error page 
+function getRegionFromUrl() {
+    var urlRegion = window.location.pathname.split("/").pop();
+    urlRegion = urlRegion.trim();
+    urlRegion = urlRegion.split("-").join(" ");
+    urlRegion = urlRegion.charAt(0).toUpperCase() + urlRegion.substring(1).toLowerCase();
+    return urlRegion;
+}
 function getRouteListFromEndpoint(apiEndpoint, searchParams) {
     return __awaiter(this, void 0, void 0, function () {
         var result;
@@ -173,20 +181,27 @@ function makeDividingLine() {
 // These functions simply sets up some nice animations for the top panel
 function setupRegionSelector() {
     var regionList = document.getElementById("regionList");
-    currentRegionDiv.addEventListener("mouseenter", function () {
-        currentRegionDiv.style.backgroundColor = "#030f21";
-        currentRegionDiv.style.color = "#bbd2e9";
+    var regionTitle = document.getElementById("regionTitle");
+    if (regions.includes(currentRegion)) {
+        regionTitle.textContent = currentRegion;
+    }
+    else {
+        regionTitle.textContent = "Salt Lake";
+    }
+    regionDiv.addEventListener("mouseenter", function () {
+        regionDiv.style.backgroundColor = "#030f21";
+        regionDiv.style.color = "#bbd2e9";
         toggleRegionPanel();
     });
-    currentRegionDiv.addEventListener("mouseleave", function () {
-        currentRegionDiv.style.backgroundColor = "rgb(117, 186, 223)";
-        currentRegionDiv.style.color = "#030f21";
+    regionDiv.addEventListener("mouseleave", function () {
+        regionDiv.style.backgroundColor = "rgb(117, 186, 223)";
+        regionDiv.style.color = "#030f21";
         toggleRegionPanel();
     });
     regions.forEach(function (region) {
         var regionLink = document.createElement('a');
-        region = region.split(" ").join("-");
         regionLink.textContent = region;
+        region = region.split(" ").join("-"); // Change here to dashes for link
         regionLink.href = "/routes/" + region;
         regionLink.classList.add('regionOption');
         regionList.appendChild(regionLink);
@@ -196,10 +211,10 @@ function toggleRegionPanel() {
     var regionSelectorDiv = document.getElementById("regionTitleWrapper");
     if (regionSelectorDiv.style.maxHeight) {
         regionSelectorDiv.style.maxHeight = null;
-        currentRegionDiv.style.maxHeight = "100";
+        regionDiv.style.maxHeight = "100";
     }
     else {
         regionSelectorDiv.style.maxHeight = "500";
-        currentRegionDiv.style.maxHeight = "600";
+        regionDiv.style.maxHeight = "600";
     }
 }

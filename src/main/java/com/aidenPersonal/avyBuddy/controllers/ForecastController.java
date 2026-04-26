@@ -73,8 +73,6 @@ public class ForecastController {
             forecastNode.set("avalanche_problem_3", avyProblem3Node);
         }
 
-        System.out.println("LKEJEKLSJ");
-
         return forecastNode.toString();
     }
 }

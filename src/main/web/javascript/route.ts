@@ -57,9 +57,9 @@ function getRegionFromUrl(): string {
     return urlRegion;
 }
 
-async function getRouteListFromEndpoint(apiEndpoint: URL, searchParams: URLSearchParams): Promise<Route[]> {
-    apiEndpoint.search = searchParams.toString();
-
+// Async function that gets a list of Route objects from a given API endpoint
+// the endpoint should be one that returns a route in the expected form
+async function getRouteListFromEndpoint(apiEndpoint: URL): Promise<Route[]> {
     let result: Route[] | number = await fetch(apiEndpoint).then(response => {
         if (!response.ok) { return response.status }
 
@@ -81,6 +81,8 @@ async function getRouteListFromEndpoint(apiEndpoint: URL, searchParams: URLSearc
     }
 }
 
+// Loads and fills the route listing area with a list of routes ordered
+// by how dangerous they would be based on the forecast of the day
 function loadSortedRoutes(region: string) {
     const apiEndpoint = "/apis/getRouteListForecast"
     const queryParamsSort = {
@@ -119,7 +121,8 @@ function loadTimeOrdredRoutes(region: string) {
     });
 }
 
-// Creates and returns a html element which holds all the route information for a single route
+// Creates and returns a html element which holds all 
+// the route information for a single route
 function makeRouteContainer(route: Route): HTMLElement {
     // Outer container
     const routeContainer = document.createElement('section');
@@ -164,7 +167,7 @@ function makeDividingLine(): HTMLHRElement {
     return divider;
 }
 
-// These functions simply sets up some nice animations for the top panel
+// Sets up the animations for the region selector panel
 function setupRegionSelector() {
     const regionList: HTMLUListElement = document.getElementById("regionList") as HTMLUListElement
     const regionTitle = document.getElementById("regionTitle")

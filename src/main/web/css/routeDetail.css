@@ -1,0 +1,46 @@
+main {
+  margin: 1rem;
+}
+
+.routeHeaderWrap, .routeHeader {
+  width: fit-content;
+  margin: 0.5rem;
+}
+
+.routeHeader .topline {
+  display: inline-block;
+  margin: 0px;
+}
+
+.routeHeader p.topline {
+  padding: 0 0 0 1rem;
+}
+
+.routeHeader p:not(.topline) {
+  margin-top: 0.5rem;
+  width: 400px;
+} 
+
+.routeDescription {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.routeDescription p {
+  margin: 0 0 0 1rem ;
+  width: 400px;
+}
+
+.routeDescription svg {
+  flex-shrink: 0;
+}
+
+.dividingLine{
+  height: 3px;
+  background-color: black;
+  border-style: none;
+  margin: 0;
+  width: 100%;
+}

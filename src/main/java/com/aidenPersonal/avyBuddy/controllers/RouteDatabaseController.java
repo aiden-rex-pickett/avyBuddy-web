@@ -86,6 +86,12 @@ public class RouteDatabaseController {
         }
     }
 
+    // TODO: Add a mapping for getting just a single route by its name.
+    @GetMapping("/route/{routeName}")
+    public String getRoute (@PathVariable String routeName, @RequestParam int svgWidth){
+
+    }
+
     @PatchMapping("/editRoute/{routeName}")
     public ResponseEntity<?> editRoute(@PathVariable String routeName, @RequestBody RouteDTO route) {
         if (route.routePositions.isPresent() && route.routePositions.get().length != 24)

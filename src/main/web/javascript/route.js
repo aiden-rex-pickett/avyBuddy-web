@@ -32,11 +32,13 @@ class Route {
 const currentRegionDiv = document.getElementById("regionButton");
 // The HTML element where the route sections will be injected into
 const routeContainer = document.querySelector("#routeContainer");
-console.log(makePretty("sALt-LakE"));
-// The region for this page, based off the URL
+// The region for the page
 const region = getRegionFromUrl();
 setupRegionSelector();
 loadTimeOrdredRoutes(region);
+setupOrderByForecastButton();
+// Gets the region in the form that the endpoint would understand from the URL
+//
 // Note: we can assume the url contains a valid region because if it did not
 // the nginx server would have redirected to the error page 
 function getRegionFromUrl() {
@@ -46,6 +48,45 @@ function getRegionFromUrl() {
     urlRegion = urlRegion.toLowerCase();
     return urlRegion;
 }
+function setupOrderByForecastButton() {
+    const orderByForecastButton = document.getElementById("orderByForecast");
+    if (orderByForecastButton != null) {
+        orderByForecastButton.addEventListener("click", () => {
+            routeContainer.replaceChildren();
+            loadSortedRoutes(region);
+        });
+    }
+}
+// Loads and fills the route listing area with a list of routes ordered
+// by how recently they were created
+function loadTimeOrdredRoutes(region) {
+    const apiEndpoint = "/apis/getRouteListRecency";
+    const url = new URL(apiEndpoint, window.location.origin);
+    url.searchParams.set("svgWidth", "250");
+    url.searchParams.set("region", region);
+    getRouteListFromEndpoint(url).then(routeList => {
+        routeList.forEach(route => {
+            routeContainer.appendChild(makeRouteContainer(route));
+            routeContainer.appendChild(makeDividingLine());
+        });
+    });
+}
+// Loads and fills the route listing area with a list of routes ordered
+// by how dangerous they would be based on the forecast of the day
+function loadSortedRoutes(region) {
+    const apiEndpoint = "/apis/getRouteListForecast";
+    const url = new URL(apiEndpoint, window.location.origin);
+    url.searchParams.set("svgWidth", "250");
+    url.searchParams.set("region", region);
+    getRouteListFromEndpoint(url).then(routeList => {
+        routeList.forEach(route => {
+            routeContainer.appendChild(makeRouteContainer(route));
+            routeContainer.appendChild(makeDividingLine());
+        });
+    });
+}
+// Async function that gets a list of Route objects from a given API endpoint
+// the endpoint should be one that returns a route in the expected form
 async function getRouteListFromEndpoint(apiEndpoint) {
     let result = await fetch(apiEndpoint).then(response => {
         if (!response.ok) {
@@ -68,40 +109,8 @@ async function getRouteListFromEndpoint(apiEndpoint) {
         console.error(result);
     }
 }
-function loadSortedRoutes(region) {
-    const apiEndpoint = "/apis/getRouteListForecast";
-    const queryParamsSort = {
-        svgWidth: "250",
-    };
-    if (region == "Salt Lake") {
-        queryParamsSort['region'] = 'salt-lake';
-    }
-    else {
-        queryParamsSort['region'] = region.toLowerCase();
-    }
-    const url = new URL(apiEndpoint, window.location.origin);
-    url.searchParams.set("svgWidth", "250");
-    getRouteListFromEndpoint(url).then(routeList => {
-        routeList.forEach(route => {
-            routeContainer.appendChild(makeRouteContainer(route));
-            routeContainer.appendChild(makeDividingLine());
-        });
-    });
-}
-function loadTimeOrdredRoutes(region) {
-    const apiEndpoint = "/apis/getRouteListRecency";
-    const url = new URL(apiEndpoint, window.location.origin);
-    url.searchParams.set("svgWidth", "250");
-    url.searchParams.set("region", region);
-    console.log(url.toString());
-    getRouteListFromEndpoint(url).then(routeList => {
-        routeList.forEach(route => {
-            routeContainer.appendChild(makeRouteContainer(route));
-            routeContainer.appendChild(makeDividingLine());
-        });
-    });
-}
-// Creates and returns a html element which holds all the route information for a single route
+// Creates and returns a html element which holds all 
+// the route information for a single route
 function makeRouteContainer(route) {
     // Outer container
     const routeContainer = document.createElement('section');
@@ -136,7 +145,7 @@ function makeDividingLine() {
     divider.classList.add('dividingLine');
     return divider;
 }
-// These functions simply sets up some nice animations for the top panel
+// Sets up the animations for the region selector panel
 function setupRegionSelector() {
     const regionList = document.getElementById("regionList");
     const regionTitle = document.getElementById("regionTitle");
@@ -160,6 +169,9 @@ function setupRegionSelector() {
         regionList.appendChild(regionLink);
     });
 }
+// Makes a region string that is in a form that the endpoint
+// would understand into a nice Looking space separated string
+// of capitalized words for the user to oodle at.
 function makePretty(region) {
     let regionWords = region.trim().toLowerCase().split("-");
     for (let i = 0; i < regionWords.length; i++) {
@@ -167,6 +179,8 @@ function makePretty(region) {
     }
     return regionWords.join(" ");
 }
+// Function for opening and closing the region selector 
+// panel when teh user hovers their mouse over it
 function toggleRegionPanel() {
     const regionSelectorDiv = document.getElementById("regionTitleWrapper");
     if (regionSelectorDiv.style.maxHeight) {

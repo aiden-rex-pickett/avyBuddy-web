@@ -48,6 +48,8 @@ function getRegionFromUrl() {
     urlRegion = urlRegion.toLowerCase();
     return urlRegion;
 }
+// Adds the event listener to the order by forecast button to
+// replace all the routes with the new ordered routes
 function setupOrderByForecastButton() {
     const orderByForecastButton = document.getElementById("orderByForecast");
     if (orderByForecastButton != null) {

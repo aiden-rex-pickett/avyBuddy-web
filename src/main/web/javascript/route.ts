@@ -13,15 +13,6 @@
 // a valid and invalid page idk
 const validRegions = ["Salt Lake", "Ogden", "Uintas", "Logan", "Provo", "Skyline", "Moab", "Abajos"]
 
-// The region for this page, based off the URL
-const region = getRegionFromUrl();
-
-// The HTML element where the route sections will be injected into
-const routeContainer: HTMLElement = document.querySelector("#routeContainer")
-
-// The HTML element where the region for the page is displayed
-const currentRegionDiv: HTMLDivElement = document.getElementById("regionButton") as HTMLDivElement
-
 // Simple struct-like container for a single route object, for use in constructing the route sections
 class Route {
     name: string;
@@ -41,15 +32,28 @@ class Route {
     }
 }
 
+// The HTML element where the region for the page is displayed
+const currentRegionDiv: HTMLDivElement = document.getElementById("regionButton") as HTMLDivElement
+
+// The HTML element where the route sections will be injected into
+const routeContainer: HTMLElement = document.querySelector("#routeContainer")
+
+// The region for the page
+const region = getRegionFromUrl();
+
 setupRegionSelector();
 
+loadTimeOrdredRoutes(region);
+
+// Gets the region in the form that the endpoint would understand from the URL
+//
 // Note: we can assume the url contains a valid region because if it did not
 // the nginx server would have redirected to the error page 
 function getRegionFromUrl(): string {
     let urlRegion: string = window.location.pathname.split("/").pop()
     urlRegion = urlRegion.trim();
-    urlRegion = urlRegion.split("-").join(" ");
-    urlRegion = urlRegion.charAt(0).toUpperCase() + urlRegion.substring(1).toLowerCase();
+    urlRegion = urlRegion.split(" ").join("-");
+    urlRegion = urlRegion.toLowerCase();
     return urlRegion;
 }
 
@@ -89,7 +93,9 @@ function loadSortedRoutes(region: string) {
         queryParamsSort['region'] = region.toLowerCase();
     }
 
-    getRouteListFromEndpoint(new URL(apiEndpoint, window.location.origin), new URLSearchParams(queryParamsSort)).then(routeList => {
+    const url = new URL(apiEndpoint, window.location.origin)
+    url.searchParams.set("svgWidth", "250")
+    getRouteListFromEndpoint(url).then(routeList => {
         routeList.forEach(route => {
             routeContainer.appendChild(makeRouteContainer(route))
             routeContainer.appendChild(makeDividingLine());
@@ -97,19 +103,15 @@ function loadSortedRoutes(region: string) {
     });
 }
 
-function loadTimeOrdredRoutes(region: String) {
+// Loads and fills the route listing area with a list of routes ordered
+// by how recently they were created
+function loadTimeOrdredRoutes(region: string) {
     const apiEndpoint = "/apis/getRouteListRecency"
-    let queryParams = {
-        svgWidth: "250",
-    }
 
-    if (region == "Salt Lake") {
-        queryParams['region'] = 'salt-lake'
-    } else {
-        queryParams['region'] = region.toLowerCase();
-    }
-
-    getRouteListFromEndpoint(new URL(apiEndpoint, window.location.origin), new URLSearchParams(queryParams)).then(routeList => {
+    const url = new URL(apiEndpoint, window.location.origin)
+    url.searchParams.set("svgWidth", "250")
+    url.searchParams.set("region", region)
+    getRouteListFromEndpoint(url).then(routeList => {
         routeList.forEach(route => {
             routeContainer.appendChild(makeRouteContainer(route))
             routeContainer.appendChild(makeDividingLine());
@@ -166,11 +168,7 @@ function makeDividingLine(): HTMLHRElement {
 function setupRegionSelector() {
     const regionList: HTMLUListElement = document.getElementById("regionList") as HTMLUListElement
     const regionTitle = document.getElementById("regionTitle")
-    if (validRegions.includes(region)) {
-        regionTitle.textContent = region;
-    } else {
-        regionTitle.textContent = "Salt Lake";
-    }
+    regionTitle.textContent = makePretty(region);
 
     currentRegionDiv.addEventListener("mouseenter", function() {
         currentRegionDiv.style.backgroundColor = "#030f21"
@@ -195,6 +193,19 @@ function setupRegionSelector() {
     })
 }
 
+// Makes a region string that is in a form that the endpoint
+// would understand into a nice Looking space separated string
+// of capitalized words for the user to oodle at.
+function makePretty(region: string) {
+    let regionWords = region.trim().toLowerCase().split("-");
+    for (let i = 0; i < regionWords.length; i++) {
+        regionWords[i] = regionWords[i].charAt(0).toUpperCase() + regionWords[i].slice(1);
+    }
+    return regionWords.join(" ");
+}
+
+// Function for opening and closing the region selector 
+// panel when teh user hovers their mouse over it
 function toggleRegionPanel() {
     const regionSelectorDiv: HTMLDivElement = document.getElementById("regionTitleWrapper") as HTMLDivElement
 

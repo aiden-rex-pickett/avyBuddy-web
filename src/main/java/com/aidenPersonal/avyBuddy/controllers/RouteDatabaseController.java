@@ -1,5 +1,18 @@
 package com.aidenPersonal.avyBuddy.controllers;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.aidenPersonal.avyBuddy.RouteFiles.Route;
 import com.aidenPersonal.avyBuddy.RouteFiles.RouteDatabase;
 import com.aidenPersonal.avyBuddy.imageHandling.SvgRoseGenerator;
@@ -7,16 +20,10 @@ import com.aidenPersonal.avyBuddy.uacData.Forecast;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
 
 /**
- * This class provides endpoints for the frontend to interact with the database, including fetching specific data, lists of
+ * This class provides endpoints for the frontend to interact with the database,
+ * including fetching specific data, lists of
  * data, as well as creating and deleting data
  *
  * @author Aiden Pickett
@@ -26,20 +33,22 @@ import java.util.Optional;
 public class RouteDatabaseController {
 
     /**
-     * This controller returns the top-{@code numRoutes} most recent routes in the database by creation
+     * This controller returns the top-{@code numRoutes} most recent routes in the
+     * database by creation
      *
      * @param svgWidth width of the svg image for the route
-     * @param region region of the routes to be returned
-     * @return String of JSON object, where each route is in its own object named "1", then "2", etc. up to "{@code numRoutes}"
+     * @param region   region of the routes to be returned
+     * @return String of JSON object, where each route is in its own object named
+     *         "1", then "2", etc. up to "{@code numRoutes}"
      */
     @GetMapping("/getRouteListRecency")
-    public String getRouteList(@RequestParam int svgWidth, @RequestParam String region) {
-        ObjectMapper mapper = new ObjectMapper();
-        ArrayNode routesNode = mapper.createArrayNode();
+    public String getRouteList(@RequestParam final int svgWidth, @RequestParam final String region) {
+        final ObjectMapper mapper = new ObjectMapper();
+        final ArrayNode routesNode = mapper.createArrayNode();
 
-        List<Route> routes = RouteDatabase.getRoutesOrderedByRecency(region);
+        final List<Route> routes = RouteDatabase.getRoutesOrderedByRecency(region);
 
-        for (Route route : routes) {
+        for (final Route route : routes) {
             routesNode.add(makeRouteNode(route, mapper, svgWidth));
         }
 
@@ -47,16 +56,17 @@ public class RouteDatabaseController {
     }
 
     /**
-     * This controller returns all the routes in the database for a given region, sorted by the forecast data
+     * This controller returns all the routes in the database for a given region,
+     * sorted by the forecast data
      */
     @GetMapping("/getRouteListForecast")
-    public String getRouteListForecast(@RequestParam int svgWidth, @RequestParam String region) {
-        ObjectMapper mapper = new ObjectMapper();
-        ArrayNode routesNode = mapper.createArrayNode();
+    public String getRouteListForecast(@RequestParam final int svgWidth, @RequestParam final String region) {
+        final ObjectMapper mapper = new ObjectMapper();
+        final ArrayNode routesNode = mapper.createArrayNode();
 
-        List<Route> routes = RouteDatabase.getRoutesOrderedByForecast(region);
+        final List<Route> routes = RouteDatabase.getRoutesOrderedByForecast(region);
 
-        for (Route route : routes) {
+        for (final Route route : routes) {
             routesNode.add(makeRouteNode(route, mapper, svgWidth));
         }
 
@@ -67,60 +77,53 @@ public class RouteDatabaseController {
         Optional<String> region;
         Optional<boolean[]> routePositions;
         Optional<String> description;
+    }
 
-        RouteDTO (String region, int routePositions, String description) {
-            this.region = Optional.ofNullable(region);
-
-            if (routePositions == 0) {
-                this.routePositions = Optional.empty();
-            } else {
-                routePositions = routePositions | 16777216;
-                boolean[] routePositionsArray = new boolean[24];
-                for (int i = 0; i < routePositionsArray.length; i++) {
-                    routePositionsArray[i] = ((1 << routePositionsArray.length - i - 1) & routePositions) != 0;
-                }
-                this.routePositions = Optional.of(routePositionsArray);
-            }
-
-            this.description = Optional.ofNullable(description);
+    @GetMapping("/route/{routeName}")
+    public String getRoute(@PathVariable final String routeName) {
+        final ObjectMapper mapper = new ObjectMapper();
+        try {
+            final Route route = RouteDatabase.getRoute(routeName);
+            return makeRouteNode(route, mapper, 500).toString();
+        } catch (final NullPointerException e) {
+            return "{\"Error\": \"There is no such route in the database\"}";
         }
     }
 
-    // TODO: Add a mapping for getting just a single route by its name.
-    @GetMapping("/route/{routeName}")
-    public String getRoute (@PathVariable String routeName, @RequestParam int svgWidth){
-
-    }
-
     @PatchMapping("/editRoute/{routeName}")
-    public ResponseEntity<?> editRoute(@PathVariable String routeName, @RequestBody RouteDTO route) {
+    public ResponseEntity<?> editRoute(@PathVariable final String routeName, @RequestBody final RouteDTO route) {
         if (route.routePositions.isPresent() && route.routePositions.get().length != 24)
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         if (route.region.isPresent() && !Arrays.asList(Forecast.validRegions).contains(route.region.get()))
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
         try {
-            RouteDatabase.editRoute(routeName, route.region.orElse(null), route.routePositions.orElse(null), route.description.orElse(null));
+            RouteDatabase.editRoute(routeName, route.region.orElse(null), route.routePositions.orElse(null),
+                    route.description.orElse(null));
             return new ResponseEntity<>(HttpStatus.OK);
-        } catch (RuntimeException e) {
+        } catch (final RuntimeException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 
     /**
-     * This helper method makes an {@code ObjectNode} that represents the route that is passed to it.
+     * This helper method makes an {@code ObjectNode} that represents the route that
+     * is passed to it.
      *
-     * @param route The route to be represented
-     * @param mapper The {@code ObjectMapper} to be used to create the {@code ObjectNode}
-     * @param svgWidth The width of the svg that shows the route positions on the frontend
+     * @param route    The route to be represented
+     * @param mapper   The {@code ObjectMapper} to be used to create the
+     *                 {@code ObjectNode}
+     * @param svgWidth The width of the svg that shows the route positions on the
+     *                 frontend
      * @return The {@code ObjectNode} that represents the passed in route.
      */
-    private static ObjectNode makeRouteNode(Route route, ObjectMapper mapper, int svgWidth) {
-        ObjectNode routeNode = mapper.createObjectNode();
+    @SuppressWarnings("deprecation")
+    private static ObjectNode makeRouteNode(final Route route, final ObjectMapper mapper, final int svgWidth) {
+        final ObjectNode routeNode = mapper.createObjectNode();
         routeNode.put("name", route.getName());
         routeNode.put("region", route.getRegion());
-        boolean[] routePositions = route.getRoutePositions();
-        ArrayNode routePositionsNode = mapper.createArrayNode();
+        final boolean[] routePositions = route.getRoutePositions();
+        final ArrayNode routePositionsNode = mapper.createArrayNode();
         for (int i = 0; i < 24; i++) {
             routePositionsNode.add(routePositions[i]);
         }

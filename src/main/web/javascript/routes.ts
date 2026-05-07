@@ -125,6 +125,9 @@ function makeRouteContainer(route: Route): HTMLElement {
     // Outer container
     const routeContainer = document.createElement('section');
     routeContainer.classList.add('routeInformationSection')
+    routeContainer.addEventListener("click", () => {
+        window.location.href = "/route/" + route.name;
+    })
 
     // Text contianer to go in outer container
     const textContainer = document.createElement('div');

@@ -48,12 +48,24 @@ function loadRoutePage(route: Route) {
 
     const dividingLine = document.createElement("hr");
 
+    const backButtonWrap = document.createElement("div");
+    backButtonWrap.classList.add("backButtonWrap");
+    backButtonWrap.classList.add("regionSelector");
+
+    const backButton = document.createElement("a");
+    backButton.classList.add("backButton");
+    backButton.textContent = "View more " + route.region + " routes";
+    backButton.href = "/routes/" + route.region
+
+    backButtonWrap.appendChild(backButton);
+
     routeHeader.appendChild(routeTitle);
     routeHeader.appendChild(routeRegionHtml);
     routeHeader.appendChild(routeCreationDate);
+    routeHeader.appendChild(dividingLine);
 
     routeHeaderWrap.appendChild(routeHeader);
-    routeHeaderWrap.appendChild(dividingLine);
+    routeHeaderWrap.appendChild(backButtonWrap);
 
     main.appendChild(routeHeaderWrap);
 

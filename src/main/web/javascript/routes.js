@@ -1,11 +1,3 @@
-// TODO: More to be done now that inital crap is cleaned up. I want to make this stateless
-// it might be a bit slower but we should.
-// JS:
-//   1. fetch the endpoint with that name, load the routes just for that
-//   2. if they click the sort by forecast, simply clear route sections and hit that endpoint, and fill again
-//   This way the whole thing has much less state
-// I will finally stop prematurely optimizing by not pulling all the routes, not doing xyz, whatever.
-// All that is great but I just gotta finish this project bruh its been too long
 // HACK: This could possibly get out of sync with the map of valid regions in the nginx config
 // maybe look into this and find some way to do the check of if we are on a valid page without
 // this list, maybe by some huristic about the state of the dom to see the differences between 
@@ -48,6 +40,8 @@ function getRegionFromUrl() {
     urlRegion = urlRegion.toLowerCase();
     return urlRegion;
 }
+// Adds the event listener to the order by forecast button to
+// replace all the routes with the new ordered routes
 function setupOrderByForecastButton() {
     const orderByForecastButton = document.getElementById("orderByForecast");
     if (orderByForecastButton != null) {
@@ -115,6 +109,9 @@ function makeRouteContainer(route) {
     // Outer container
     const routeContainer = document.createElement('section');
     routeContainer.classList.add('routeInformationSection');
+    routeContainer.addEventListener("click", () => {
+        window.location.href = "/route/" + route.name;
+    });
     // Text contianer to go in outer container
     const textContainer = document.createElement('div');
     // Title and descriton to go in text container

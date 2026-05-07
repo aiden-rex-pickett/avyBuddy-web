@@ -1,15 +1,12 @@
 package com.aidenPersonal.avyBuddy.RouteFiles;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import javax.sql.DataSource;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This class manages the connection to the database and allows for adding of routes to
+ * This class manages the connection to the database and allows for adding of
+ * routes to
  * said database
  *
  * @author Aiden Pickett
@@ -17,48 +14,37 @@ import java.util.List;
  */
 public class RouteDatabase {
 
-    //connection string to database
-    private static final String url = "jdbc:sqlite:C:/apache-tomcat-11.0.5/lib/database.db";
+    // connection string to database
+    private static final String url = "jdbc:sqlite:C:/Users/ka7nq/webProjects/avyBuddy/src/main/resources/database.db";
 
     /**
      * Makes sure objects of this class cannot be created.
      */
-    private RouteDatabase() {}
-
-    /**
-     * Gets a database connection for the routes database, used by server
-     *
-     * @return  A connection to the database
-     * @throws SQLException If database connection fails
-     * @throws NamingException If namespace doesnt exist in context
-     */
-    private static Connection getConnection() throws SQLException, NamingException {
-        Context initalContext = new InitialContext();
-        Context environemntContext = (Context) initalContext.lookup("java:comp/env");
-        DataSource dataSource = (DataSource) environemntContext.lookup("jdbc/routesDatabase");
-        return dataSource.getConnection();
+    private RouteDatabase() {
     }
 
     /**
-     * Writes state of passed route object to database for storage. This includes the name, region, and routePositions
+     * Writes state of passed route object to database for storage. This includes
+     * the name, region, and routePositions
      * instance variables values when they are passed
      *
      * @param route Route object to have state stored
      */
     public static void addRoute(Route route) {
-        //Checks that route is not already in database
+        // Checks that route is not already in database
         if (getRoute(route.getName()) != null) {
             throw new IllegalArgumentException("The route " + route.getName() + " already exists in the database");
         }
 
-        //Establishes database connection
+        // Establishes database connection
         try {
             var connection = DriverManager.getConnection(url);
             var statement = connection.createStatement();
 
-            //Writes state of passed Route object to database
+            // Writes state of passed Route object to database
             String sql = "INSERT INTO routes (name, region, routePositions, description)"
-                    + "VALUES ('" + route.getName() + "', '" + route.getRegion() + "', '" + route.getRoutePositionsBinary() + "', '" + route.getDescription() + "')";
+                    + "VALUES ('" + route.getName() + "', '" + route.getRegion() + "', '"
+                    + route.getRoutePositionsBinary() + "', '" + route.getDescription() + "')";
 
             statement.execute(sql);
             connection.close();
@@ -69,7 +55,8 @@ public class RouteDatabase {
     }
 
     /**
-     * Gets a given route from the database by the route name. This is guaranteed to be unique
+     * Gets a given route from the database by the route name. This is guaranteed to
+     * be unique
      *
      * @param routeName name of the route to get
      * @return a Route object representing that route
@@ -79,7 +66,7 @@ public class RouteDatabase {
         ResultSet results;
 
         try {
-//            Connection connection = getConnection();
+            // Connection connection = getConnection();
             var connection = DriverManager.getConnection(url);
             var statement = connection.createStatement();
 
@@ -111,15 +98,17 @@ public class RouteDatabase {
      * @param newRegion         the new region for this route
      * @param newRoutePositions the new route positions for this route
      * @param newDescription    the new description for this route
-     * @implNote Everything except for routeName can be a null value and still be valid, this allows
-     * for patch requests to work
+     * @implNote Everything except for routeName can be a null value and still be
+     *           valid, this allows
+     *           for patch requests to work
      */
-    public static void editRoute(String routeName, String newRegion, boolean[] newRoutePositions, String newDescription) {
+    public static void editRoute(String routeName, String newRegion, boolean[] newRoutePositions,
+            String newDescription) {
         if (newRegion == null && newRoutePositions == null && newDescription == null) {
             return;
         }
         try {
-            //var connection = getConnection();
+            // var connection = getConnection();
             var connection = DriverManager.getConnection(url);
 
             var statement = connection.createStatement();
@@ -142,7 +131,8 @@ public class RouteDatabase {
     }
 
     /**
-     * Helper method that converts a boolean array of route positions into a binary number that represents it
+     * Helper method that converts a boolean array of route positions into a binary
+     * number that represents it
      * to be used by the database
      *
      * @param newRoutePositions boolean array of route positions
@@ -193,7 +183,8 @@ public class RouteDatabase {
     }
 
     /**
-     * Gets a list of the route names currently in the database, ordered by the date of creation (newest-to-oldest)
+     * Gets a list of the route names currently in the database, ordered by the date
+     * of creation (newest-to-oldest)
      *
      * @param region region of the routes to be returned
      * @return a list of route names currently in the database
@@ -201,15 +192,17 @@ public class RouteDatabase {
     public static List<Route> getRoutesOrderedByRecency(String region) {
         ResultSet results;
         try {
-//            Connection connection = getConnection();
+            // Connection connection = getConnection();
             var connection = DriverManager.getConnection(url);
             var statement = connection.createStatement();
 
-            results = statement.executeQuery("SELECT * FROM routes WHERE region is '" + region + "' ORDER BY routes.dateCreated DESC");
+            results = statement.executeQuery(
+                    "SELECT * FROM routes WHERE region is '" + region + "' ORDER BY routes.dateCreated DESC");
             ArrayList<Route> routes = new ArrayList<>();
 
             while (results.next()) {
-                Route route = new Route(results.getString("region"), results.getString("name"), results.getString("dateCreated"), results.getString("description"));
+                Route route = new Route(results.getString("region"), results.getString("name"),
+                        results.getString("dateCreated"), results.getString("description"));
                 route.setNewRoutePositionsBinary(results.getInt("routePositions"));
                 routes.add(route);
             }
@@ -232,11 +225,13 @@ public class RouteDatabase {
             var connection = DriverManager.getConnection(url);
             var statement = connection.createStatement();
 
-            results = statement.executeQuery("SELECT * FROM routes WHERE region is '" +  region + "' ORDER BY routes.dateCreated DESC");
+            results = statement.executeQuery(
+                    "SELECT * FROM routes WHERE region is '" + region + "' ORDER BY routes.dateCreated DESC");
             ArrayList<Route> routes = new ArrayList<>();
 
             while (results.next()) {
-                Route route = new Route(results.getString("region"), results.getString("name"), results.getString("dateCreated"), results.getString("description"));
+                Route route = new Route(results.getString("region"), results.getString("name"),
+                        results.getString("dateCreated"), results.getString("description"));
                 route.setNewRoutePositionsBinary(results.getInt("routePositions"));
                 routes.add(route);
             }

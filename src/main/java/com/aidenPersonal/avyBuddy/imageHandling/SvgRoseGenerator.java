@@ -1,10 +1,11 @@
 package com.aidenPersonal.avyBuddy.imageHandling;
 
-import org.jfree.graphics2d.svg.SVGGraphics2D;
-
-import java.awt.*;
+import java.awt.BasicStroke;
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import org.jfree.graphics2d.svg.SVGGraphics2D;
 
 /**
  * This class allows for the creations of avalanche rose images that are .svg files for sending to the
@@ -43,15 +44,15 @@ public class SvgRoseGenerator {
      *                   specified by the UAC API endpoint
      * @return A string which can be used as an SVG element in a html file
      */
-    public static String generateRose(int width, int[] roseValues) {
+    public static String generateRose(final int width, final int[] roseValues) {
         if(roseValues.length != 24) {
             throw new IllegalArgumentException("The number of rose values must be 24");
         }
 
-        double scaleFactor = (double) width /94;
+        final double scaleFactor = (double) width /94;
         //94 is picked so that the build-in scaling function can be used to get the right width
         //and scale off of a pixel-perfect model
-        SVGGraphics2D svgGenerator = new SVGGraphics2D((int) (94 * scaleFactor), (int) (94 * scaleFactor));
+        final SVGGraphics2D svgGenerator = new SVGGraphics2D((int) (94 * scaleFactor), (int) (94 * scaleFactor));
         svgGenerator.scale(scaleFactor, scaleFactor);
 
         drawRoseColors(svgGenerator, roseValues);
@@ -70,18 +71,18 @@ public class SvgRoseGenerator {
      *                   specified by the Routes class
      * @return A string which can be used as an SVG element in a html file
      */
-    public static String generateRose(int width, boolean[] roseValues) {
+    public static String generateRose(final int width, final boolean[] roseValues) {
         if(roseValues.length != 24) {
             throw new IllegalArgumentException("The number of rose values must be 24");
         }
 
-        double scaleFactor = (double) width /94;
+        final double scaleFactor = (double) width /94;
         //94 is picked so that the build-in scaling function can be used to get the right width
         //and scale off of a pixel-perfect model
-        SVGGraphics2D svgGenerator = new SVGGraphics2D((int) (94 * scaleFactor), (int) (94 * scaleFactor));
+        final SVGGraphics2D svgGenerator = new SVGGraphics2D((int) (94 * scaleFactor), (int) (94 * scaleFactor));
         svgGenerator.scale(scaleFactor, scaleFactor);
 
-        int[] roseColors = new int[24];
+        final int[] roseColors = new int[24];
         for(int i = 0; i < 24; i++) {
             if (roseValues[i]) {
                 roseColors[i] = 16;
@@ -101,21 +102,21 @@ public class SvgRoseGenerator {
      * @param roseValues A 24-length int array for the values of each of the aspects/elevations. This is
      *                   specified by the UAC API endpoint
      */
-    private static void drawRoseColors(SVGGraphics2D svgGenerator, int[] roseValues) {
+    private static void drawRoseColors(final SVGGraphics2D svgGenerator, final int[] roseValues) {
         //This is made so that the rose values passed don't have to be inverted.
         //Inverted here for drawing purposes, so we can draw last to first
-        ArrayList<Integer> reversedList = new ArrayList<>();
+        final ArrayList<Integer> reversedList = new ArrayList<>();
         for(int i = roseValues.length - 1; i >= 0; i--) {
             reversedList.add(roseValues[i]);
         }
 
         for (int i = 0; i < 3; i++) {
-            int x = 2 + 15 * i;
-            int widthActual = 90 - 30 * i;
+            final int x = 2 + 15 * i;
+            final int widthActual = 90 - 30 * i;
             for (int j = 0; j < 8; j++) {
                 svgGenerator.setColor(dangerValuesToColorsMap.get(reversedList.get((i * 8) + j)));
-                int beginAngle = (int) ((90 + 22.5) + 45 * j);
-                int rotateAngle = 45;
+                final int beginAngle = (int) ((90 + 22.5) + 45 * j);
+                final int rotateAngle = 45;
                 svgGenerator.fillArc(x, x, widthActual, widthActual, beginAngle, rotateAngle);
             }
         }
@@ -126,18 +127,18 @@ public class SvgRoseGenerator {
      *
      * @param svgGenerator SVGGraphics2D object that the rose will be drawn with
      */
-    private static void drawRoseOutline(SVGGraphics2D svgGenerator) {
+    private static void drawRoseOutline(final SVGGraphics2D svgGenerator) {
         //Sets uniform stroke width
-        int strokeWidth = 1;
+        final int strokeWidth = 1;
         svgGenerator.setStroke(new BasicStroke(strokeWidth));
         svgGenerator.setColor(Color.BLACK);
 
         for (int i = 0; i < 3; i++) {
-            int x = 2 + 15 * i;
-            int widthActual = 90 - 30 * i;
+            final int x = 2 + 15 * i;
+            final int widthActual = 90 - 30 * i;
             for (int j = 0; j < 8; j++) {
-                int beginAngle = (int) ((90 + 22.5) + 45 * j);
-                int rotateAngle = 45;
+                final int beginAngle = (int) ((90 + 22.5) + 45 * j);
+                final int rotateAngle = 45;
                 svgGenerator.drawArc(x, x, widthActual, widthActual, beginAngle, rotateAngle);
             }
         }

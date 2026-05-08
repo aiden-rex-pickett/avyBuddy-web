@@ -13,19 +13,19 @@ import java.io.IOException;
 public class TestController {
 
     @GetMapping("/Forecast/{region}")
-    public String hey(@PathVariable String region) {
+    public String hey(@PathVariable final String region) {
         Forecast forecast;
 
         try {
             forecast = new Forecast(region);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new RuntimeException(e);
         }
 
-        ObjectMapper mapper = new ObjectMapper();
+        final ObjectMapper mapper = new ObjectMapper();
         try {
             return mapper.writeValueAsString(forecast);
-        } catch (JsonProcessingException e) {
+        } catch (final JsonProcessingException e) {
             throw new RuntimeException(e);
         }
     }

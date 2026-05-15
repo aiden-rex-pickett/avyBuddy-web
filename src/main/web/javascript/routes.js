@@ -6,12 +6,14 @@ const validRegions = ["Salt Lake", "Ogden", "Uintas", "Logan", "Provo", "Skyline
 // Simple struct-like container for a single route object, for use in constructing the route sections
 class Route {
     name;
+    id;
     region;
     positions;
     positionsSVG;
     dateCreated;
     description;
-    constructor(name, region, positions, positionsSVG, dateCreated, description) {
+    constructor(id, name, region, positions, positionsSVG, dateCreated, description) {
+        this.id = id;
         this.name = name;
         this.region = region;
         this.positions = positions;
@@ -90,7 +92,7 @@ async function getRouteListFromEndpoint(apiEndpoint) {
             let routeList = new Array(serverArray.length);
             for (let i = 0; i < routeList.length; i++) {
                 const currRoute = serverArray[i];
-                routeList[i] = new Route(currRoute["name"], currRoute["region"], currRoute["positions"], currRoute["positionsSvg"], currRoute["dateCreated"], currRoute["description"]);
+                routeList[i] = new Route(currRoute["id"], currRoute["name"], currRoute["region"], currRoute["positions"], currRoute["positionsSvg"], currRoute["dateCreated"], currRoute["description"]);
             }
             return routeList;
         })
@@ -110,7 +112,7 @@ function makeRouteContainer(route) {
     const routeContainer = document.createElement('section');
     routeContainer.classList.add('routeInformationSection');
     routeContainer.addEventListener("click", () => {
-        window.location.href = "/route/" + route.name;
+        window.location.href = "/route/" + route.id;
     });
     // Text contianer to go in outer container
     const textContainer = document.createElement('div');

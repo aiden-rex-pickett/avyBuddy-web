@@ -7,7 +7,8 @@ import java.io.IOException;
 import java.util.Arrays;
 
 /**
- * This class creates objects that represent routes in the backcountry. These contain the aspects and elevations of concern,
+ * This class creates objects that represent routes in the backcountry. These
+ * contain the aspects and elevations of concern,
  * where a backcountry user might pass through.
  *
  * @author Aiden Pickett
@@ -15,83 +16,98 @@ import java.util.Arrays;
  */
 public class Route implements Comparable<Route> {
 
-    //Array of booleans to represent if the position (aspect and elevation) is present in the route
+    // Array of booleans to represent if the position (aspect and elevation) is
+    // present in the route
     private boolean[] routePositions = new boolean[24];
 
-    //region where the route exists, or what region to pull data from when analyzed
-    private final String region;
+    // region where the route exists, or what region to pull data from when analyzed
+    private String region;
 
-    //name of the route
+    // name of the route
     private String name;
 
-    //date the route was created, as a string
+    // date the route was created, as a string
     private String dateCreated;
 
-    //string description of the route
+    // string description of the route
     private String description;
 
+    // id of the route in the database
+    private int id;
+
     /**
-     * Default constructor, for creating hollow Route Objects. Not to be used by user as it would conflict with compareTo method
+     * Default constructor, for creating hollow Route Objects. Not to be used by
+     * user as it would conflict with compareTo method
      *
      * @param region region of where to get avalanche forecast data from
      * @param name   string name of the Route
      */
-    public Route(String region, String name) {
-        //checks that region is valid
+    public Route(String region, String name, int id) {
+        // checks that region is valid
         if (!Arrays.asList(Forecast.validRegions).contains(region)) {
-            throw new IllegalArgumentException("Invalid region name, only logan, ogden, uintas, salt-lake, provo, skyline, moab, abajos, and southwest are valid region names, default forecast created instead");
+            throw new IllegalArgumentException(
+                    "Invalid region name, only logan, ogden, uintas, salt-lake, provo, skyline, moab, abajos, and southwest are valid region names, default forecast created instead");
         } else {
             this.region = region;
         }
 
         this.name = name;
+        this.id = id;
     }
 
     /**
-     * Database constructor, for creating hollow Route Objects. Not to be used by user as it would conflict with compareTo method
+     * Database constructor, for creating hollow Route Objects. Not to be used by
+     * user as it would conflict with compareTo method
      *
-     * @param region region of where to get avalanche forecast data from
-     * @param name   string name of the Route
+     * @param region      region of where to get avalanche forecast data from
+     * @param name        string name of the Route
      * @param dateCreated The string of the date of creation
      */
-    public Route(String region, String name, String dateCreated, String description) {
-        //checks that region is valid
+    public Route(String region, String name, int id, String dateCreated, String description) {
+        // checks that region is valid
         if (!Arrays.asList(Forecast.validRegions).contains(region)) {
-            throw new IllegalArgumentException("Invalid region name, only logan, ogden, uintas, salt-lake, provo, skyline, moab, abajos, and southwest are valid region names, default forecast created instead");
+            throw new IllegalArgumentException(
+                    "Invalid region name, only logan, ogden, uintas, salt-lake, provo, skyline, moab, abajos, and southwest are valid region names, default forecast created instead");
         } else {
             this.region = region;
         }
 
         this.name = name;
+        this.id = id;
         this.dateCreated = dateCreated;
         this.description = description;
     }
 
     /**
-     * Constructor for Route object, where you can provide some initial aspects and elevations
+     * Constructor for Route object, where you can provide some initial aspects and
+     * elevations
      * to be added
      *
      * @param region    region where the route will take place
      * @param aspect    integer of 0-7, where 0 is north, 1 is northeast, etc
-     * @param elevation integer of 0-2, where 2 is the lowest elevation band and 0 is the highest
+     * @param elevation integer of 0-2, where 2 is the lowest elevation band and 0
+     *                  is the highest
      */
-    public Route(String region, String name, int elevation, int... aspect) {
-        //Checks that region is valid
+    public Route(String region, String name, int id, int elevation, int... aspect) {
+        // Checks that region is valid
         if (!Arrays.asList(Forecast.validRegions).contains(region)) {
-            throw new IllegalArgumentException("Invalid region name, only logan, ogden, uintas, salt-lake, provo, skyline, moab, abajos, and southwest are valid region names, default forecast created instead");
+            throw new IllegalArgumentException(
+                    "Invalid region name, only logan, ogden, uintas, salt-lake, provo, skyline, moab, abajos, and southwest are valid region names, default forecast created instead");
         } else {
             this.region = region;
         }
-        //adds initial
+        // adds initial
         addRouteDanger(elevation, aspect);
 
         this.name = name;
+        this.id = id;
     }
 
     public Route(String region, String name, boolean[] routePositions) {
-        //checks that region is valid
+        // checks that region is valid
         if (!Arrays.asList(Forecast.validRegions).contains(region)) {
-            throw new IllegalArgumentException("Invalid region name, only logan, ogden, uintas, salt-lake, provo, skyline, moab, abajos, and southwest are valid region names, default forecast created instead");
+            throw new IllegalArgumentException(
+                    "Invalid region name, only logan, ogden, uintas, salt-lake, provo, skyline, moab, abajos, and southwest are valid region names, default forecast created instead");
         } else {
             this.region = region;
         }
@@ -102,26 +118,31 @@ public class Route implements Comparable<Route> {
     }
 
     /**
-     * Setter for routePositions array, used to know if a certain position (aspect and elevation) is included
+     * Setter for routePositions array, used to know if a certain position (aspect
+     * and elevation) is included
      * in the Route
      *
      * @param aspect    integer of 0-7, where 0 is north, 1 is northeast, etc
-     * @param elevation integer of 0-2, where 2 is the lowest elevation band and 0 is the highest
+     * @param elevation integer of 0-2, where 2 is the lowest elevation band and 0
+     *                  is the highest
      */
     public void addRouteDanger(int elevation, int... aspect) {
 
-        //Check to see that inputs are valid
+        // Check to see that inputs are valid
         for (int num : aspect) {
             if (num > 7 || num < 0) {
-                throw new IllegalArgumentException("Only values between 0 and 7 inclusive are allowed for the aspect argument");
+                throw new IllegalArgumentException(
+                        "Only values between 0 and 7 inclusive are allowed for the aspect argument");
             }
         }
         if (elevation > 2 || elevation < 0) {
-            throw new IllegalArgumentException("Only values between 0 and 2 inclusive are allowed for the elevation argument");
+            throw new IllegalArgumentException(
+                    "Only values between 0 and 2 inclusive are allowed for the elevation argument");
         }
 
-        //Changes corresponding indices in aspects array to the danger value of the forecast to
-        //represent that they are a part of the tour
+        // Changes corresponding indices in aspects array to the danger value of the
+        // forecast to
+        // represent that they are a part of the tour
         for (int i = 0; i < routePositions.length; i++) {
             for (int k : aspect) {
                 if (i == elevation * 8 + k) {
@@ -133,7 +154,8 @@ public class Route implements Comparable<Route> {
     }
 
     /**
-     * This function replaces the current array of positions with a new one, mainly for use with the database
+     * This function replaces the current array of positions with a new one, mainly
+     * for use with the database
      *
      * @param newPositions int to be converted to binary to parse the positions from
      */
@@ -146,7 +168,8 @@ public class Route implements Comparable<Route> {
     }
 
     /**
-     * This function replaces the current array of positions with a new one, mainly for use with the database
+     * This function replaces the current array of positions with a new one, mainly
+     * for use with the database
      *
      * @param newPositions int to be converted to binary to parse the positions from
      */
@@ -157,15 +180,17 @@ public class Route implements Comparable<Route> {
     /**
      * getter for the routePositions array
      *
-     * @return the routePositions array, which is an array of boolean values that represents if the position (aspect and elevation)
-     * are a part of the route.
+     * @return the routePositions array, which is an array of boolean values that
+     *         represents if the position (aspect and elevation)
+     *         are a part of the route.
      */
     public boolean[] getRoutePositions() {
         return routePositions;
     }
 
     /**
-     * This gets the route position integer, and constructs its binary. For use with the database, as the positions
+     * This gets the route position integer, and constructs its binary. For use with
+     * the database, as the positions
      * are stored in a binary representation
      *
      * @return the integer binary representing the route position
@@ -198,23 +223,28 @@ public class Route implements Comparable<Route> {
     }
 
     /**
-     * getter for an integer array that gets the most current avalanche data and applies it to positions (aspect and elevation) that
-     * is part of the route. The region is the one defined as a part of this Route object
+     * getter for an integer array that gets the most current avalanche data and
+     * applies it to positions (aspect and elevation) that
+     * is part of the route. The region is the one defined as a part of this Route
+     * object
      *
-     * @return integer array, where the positions of the tour (aspect and elevation) are filled in with the avalanche data danger at the
-     * time of the function call. As always, 1 is pockets of low danger, 2 is low danger, 3 is low with pockets of moderate,... up to 10
-     * which is extreme. If there is an IOExepiton, it returns a list where all positions are at danger 0.
+     * @return integer array, where the positions of the tour (aspect and elevation)
+     *         are filled in with the avalanche data danger at the
+     *         time of the function call. As always, 1 is pockets of low danger, 2
+     *         is low danger, 3 is low with pockets of moderate,... up to 10
+     *         which is extreme. If there is an IOExepiton, it returns a list where
+     *         all positions are at danger 0.
      */
     public int[] getOverallDangerPositionsForRoute() {
 
         int[] returnArray = new int[routePositions.length];
         Forecast forecast;
 
-        //gets most recent forecast
+        // gets most recent forecast
         try {
             forecast = new Forecast(region);
         } catch (IOException e) {
-            //In case of IOException it returns the array described in the Javadoc
+            // In case of IOException it returns the array described in the Javadoc
             return returnArray;
         }
         int[] mainRoseArray = forecast.getmain_rose_array();
@@ -261,7 +291,8 @@ public class Route implements Comparable<Route> {
         String returnString = "Route: " + getName() + " || Region: " + getRegion() + "\nThis route passes through: \n";
         for (int i = 0; i < routePositions.length; i++) {
             if (routePositions[i]) {
-                returnString += "- " + DataToStringConversions.getAspectString(i % 8) + " " + DataToStringConversions.getElevationString(i / 8) + "\n";
+                returnString += "- " + DataToStringConversions.getAspectString(i % 8) + " "
+                        + DataToStringConversions.getElevationString(i / 8) + "\n";
             }
         }
         return returnString;
@@ -304,7 +335,7 @@ public class Route implements Comparable<Route> {
         } else {
             return false;
         }
-			  for (int i = 0; i < routePositions.length; i++) {
+        for (int i = 0; i < routePositions.length; i++) {
             if (routePositions[i] != otherRoute.routePositions[i])
                 return false;
         }
@@ -328,4 +359,13 @@ public class Route implements Comparable<Route> {
     public void setDescription(String description) {
         this.description = description;
     }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
 }

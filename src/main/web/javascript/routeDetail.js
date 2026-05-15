@@ -1,11 +1,13 @@
 class PageRoute {
     name;
+    id;
     region;
     positions;
     positionsSVG;
     dateCreated;
     description;
-    constructor(name, region, positions, positionsSVG, dateCreated, description) {
+    constructor(id, name, region, positions, positionsSVG, dateCreated, description) {
+        this.id = id;
         this.name = name;
         this.region = region;
         this.positions = positions;
@@ -20,7 +22,7 @@ fetch(path).then(response => response.json()).then(json => {
         loadErrorPage(window.location.pathname.replace("/route/", ""));
     }
     else {
-        const route = new PageRoute(json["name"], json["region"], json["positions"], json["positionsSvg"], json["dateCreated"], json["description"]);
+        const route = new PageRoute(json["id"], json["name"], json["region"], json["positions"], json["positionsSvg"], json["dateCreated"], json["description"]);
         loadRoutePage(route);
     }
 }).catch(err => { console.error(err); });

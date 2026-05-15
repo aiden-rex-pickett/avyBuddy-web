@@ -1,6 +1,8 @@
 package com.aidenPersonal.avyBuddy.RouteFiles;
 
-import java.sql.*;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,58 +34,58 @@ public class RouteDatabase {
      */
     public static void addRoute(Route route) {
         // Checks that route is not already in database
-        if (getRoute(route.getName()) != null) {
+        if (getRoute(route.getId()) != null) {
             throw new IllegalArgumentException("The route " + route.getName() + " already exists in the database");
         }
 
         // Establishes database connection
         try {
-            var connection = DriverManager.getConnection(url);
-            var statement = connection.createStatement();
+            var dbConnection = DriverManager.getConnection(url);
+            var statement = dbConnection.createStatement();
 
             // Writes state of passed Route object to database
-            String sql = "INSERT INTO routes (name, region, routePositions, description)"
+            String sql = "INSERT INTO routes (name, region, positions, description)"
                     + "VALUES ('" + route.getName() + "', '" + route.getRegion() + "', '"
-                    + route.getRoutePositionsBinary() + "', '" + route.getDescription() + "')";
+                    + route.getRoutePositionsBinary() + "', '" + route.getDescription() + "');";
 
             statement.execute(sql);
-            connection.close();
-            statement.close();
+            dbConnection.close();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
     /**
-     * Gets a given route from the database by the route name. This is guaranteed to
-     * be unique
+     * Gets a route from the database with a given id
      *
-     * @param routeName name of the route to get
-     * @return a Route object representing that route
+     * @param routeId the ID of the route
+     * @return a Route object representing that route, or null if there is none with
+     *         that ID
      */
-    public static Route getRoute(String routeName) {
+    public static Route getRoute(int routeId) {
         Route returnRoute;
         ResultSet results;
 
         try {
-            // Connection connection = getConnection();
-            var connection = DriverManager.getConnection(url);
-            var statement = connection.createStatement();
+            var dbConnection = DriverManager.getConnection(url);
+            var statement = dbConnection.createStatement();
 
-            String sqlName = "SELECT * FROM routes WHERE name = '" + routeName + "';";
+            String sqlName = "SELECT * FROM routes WHERE id = '" + routeId + "';";
             results = statement.executeQuery(sqlName);
 
             String name = results.getString("name");
             String region = results.getString("region");
-            String dateCreated = results.getString("dateCreated");
+            int id = results.getInt("id");
+            String dateCreated = results.getString("date_created");
             String description = results.getString("description");
-            int routePositions = results.getInt("routePositions");
+            int routePositions = results.getInt("positions");
             if (name == null) {
                 return null;
             }
 
-            returnRoute = new Route(region, name, dateCreated, description);
+            returnRoute = new Route(region, name, id, dateCreated, description);
             returnRoute.setNewRoutePositionsBinary(routePositions);
+            dbConnection.close();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -94,7 +96,8 @@ public class RouteDatabase {
     /**
      * Edits a route already in the database
      *
-     * @param routeName         name of the route to edit in the database
+     * @param routeId           id of the route to edit
+     * @param newRouteName      the new name for this route
      * @param newRegion         the new region for this route
      * @param newRoutePositions the new route positions for this route
      * @param newDescription    the new description for this route
@@ -102,29 +105,32 @@ public class RouteDatabase {
      *           valid, this allows
      *           for patch requests to work
      */
-    public static void editRoute(String routeName, String newRegion, boolean[] newRoutePositions,
+    public static void editRoute(int routeId, String newRouteName, String newRegion, boolean[] newRoutePositions,
             String newDescription) {
         if (newRegion == null && newRoutePositions == null && newDescription == null) {
             return;
         }
         try {
-            // var connection = getConnection();
-            var connection = DriverManager.getConnection(url);
+            var dbConnection = DriverManager.getConnection(url);
+            var statement = dbConnection.createStatement();
 
-            var statement = connection.createStatement();
             String sql = "UPDATE routes SET ";
+            if (newRouteName != null) {
+                sql += "name = '" + newRouteName + "' , ";
+            }
             if (newRegion != null) {
                 sql += "region = '" + newRegion + "' , ";
             }
             if (newRoutePositions != null) {
-                sql += "routePositions = '" + getBinaryRoutePositions(newRoutePositions) + "' , ";
+                sql += "positions = '" + getBinaryRoutePositions(newRoutePositions) + "' , ";
             }
             if (newDescription != null) {
                 sql += "description = '" + newDescription + "' , ";
             }
             sql = sql.substring(0, sql.length() - 2);
-            sql += "WHERE name = '" + routeName + "';";
+            sql += "WHERE id = '" + routeId + "';";
             statement.execute(sql);
+            dbConnection.close();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -171,12 +177,13 @@ public class RouteDatabase {
      */
     public static void deleteRoute(String routeName) {
         try {
-            var connection = DriverManager.getConnection(url);
-            var statement = connection.createStatement();
+            var dbConnection = DriverManager.getConnection(url);
+            var statement = dbConnection.createStatement();
 
             String sql = "DELETE FROM routes WHERE name = '" + routeName + "';";
 
             statement.execute(sql);
+            dbConnection.close();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -193,19 +200,21 @@ public class RouteDatabase {
         ResultSet results;
         try {
             // Connection connection = getConnection();
-            var connection = DriverManager.getConnection(url);
-            var statement = connection.createStatement();
+            var dbConnection = DriverManager.getConnection(url);
+            var statement = dbConnection.createStatement();
 
             results = statement.executeQuery(
-                    "SELECT * FROM routes WHERE region is '" + region + "' ORDER BY routes.dateCreated DESC");
+                    "SELECT * FROM routes WHERE region is '" + region + "' ORDER BY routes.date_created DESC");
             ArrayList<Route> routes = new ArrayList<>();
 
             while (results.next()) {
-                Route route = new Route(results.getString("region"), results.getString("name"),
-                        results.getString("dateCreated"), results.getString("description"));
-                route.setNewRoutePositionsBinary(results.getInt("routePositions"));
+                Route route = new Route(results.getString("region"), results.getString("name"), results.getInt("id"),
+                        results.getString("date_created"), results.getString("description"));
+                route.setNewRoutePositionsBinary(results.getInt("positions"));
                 routes.add(route);
             }
+
+            dbConnection.close();
 
             return routes;
         } catch (SQLException e) {
@@ -222,21 +231,23 @@ public class RouteDatabase {
     public static List<Route> getRoutesOrderedByForecast(String region) {
         ResultSet results;
         try {
-            var connection = DriverManager.getConnection(url);
-            var statement = connection.createStatement();
+            var dbConnection = DriverManager.getConnection(url);
+            var statement = dbConnection.createStatement();
 
             results = statement.executeQuery(
-                    "SELECT * FROM routes WHERE region is '" + region + "' ORDER BY routes.dateCreated DESC");
+                    "SELECT * FROM routes WHERE region is '" + region + "' ORDER BY routes.date_created DESC");
             ArrayList<Route> routes = new ArrayList<>();
 
             while (results.next()) {
-                Route route = new Route(results.getString("region"), results.getString("name"),
-                        results.getString("dateCreated"), results.getString("description"));
-                route.setNewRoutePositionsBinary(results.getInt("routePositions"));
+                Route route = new Route(results.getString("region"), results.getString("name"), results.getInt("id"),
+                        results.getString("date_created"), results.getString("description"));
+                route.setNewRoutePositionsBinary(results.getInt("positions"));
                 routes.add(route);
             }
 
             routes.sort(new RouteComparator(region));
+
+            dbConnection.close();
 
             return routes;
         } catch (SQLException e) {

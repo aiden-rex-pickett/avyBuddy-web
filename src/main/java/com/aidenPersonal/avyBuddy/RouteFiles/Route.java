@@ -63,7 +63,7 @@ public class Route implements Comparable<Route> {
      * @param name        string name of the Route
      * @param dateCreated The string of the date of creation
      */
-    public Route(String region, String name, String dateCreated, String description) {
+    public Route(String region, String name, int id, String dateCreated, String description) {
         // checks that region is valid
         if (!Arrays.asList(Forecast.validRegions).contains(region)) {
             throw new IllegalArgumentException(
@@ -73,6 +73,7 @@ public class Route implements Comparable<Route> {
         }
 
         this.name = name;
+        this.id = id;
         this.dateCreated = dateCreated;
         this.description = description;
     }
@@ -87,7 +88,7 @@ public class Route implements Comparable<Route> {
      * @param elevation integer of 0-2, where 2 is the lowest elevation band and 0
      *                  is the highest
      */
-    public Route(String region, String name, int elevation, int... aspect) {
+    public Route(String region, String name, int id, int elevation, int... aspect) {
         // Checks that region is valid
         if (!Arrays.asList(Forecast.validRegions).contains(region)) {
             throw new IllegalArgumentException(
@@ -99,6 +100,7 @@ public class Route implements Comparable<Route> {
         addRouteDanger(elevation, aspect);
 
         this.name = name;
+        this.id = id;
     }
 
     public Route(String region, String name, boolean[] routePositions) {

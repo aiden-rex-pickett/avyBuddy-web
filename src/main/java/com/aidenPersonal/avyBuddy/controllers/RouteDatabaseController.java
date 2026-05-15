@@ -39,7 +39,7 @@ public class RouteDatabaseController {
      * @param svgWidth width of the svg image for the route
      * @param region   region of the routes to be returned
      * @return String of JSON object, where each route is in its own object named
-     *         "1", then "2", etc. up to "{@code numRoutes}"
+     * "1", then "2", etc. up to "{@code numRoutes}"
      */
     @GetMapping("/getRouteListRecency")
     public String getRouteList(@RequestParam final int svgWidth, @RequestParam final String region) {
@@ -77,32 +77,17 @@ public class RouteDatabaseController {
         Optional<String> region;
         Optional<boolean[]> routePositions;
         Optional<String> description;
+        Optional<Integer> id;
     }
 
-    @GetMapping("/route/{routeName}")
-    public String getRoute(@PathVariable final String routeName) {
+    @GetMapping("/route/{routeId}")
+    public String getRoute(@PathVariable final int routeId) {
         final ObjectMapper mapper = new ObjectMapper();
         try {
-            final Route route = RouteDatabase.getRoute(routeName);
+            final Route route = RouteDatabase.getRoute(routeId);
             return makeRouteNode(route, mapper, 500).toString();
         } catch (final NullPointerException e) {
             return "{\"Error\": \"There is no such route in the database\"}";
-        }
-    }
-
-    @PatchMapping("/editRoute/{routeName}")
-    public ResponseEntity<?> editRoute(@PathVariable final String routeName, @RequestBody final RouteDTO route) {
-        if (route.routePositions.isPresent() && route.routePositions.get().length != 24)
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        if (route.region.isPresent() && !Arrays.asList(Forecast.validRegions).contains(route.region.get()))
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-        try {
-            RouteDatabase.editRoute(routeName, route.region.orElse(null), route.routePositions.orElse(null),
-                    route.description.orElse(null));
-            return new ResponseEntity<>(HttpStatus.OK);
-        } catch (final RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 
@@ -121,6 +106,7 @@ public class RouteDatabaseController {
     private static ObjectNode makeRouteNode(final Route route, final ObjectMapper mapper, final int svgWidth) {
         final ObjectNode routeNode = mapper.createObjectNode();
         routeNode.put("name", route.getName());
+        routeNode.put("id", route.getId());
         routeNode.put("region", route.getRegion());
         final boolean[] routePositions = route.getRoutePositions();
         final ArrayNode routePositionsNode = mapper.createArrayNode();

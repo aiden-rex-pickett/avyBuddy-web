@@ -32,7 +32,7 @@ public class RouteDatabase {
      *
      * @param route Route object to have state stored
      */
-    public void addRoute(Route route) {
+    public static void addRoute(Route route) {
         // Checks that route is not already in database
         if (getRoute(route.getId()) != null) {
             throw new IllegalArgumentException("The route " + route.getName() + " already exists in the database");
@@ -44,7 +44,7 @@ public class RouteDatabase {
             var statement = dbConnection.createStatement();
 
             // Writes state of passed Route object to database
-            String sql = "INSERT INTO routes (name, region, routePositions, description)"
+            String sql = "INSERT INTO routes (name, region, positions, description)"
                     + "VALUES ('" + route.getName() + "', '" + route.getRegion() + "', '"
                     + route.getRoutePositionsBinary() + "', '" + route.getDescription() + "');";
 
@@ -58,11 +58,11 @@ public class RouteDatabase {
     /**
      * Gets a route from the database with a given id
      *
-     * @param routeName name of the route to get
+     * @param routeId the ID of the route
      * @return a Route object representing that route, or null if there is none with
      *         that ID
      */
-    public Route getRoute(int routeId) {
+    public static Route getRoute(int routeId) {
         Route returnRoute;
         ResultSet results;
 
@@ -75,14 +75,15 @@ public class RouteDatabase {
 
             String name = results.getString("name");
             String region = results.getString("region");
-            String dateCreated = results.getString("dateCreated");
+            int id = results.getInt("id");
+            String dateCreated = results.getString("date_created");
             String description = results.getString("description");
-            int routePositions = results.getInt("routePositions");
+            int routePositions = results.getInt("positions");
             if (name == null) {
                 return null;
             }
 
-            returnRoute = new Route(region, name, dateCreated, description);
+            returnRoute = new Route(region, name, id, dateCreated, description);
             returnRoute.setNewRoutePositionsBinary(routePositions);
             dbConnection.close();
         } catch (SQLException e) {
@@ -121,7 +122,7 @@ public class RouteDatabase {
                 sql += "region = '" + newRegion + "' , ";
             }
             if (newRoutePositions != null) {
-                sql += "routePositions = '" + getBinaryRoutePositions(newRoutePositions) + "' , ";
+                sql += "positions = '" + getBinaryRoutePositions(newRoutePositions) + "' , ";
             }
             if (newDescription != null) {
                 sql += "description = '" + newDescription + "' , ";
@@ -203,13 +204,13 @@ public class RouteDatabase {
             var statement = dbConnection.createStatement();
 
             results = statement.executeQuery(
-                    "SELECT * FROM routes WHERE region is '" + region + "' ORDER BY routes.dateCreated DESC");
+                    "SELECT * FROM routes WHERE region is '" + region + "' ORDER BY routes.date_created DESC");
             ArrayList<Route> routes = new ArrayList<>();
 
             while (results.next()) {
-                Route route = new Route(results.getString("region"), results.getString("name"),
-                        results.getString("dateCreated"), results.getString("description"));
-                route.setNewRoutePositionsBinary(results.getInt("routePositions"));
+                Route route = new Route(results.getString("region"), results.getString("name"), results.getInt("id"),
+                        results.getString("date_created"), results.getString("description"));
+                route.setNewRoutePositionsBinary(results.getInt("positions"));
                 routes.add(route);
             }
 
@@ -234,13 +235,13 @@ public class RouteDatabase {
             var statement = dbConnection.createStatement();
 
             results = statement.executeQuery(
-                    "SELECT * FROM routes WHERE region is '" + region + "' ORDER BY routes.dateCreated DESC");
+                    "SELECT * FROM routes WHERE region is '" + region + "' ORDER BY routes.date_created DESC");
             ArrayList<Route> routes = new ArrayList<>();
 
             while (results.next()) {
-                Route route = new Route(results.getString("region"), results.getString("name"),
-                        results.getString("dateCreated"), results.getString("description"));
-                route.setNewRoutePositionsBinary(results.getInt("routePositions"));
+                Route route = new Route(results.getString("region"), results.getString("name"), results.getInt("id"),
+                        results.getString("date_created"), results.getString("description"));
+                route.setNewRoutePositionsBinary(results.getInt("positions"));
                 routes.add(route);
             }
 

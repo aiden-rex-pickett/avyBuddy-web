@@ -23,7 +23,7 @@ public class AccountController {
             var connection = DriverManager.getConnection(dburl);
             var statement = connection.createStatement();
 
-            String sql = "INSERT INTO accounts (username, password) VALUES ('" + username + "', '" + password + "')";
+            String sql = "INSERT INTO accounts (username, password) VALUES ('" + username + "', '" + password + "');";
 
             statement.execute(sql);
             connection.close();

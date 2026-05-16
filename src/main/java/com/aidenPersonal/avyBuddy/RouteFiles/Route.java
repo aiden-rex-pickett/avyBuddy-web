@@ -1,10 +1,10 @@
 package com.aidenPersonal.avyBuddy.RouteFiles;
 
-import com.aidenPersonal.avyBuddy.uacData.DataToStringConversions;
-import com.aidenPersonal.avyBuddy.uacData.Forecast;
-
 import java.io.IOException;
 import java.util.Arrays;
+
+import com.aidenPersonal.avyBuddy.uacData.DataToStringConversions;
+import com.aidenPersonal.avyBuddy.uacData.Forecast;
 
 /**
  * This class creates objects that represent routes in the backcountry. These
@@ -307,27 +307,6 @@ public class Route implements Comparable<Route> {
         return Double.compare(thisAverageDanger, otherAverageDanger);
     }
 
-    /**
-     * Private helper method that calculates the average danger of a Route object
-     *
-     * @param route Route object to calculate average danger of
-     * @return double type value which represents the average danger
-     */
-    private double averageDanger(Route route) {
-        double routeTotalDanger = 0.0;
-        double numberOfPositions = 0.0;
-        int[] routeOverallDanger = route.getOverallDangerPositionsForRoute();
-
-        for (int num : routeOverallDanger) {
-            if (num != 0) {
-                routeTotalDanger += num;
-                numberOfPositions++;
-            }
-        }
-
-        return routeTotalDanger / numberOfPositions;
-    }
-
     public boolean equals(Object other) {
         Route otherRoute;
         if (other instanceof Route) {
@@ -366,6 +345,27 @@ public class Route implements Comparable<Route> {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    /**
+     * Private helper method that calculates the average danger of a Route object
+     *
+     * @param route Route object to calculate average danger of
+     * @return double type value which represents the average danger
+     */
+    private double averageDanger(Route route) {
+        double routeTotalDanger = 0.0;
+        double numberOfPositions = 0.0;
+        int[] routeOverallDanger = route.getOverallDangerPositionsForRoute();
+
+        for (int num : routeOverallDanger) {
+            if (num != 0) {
+                routeTotalDanger += num;
+                numberOfPositions++;
+            }
+        }
+
+        return routeTotalDanger / numberOfPositions;
     }
 
 }

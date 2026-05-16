@@ -20,12 +20,6 @@ public class RouteDatabase {
     private static final String url = "jdbc:sqlite:C:/Users/ka7nq/webProjects/avyBuddy/src/main/resources/database.db";
 
     /**
-     * Makes sure objects of this class cannot be created.
-     */
-    private RouteDatabase() {
-    }
-
-    /**
      * Writes state of passed route object to database for storage. This includes
      * the name, region, and routePositions
      * instance variables values when they are passed
@@ -137,40 +131,6 @@ public class RouteDatabase {
     }
 
     /**
-     * Helper method that converts a boolean array of route positions into a binary
-     * number that represents it
-     * to be used by the database
-     *
-     * @param newRoutePositions boolean array of route positions
-     * @return integer representing the positions
-     */
-    private static int getBinaryRoutePositions(boolean[] newRoutePositions) {
-        int newRoutePositionsBinary = 0;
-        boolean[] routePositionsReversed = newRoutePositions.clone();
-
-        int left = 0;
-        int right = routePositionsReversed.length - 1;
-        while (left < right) {
-            boolean temp = routePositionsReversed[left];
-            routePositionsReversed[left] = routePositionsReversed[right];
-            routePositionsReversed[right] = temp;
-            left++;
-            right--;
-        }
-
-        for (int i = routePositionsReversed.length - 1; i >= 0; i--) {
-            boolean b = routePositionsReversed[i];
-            if (b) {
-                newRoutePositionsBinary = newRoutePositionsBinary | 1 << i;
-            } else {
-                newRoutePositionsBinary = newRoutePositionsBinary & ~(1 << i);
-            }
-        }
-
-        return newRoutePositionsBinary;
-    }
-
-    /**
      * This method deletes a route from the database
      *
      * @param routeName name of the route to delete
@@ -253,6 +213,46 @@ public class RouteDatabase {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * Helper method that converts a boolean array of route positions into a binary
+     * number that represents it
+     * to be used by the database
+     *
+     * @param newRoutePositions boolean array of route positions
+     * @return integer representing the positions
+     */
+    private static int getBinaryRoutePositions(boolean[] newRoutePositions) {
+        int newRoutePositionsBinary = 0;
+        boolean[] routePositionsReversed = newRoutePositions.clone();
+
+        int left = 0;
+        int right = routePositionsReversed.length - 1;
+        while (left < right) {
+            boolean temp = routePositionsReversed[left];
+            routePositionsReversed[left] = routePositionsReversed[right];
+            routePositionsReversed[right] = temp;
+            left++;
+            right--;
+        }
+
+        for (int i = routePositionsReversed.length - 1; i >= 0; i--) {
+            boolean b = routePositionsReversed[i];
+            if (b) {
+                newRoutePositionsBinary = newRoutePositionsBinary | 1 << i;
+            } else {
+                newRoutePositionsBinary = newRoutePositionsBinary & ~(1 << i);
+            }
+        }
+
+        return newRoutePositionsBinary;
+    }
+
+    /**
+     * Makes sure objects of this class cannot be created.
+     */
+    private RouteDatabase() {
     }
 
 }

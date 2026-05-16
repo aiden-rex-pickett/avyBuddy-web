@@ -1,14 +1,17 @@
 package com.aidenPersonal.avyBuddy.controllers;
 
+import java.io.IOException;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.aidenPersonal.avyBuddy.imageHandling.SvgRoseGenerator;
 import com.aidenPersonal.avyBuddy.uacData.AvalancheProblem;
 import com.aidenPersonal.avyBuddy.uacData.Forecast;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.springframework.web.bind.annotation.*;
-
-import java.io.IOException;
 
 /**
  * This class is a rest controller that sends data from the UAC api to
@@ -22,13 +25,15 @@ public class ForecastController {
     /**
      * This get mapping returns a JSON object representing the forecast
      *
-     * @param region region to get forecast of
-     * @param svgWidthMain width of the svg of the main rose
-     * @param svgWidthProblems width of the svg of the roses for the avalanche problems
+     * @param region           region to get forecast of
+     * @param svgWidthMain     width of the svg of the main rose
+     * @param svgWidthProblems width of the svg of the roses for the avalanche
+     *                         problems
      * @return string of JSON object
      */
     @GetMapping("/forecast")
-    public String forecast(@RequestParam String region, @RequestParam int svgWidthMain, @RequestParam int svgWidthProblems) {
+    public String forecast(@RequestParam String region, @RequestParam int svgWidthMain,
+            @RequestParam int svgWidthProblems) {
 
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode forecastNode;

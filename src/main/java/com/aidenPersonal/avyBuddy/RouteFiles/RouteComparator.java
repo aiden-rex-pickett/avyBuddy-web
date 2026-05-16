@@ -1,9 +1,9 @@
 package com.aidenPersonal.avyBuddy.RouteFiles;
 
-import com.aidenPersonal.avyBuddy.uacData.Forecast;
-
 import java.io.IOException;
 import java.util.Comparator;
+
+import com.aidenPersonal.avyBuddy.uacData.Forecast;
 
 /**
  * Compares route objects based on the given forecast for the day.

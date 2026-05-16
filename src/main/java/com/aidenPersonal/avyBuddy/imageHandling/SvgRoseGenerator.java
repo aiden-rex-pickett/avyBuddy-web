@@ -8,7 +8,8 @@ import java.util.HashMap;
 import org.jfree.graphics2d.svg.SVGGraphics2D;
 
 /**
- * This class allows for the creations of avalanche rose images that are .svg files for sending to the
+ * This class allows for the creations of avalanche rose images that are .svg
+ * files for sending to the
  * frontend.
  *
  * @author Aiden Pickett
@@ -16,9 +17,11 @@ import org.jfree.graphics2d.svg.SVGGraphics2D;
  */
 public class SvgRoseGenerator {
 
-    //This hashmap is used for mapping the integer values that represent the dangers to
-    //the colors that correspond to the dangers
-    private static final HashMap<Integer, Color> dangerValuesToColorsMap = new HashMap<>(); static {
+    // This hashmap is used for mapping the integer values that represent the
+    // dangers to
+    // the colors that correspond to the dangers
+    private static final HashMap<Integer, Color> dangerValuesToColorsMap = new HashMap<>();
+    static {
         dangerValuesToColorsMap.put(0, Color.WHITE);
         dangerValuesToColorsMap.put(1, Color.WHITE);
         dangerValuesToColorsMap.put(2, new Color(115, 180, 87));
@@ -35,23 +38,27 @@ public class SvgRoseGenerator {
     }
 
     /**
-     * This method generates a rose with a given width. The reason that there is a 94 hardcoded
-     * into the creation of the rose is because a rose of width 94 creates no sub-pixel disturbances
+     * This method generates a rose with a given width. The reason that there is a
+     * 94 hardcoded
+     * into the creation of the rose is because a rose of width 94 creates no
+     * sub-pixel disturbances
      * that would be noticeable when scaling the .svg.
      *
-     * @param width desired with of the svg
-     * @param roseValues A 24-length int array for the values of each of the aspects/elevations. This is
+     * @param width      desired with of the svg
+     * @param roseValues A 24-length int array for the values of each of the
+     *                   aspects/elevations. This is
      *                   specified by the UAC API endpoint
      * @return A string which can be used as an SVG element in a html file
      */
     public static String generateRose(final int width, final int[] roseValues) {
-        if(roseValues.length != 24) {
+        if (roseValues.length != 24) {
             throw new IllegalArgumentException("The number of rose values must be 24");
         }
 
-        final double scaleFactor = (double) width /94;
-        //94 is picked so that the build-in scaling function can be used to get the right width
-        //and scale off of a pixel-perfect model
+        final double scaleFactor = (double) width / 94;
+        // 94 is picked so that the build-in scaling function can be used to get the
+        // right width
+        // and scale off of a pixel-perfect model
         final SVGGraphics2D svgGenerator = new SVGGraphics2D((int) (94 * scaleFactor), (int) (94 * scaleFactor));
         svgGenerator.scale(scaleFactor, scaleFactor);
 
@@ -62,28 +69,32 @@ public class SvgRoseGenerator {
     }
 
     /**
-     * This method generates a rose with a given width. The reason that there is a 94 hardcoded
-     * into the creation of the rose is because a rose of width 94 creates no sub-pixel disturbances
+     * This method generates a rose with a given width. The reason that there is a
+     * 94 hardcoded
+     * into the creation of the rose is because a rose of width 94 creates no
+     * sub-pixel disturbances
      * that would be noticeable when scaling the .svg.
      *
-     * @param width desired with of the svg
-     * @param roseValues A 24-length boolean array for the values of each of the aspects/elevations. This is
+     * @param width      desired with of the svg
+     * @param roseValues A 24-length boolean array for the values of each of the
+     *                   aspects/elevations. This is
      *                   specified by the Routes class
      * @return A string which can be used as an SVG element in a html file
      */
     public static String generateRose(final int width, final boolean[] roseValues) {
-        if(roseValues.length != 24) {
+        if (roseValues.length != 24) {
             throw new IllegalArgumentException("The number of rose values must be 24");
         }
 
-        final double scaleFactor = (double) width /94;
-        //94 is picked so that the build-in scaling function can be used to get the right width
-        //and scale off of a pixel-perfect model
+        final double scaleFactor = (double) width / 94;
+        // 94 is picked so that the build-in scaling function can be used to get the
+        // right width
+        // and scale off of a pixel-perfect model
         final SVGGraphics2D svgGenerator = new SVGGraphics2D((int) (94 * scaleFactor), (int) (94 * scaleFactor));
         svgGenerator.scale(scaleFactor, scaleFactor);
 
         final int[] roseColors = new int[24];
-        for(int i = 0; i < 24; i++) {
+        for (int i = 0; i < 24; i++) {
             if (roseValues[i]) {
                 roseColors[i] = 16;
             }
@@ -96,17 +107,19 @@ public class SvgRoseGenerator {
     }
 
     /**
-     * This method draws the Colors of the rose. This one is not imprecise, thank God.
+     * This method draws the Colors of the rose. This one is not imprecise, thank
+     * God.
      *
      * @param svgGenerator SVGGraphics2D object that the rose will be drawn with
-     * @param roseValues A 24-length int array for the values of each of the aspects/elevations. This is
-     *                   specified by the UAC API endpoint
+     * @param roseValues   A 24-length int array for the values of each of the
+     *                     aspects/elevations. This is
+     *                     specified by the UAC API endpoint
      */
     private static void drawRoseColors(final SVGGraphics2D svgGenerator, final int[] roseValues) {
-        //This is made so that the rose values passed don't have to be inverted.
-        //Inverted here for drawing purposes, so we can draw last to first
+        // This is made so that the rose values passed don't have to be inverted.
+        // Inverted here for drawing purposes, so we can draw last to first
         final ArrayList<Integer> reversedList = new ArrayList<>();
-        for(int i = roseValues.length - 1; i >= 0; i--) {
+        for (int i = roseValues.length - 1; i >= 0; i--) {
             reversedList.add(roseValues[i]);
         }
 
@@ -128,7 +141,7 @@ public class SvgRoseGenerator {
      * @param svgGenerator SVGGraphics2D object that the rose will be drawn with
      */
     private static void drawRoseOutline(final SVGGraphics2D svgGenerator) {
-        //Sets uniform stroke width
+        // Sets uniform stroke width
         final int strokeWidth = 1;
         svgGenerator.setStroke(new BasicStroke(strokeWidth));
         svgGenerator.setColor(Color.BLACK);

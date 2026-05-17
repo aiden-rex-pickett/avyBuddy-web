@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
 
+import jakarta.annotation.Nonnull;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -15,11 +16,15 @@ import jakarta.persistence.Table;
 public class Account {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Nonnull
     private Integer id;
+    @Nonnull
     private String username;
+    @Nonnull
     private String passwordHash;
     @CreationTimestamp
-    private LocalDateTime creation_date;
+    @Nonnull
+    private LocalDateTime creation_timestamp;
 
     public Account() {
     }
@@ -53,17 +58,18 @@ public class Account {
         this.passwordHash = passwordHash;
     }
 
-    public LocalDateTime getCreation_date() {
-        return creation_date;
+    public LocalDateTime getCreation_timestamp() {
+        return creation_timestamp;
     }
 
-    public void setCreation_date(LocalDateTime creation_date) {
-        this.creation_date = creation_date;
+    public void setCreation_timestamp(LocalDateTime creation_date) {
+        this.creation_timestamp = creation_date;
     }
 
     @Override
     public String toString() {
-        return "Account [username=" + username + ", passwordHash=" + passwordHash + ", creation_date=" + creation_date
+        return "Account [username=" + username + ", passwordHash=" + passwordHash + ", creation_date="
+                + creation_timestamp
                 + "]";
     }
 }

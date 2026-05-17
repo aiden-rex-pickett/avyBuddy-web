@@ -55,10 +55,6 @@ public class Forecast {
      */
     public Forecast() {
         mainRose = new int[24];
-        AvalancheProblem avy_problem_1 = new AvalancheProblem(new int[24], "NO VALUE FOUND", "NO VALUE FOUND");
-        AvalancheProblem avy_problem_2 = new AvalancheProblem(new int[24], "NO VALUE FOUND", "NO VALUE FOUND");
-        AvalancheProblem avy_problem_3 = new AvalancheProblem(new int[24], "NO VALUE FOUND", "NO VALUE FOUND");
-
         overall_avy_danger = "NO VALUE FOUND";
         bottom_line = "NO VALUE FOUND";
         date_issued = "NO VALUE FOUND";

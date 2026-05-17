@@ -39,11 +39,12 @@ public class Route {
     public Route() {
     }
 
-    public Route(String name, String region, String description, Integer positions) {
+    public Route(String name, String region, String description, Integer positions, Account account) {
         this.name = name;
         this.region = region;
         this.description = description;
         this.positions = positions;
+        this.account_id = account;
     }
 
     @Override
@@ -99,4 +100,12 @@ public class Route {
         this.creation_timestamp = date_created;
     }
 
+    public boolean[] getPositionsArray() {
+        boolean[] returnPositions = new boolean[24];
+        int newPositions = positions | 0x1000000;
+        for (int i = 0; i < 24; i++) {
+            returnPositions[i] = (newPositions & (1 << 24 - i - 1)) != 0;
+        }
+        return returnPositions;
+    }
 }

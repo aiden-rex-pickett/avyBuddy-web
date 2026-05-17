@@ -1,7 +1,10 @@
 package com.aidenPersonal.avyBuddy.controllers;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -10,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.aidenPersonal.avyBuddy.RouteFiles.Route;
 import com.aidenPersonal.avyBuddy.RouteFiles.RouteDatabase;
 import com.aidenPersonal.avyBuddy.imageHandling.SvgRoseGenerator;
+import com.aidenPersonal.avyBuddy.services.RouteService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -24,6 +28,9 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
  */
 @RestController
 public class RouteDatabaseController {
+
+    @Autowired
+    private RouteService routeService;
 
     /**
      * This helper method makes an {@code ObjectNode} that represents the route that
@@ -50,6 +57,38 @@ public class RouteDatabaseController {
         routeNode.put("positions", routePositionsNode);
         routeNode.put("positionsSvg", SvgRoseGenerator.generateRose(svgWidth, route.getRoutePositions()));
         routeNode.put("dateCreated", route.getDateCreated());
+        routeNode.put("description", route.getDescription());
+
+        return routeNode;
+    }
+
+    /**
+     * This helper method makes an {@code ObjectNode} that represents the route that
+     * is passed to it.
+     *
+     * @param route    The route to be represented
+     * @param mapper   The {@code ObjectMapper} to be used to create the
+     *                 {@code ObjectNode}
+     * @param svgWidth The width of the svg that shows the route positions on the
+     *                 frontend
+     * @return The {@code ObjectNode} that represents the passed in route.
+     */
+    @SuppressWarnings("deprecation")
+    private static ObjectNode makeRouteNode(final com.aidenPersonal.avyBuddy.models.Route route,
+            final ObjectMapper mapper, final int svgWidth) {
+        final ObjectNode routeNode = mapper.createObjectNode();
+        routeNode.put("name", route.getName());
+        routeNode.put("id", route.getId());
+        routeNode.put("region", route.getRegion());
+        final boolean[] routePositions = route.getPositionsArray();
+        final ArrayNode routePositionsNode = mapper.createArrayNode();
+        for (int i = 0; i < 24; i++) {
+            routePositionsNode.add(routePositions[i]);
+        }
+        routeNode.put("positions", routePositionsNode);
+        routeNode.put("positionsSvg", SvgRoseGenerator.generateRose(svgWidth, route.getPositionsArray()));
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM yyyy");
+        routeNode.put("dateCreated", formatter.format(route.getCreation_timestamp()));
         routeNode.put("description", route.getDescription());
 
         return routeNode;
@@ -96,14 +135,24 @@ public class RouteDatabaseController {
         return routesNode.toString();
     }
 
+    // @GetMapping("/route/{routeId}")
+    // public String getRoute(@PathVariable final int routeId) {
+    // final ObjectMapper mapper = new ObjectMapper();
+    // try {
+    // final Route route = RouteDatabase.getRoute(routeId);
+    // return makeRouteNode(route, mapper, 500).toString();
+    // } catch (final NullPointerException e) {
+    // return "{\"Error\": \"There is no such route in the database\"}";
+    // }
+    // }
+
     @GetMapping("/route/{routeId}")
     public String getRoute(@PathVariable final int routeId) {
-        final ObjectMapper mapper = new ObjectMapper();
-        try {
-            final Route route = RouteDatabase.getRoute(routeId);
-            return makeRouteNode(route, mapper, 500).toString();
-        } catch (final NullPointerException e) {
+        ObjectMapper mapper = new ObjectMapper();
+        Optional<com.aidenPersonal.avyBuddy.models.Route> route = routeService.getRouteById(routeId);
+        if (!route.isPresent()) {
             return "{\"Error\": \"There is no such route in the database\"}";
         }
+        return makeRouteNode(route.get(), mapper, 500).toString();
     }
 }

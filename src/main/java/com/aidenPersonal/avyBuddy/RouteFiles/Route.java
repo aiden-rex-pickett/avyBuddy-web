@@ -1,3 +1,5 @@
+// TODO: Fully migrate this files important methods to the Route.java
+// file in the entities folder This one is gonna be no longer needed
 package com.aidenPersonal.avyBuddy.RouteFiles;
 
 import java.io.IOException;

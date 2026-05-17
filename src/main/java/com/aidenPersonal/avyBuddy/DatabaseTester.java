@@ -6,14 +6,18 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import com.aidenPersonal.avyBuddy.models.Account;
+import com.aidenPersonal.avyBuddy.models.Route;
 import com.aidenPersonal.avyBuddy.repositories.AccountRepository;
+import com.aidenPersonal.avyBuddy.repositories.RouteRepository;
 
 @Component
 public class DatabaseTester implements CommandLineRunner {
     private final AccountRepository userRepo;
+    private final RouteRepository routeRepo;
 
-    public DatabaseTester(AccountRepository userRepo) {
+    public DatabaseTester(AccountRepository userRepo, RouteRepository routeRepo) {
         this.userRepo = userRepo;
+        this.routeRepo = routeRepo;
     }
 
     @Override
@@ -28,5 +32,8 @@ public class DatabaseTester implements CommandLineRunner {
         for (Account u : users) {
             System.out.println(u);
         }
+
+        Route r = new Route("TEST01", "salt-lake", "This is a description for TEST01", 1234, users.get(0));
+        routeRepo.save(r);
     }
 }

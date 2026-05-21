@@ -66,8 +66,7 @@ function loadTimeOrdredRoutes(region) {
             routeContainer.appendChild(makeDividingLine());
         });
     }).catch((errObj) => {
-        console.log("CODE: " + errObj.code);
-        console.log("MESSAGE: " + errObj.message);
+        routeContainer.appendChild(makeErrorContainer(errObj));
     });
 }
 // Loads and fills the route listing area with a list of routes ordered
@@ -83,9 +82,22 @@ function loadSortedRoutes(region) {
             routeContainer.appendChild(makeDividingLine());
         });
     }).catch((errObj) => {
-        console.log("CODE: " + errObj.code);
-        console.log("MESSAGE: " + errObj.message);
+        routeContainer.appendChild(makeErrorContainer(errObj));
     });
+}
+function makeErrorContainer(errObj) {
+    const errorMessageContainer = document.createElement("section");
+    errorMessageContainer.classList.add("errorMessageContainer");
+    const errorMessageHeader = document.createElement("h1");
+    errorMessageHeader.textContent = "Oh no!";
+    const errorCodeInfo = document.createElement("p");
+    errorCodeInfo.textContent = "There was a " + errObj.code + " error when attempting to sort by the forecast";
+    const errorMessageInfo = document.createElement("p");
+    errorMessageInfo.textContent = errObj.message;
+    errorMessageContainer.appendChild(errorMessageHeader);
+    errorMessageContainer.appendChild(errorCodeInfo);
+    errorMessageContainer.appendChild(errorMessageInfo);
+    return errorMessageContainer;
 }
 // Function that gets a list of Route objects from a given API endpoint
 // the endpoint should be one that returns a list of routes in the expected form

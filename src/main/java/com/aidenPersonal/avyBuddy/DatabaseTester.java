@@ -34,10 +34,10 @@ public class DatabaseTester implements CommandLineRunner {
         r = new Route("TEST02", "salt-lake", "This is a description for TEST02", 2345, user2);
         routeRepo.save(r);
         Thread.sleep(4000);
-        r = new Route("TEST03", "salt-lake", "This is a description for TEST03", 3456, user2);
+        r = new Route("TEST03", "skyline", "This is a description for TEST03", 3456, user2);
         routeRepo.save(r);
 
-        r = new Route("TEST04", "salt-lake", "This is a description for TEST04", 4567, user1);
+        r = new Route("TEST04", "ogden", "This is a description for TEST04", 4567, user1);
 
         List<Account> users = userRepo.findAll();
         for (Account u : users) {

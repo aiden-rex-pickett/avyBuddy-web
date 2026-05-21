@@ -65,6 +65,8 @@ function loadTimeOrdredRoutes(region) {
             routeContainer.appendChild(makeRouteContainer(route));
             routeContainer.appendChild(makeDividingLine());
         });
+    }).catch((errObj) => {
+        routeContainer.appendChild(makeErrorContainer(errObj));
     });
 }
 // Loads and fills the route listing area with a list of routes ordered
@@ -79,31 +81,51 @@ function loadSortedRoutes(region) {
             routeContainer.appendChild(makeRouteContainer(route));
             routeContainer.appendChild(makeDividingLine());
         });
+    }).catch((errObj) => {
+        routeContainer.appendChild(makeErrorContainer(errObj));
     });
 }
-// Async function that gets a list of Route objects from a given API endpoint
-// the endpoint should be one that returns a route in the expected form
-async function getRouteListFromEndpoint(apiEndpoint) {
-    let result = await fetch(apiEndpoint).then(response => {
-        if (!response.ok) {
-            return response.status;
-        }
-        return response.json().then(serverArray => {
-            let routeList = new Array(serverArray.length);
-            for (let i = 0; i < routeList.length; i++) {
-                const currRoute = serverArray[i];
-                routeList[i] = new Route(currRoute["id"], currRoute["name"], currRoute["region"], currRoute["positions"], currRoute["positionsSvg"], currRoute["dateCreated"], currRoute["description"]);
+function makeErrorContainer(errObj) {
+    const errorMessageContainer = document.createElement("section");
+    errorMessageContainer.classList.add("errorMessageContainer");
+    const errorMessageHeader = document.createElement("h1");
+    errorMessageHeader.textContent = "Oh no!";
+    const errorCodeInfo = document.createElement("p");
+    errorCodeInfo.textContent = "There was a " + errObj.code + " error when attempting to sort by the forecast";
+    const errorMessageInfo = document.createElement("p");
+    errorMessageInfo.textContent = errObj.message;
+    errorMessageContainer.appendChild(errorMessageHeader);
+    errorMessageContainer.appendChild(errorCodeInfo);
+    errorMessageContainer.appendChild(errorMessageInfo);
+    return errorMessageContainer;
+}
+// Function that gets a list of Route objects from a given API endpoint
+// the endpoint should be one that returns a list of routes in the expected form
+function getRouteListFromEndpoint(apiEndpoint) {
+    return new Promise((resolve, reject) => {
+        fetch(apiEndpoint).then(async (response) => {
+            if (!response.ok) { // If not good data, reject promise with status code
+                const data = await response.json();
+                if (data["error"]) {
+                    reject({ code: response.status, message: data["error"] });
+                }
+                else {
+                    reject({ code: response.status, message: response.statusText });
+                }
             }
-            return routeList;
-        })
-            .catch(() => 1);
+            else {
+                const data = await response.json();
+                let routeList = new Array(data.length);
+                for (let i = 0; i < routeList.length; i++) {
+                    const currRoute = data[i];
+                    routeList[i] = new Route(currRoute["id"], currRoute["name"], currRoute["region"], currRoute["positions"], currRoute["positionsSvg"], currRoute["dateCreated"], currRoute["description"]);
+                }
+                resolve(routeList); // If good data, fulfill with route list
+            }
+        }).catch(() => {
+            reject({ code: "", message: "The request failed due to a network error" });
+        });
     });
-    if (Array.isArray(result)) {
-        return result;
-    }
-    else {
-        console.error(result);
-    }
 }
 // Creates and returns a html element which holds all 
 // the route information for a single route

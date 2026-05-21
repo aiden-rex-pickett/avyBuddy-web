@@ -176,42 +176,7 @@ public class Forecast {
      * that the UAC puts at the end and beginning of their api endpoint
      */
     private String removeNBSPAtEndAndBeginning(String string) {
-        char[] expectedToken = new char[] { ';', 'p', 's', 'b', 'n', '&' };
-        int pointer = string.length();
-        while (true) {
-            if (string.charAt(pointer - 1) != '\r' && string.charAt(pointer - 1) != ';') {
-                break;
-            }
-
-            if (string.charAt(pointer - 1) == expectedToken[0]) {
-                boolean nbspSequence = true;
-                for (int i = pointer - 2, j = 1; i > pointer - 1 - expectedToken.length; i--, j++) {
-                    if (string.charAt(i) != expectedToken[j]) {
-                        nbspSequence = false;
-                        break;
-                    }
-                }
-                if (nbspSequence) {
-                    pointer -= 6;
-                } else {
-                    break;
-                }
-            } else {
-                pointer--;
-            }
-        }
-
-        String strippedString = string.substring(0, pointer);
-
-        while (strippedString.charAt(0) == '\r' || strippedString.charAt(0) == '&') {
-            if (strippedString.charAt(0) == '&') {
-                strippedString = strippedString.replaceFirst("&nbsp;", "");
-            } else {
-                strippedString = strippedString.replaceFirst("\r", "");
-            }
-        }
-
-        return strippedString;
+        return string.replaceAll("(^(&nbsp;)+|(&nbsp;)+$)", "");
     }
 
     /**

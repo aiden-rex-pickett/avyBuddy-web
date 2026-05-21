@@ -78,7 +78,9 @@ function loadTimeOrdredRoutes(region: string) {
             routeContainer.appendChild(makeRouteContainer(route))
             routeContainer.appendChild(makeDividingLine());
         })
-    });
+    }).catch((errObj) => {
+        routeContainer.appendChild(makeErrorContainer(errObj));
+    })
 }
 
 // Loads and fills the route listing area with a list of routes ordered
@@ -89,36 +91,61 @@ function loadSortedRoutes(region: string) {
     const url = new URL(apiEndpoint, window.location.origin)
     url.searchParams.set("svgWidth", "250")
     url.searchParams.set("region", region)
-    getRouteListFromEndpoint(url).then(routeList => {
+    getRouteListFromEndpoint(url).then(routeList => { // If route list, then fill with routes
         routeList.forEach(route => {
             routeContainer.appendChild(makeRouteContainer(route))
             routeContainer.appendChild(makeDividingLine());
         })
-    });
+    }).catch((errObj) => {
+        routeContainer.appendChild(makeErrorContainer(errObj));
+    })
 }
 
-// Async function that gets a list of Route objects from a given API endpoint
-// the endpoint should be one that returns a route in the expected form
-async function getRouteListFromEndpoint(apiEndpoint: URL): Promise<Route[]> {
-    let result: Route[] | number = await fetch(apiEndpoint).then(response => {
-        if (!response.ok) { return response.status }
+function makeErrorContainer(errObj): HTMLElement {
+    const errorMessageContainer = document.createElement("section");
+    errorMessageContainer.classList.add("errorMessageContainer")
 
-        return response.json().then(serverArray => {
-            let routeList: Route[] = new Array(serverArray.length);
-            for (let i = 0; i < routeList.length; i++) {
-                const currRoute = serverArray[i];
-                routeList[i] = new Route(currRoute["id"], currRoute["name"], currRoute["region"], currRoute["positions"], currRoute["positionsSvg"], currRoute["dateCreated"], currRoute["description"]);
+    const errorMessageHeader = document.createElement("h1");
+    errorMessageHeader.textContent = "Oh no!"
+
+    const errorCodeInfo = document.createElement("p");
+    errorCodeInfo.textContent = "There was a " + errObj.code + " error when attempting to sort by the forecast";
+
+    const errorMessageInfo = document.createElement("p");
+    errorMessageInfo.textContent = errObj.message
+
+    errorMessageContainer.appendChild(errorMessageHeader)
+    errorMessageContainer.appendChild(errorCodeInfo)
+    errorMessageContainer.appendChild(errorMessageInfo)
+
+    return errorMessageContainer
+}
+
+// Function that gets a list of Route objects from a given API endpoint
+// the endpoint should be one that returns a list of routes in the expected form
+function getRouteListFromEndpoint(apiEndpoint: URL): Promise<Route[]> {
+    return new Promise<Route[]>((resolve, reject) => {
+        fetch(apiEndpoint).then(async (response) => { // When we have recevied a response from fetch
+            if (!response.ok) { // If not good data, reject promise with status code
+                const data = await response.json();
+                if (data["error"]) {
+                    reject({ code: response.status, message: data["error"] })
+                } else {
+                    reject({ code: response.status, message: response.statusText })
+                }
+            } else {
+                const data = await response.json();
+                let routeList: Route[] = new Array(data.length);
+                for (let i = 0; i < routeList.length; i++) {
+                    const currRoute = data[i];
+                    routeList[i] = new Route(currRoute["id"], currRoute["name"], currRoute["region"], currRoute["positions"], currRoute["positionsSvg"], currRoute["dateCreated"], currRoute["description"]);
+                }
+                resolve(routeList); // If good data, fulfill with route list
             }
-            return routeList;
-        })
-            .catch(() => 1)
+        }).catch(() => { // Only if catastrophic fetch failure
+            reject({ code: "", message: "The request failed due to a network error" })
+        });
     })
-
-    if (Array.isArray(result)) {
-        return result
-    } else {
-        console.error(result)
-    }
 }
 
 // Creates and returns a html element which holds all 

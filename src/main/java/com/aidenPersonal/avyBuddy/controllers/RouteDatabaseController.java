@@ -1,15 +1,22 @@
 package com.aidenPersonal.avyBuddy.controllers;
 
+import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.aidenPersonal.avyBuddy.RouteFiles.Route;
-import com.aidenPersonal.avyBuddy.RouteFiles.RouteDatabase;
 import com.aidenPersonal.avyBuddy.imageHandling.SvgRoseGenerator;
+import com.aidenPersonal.avyBuddy.models.Route;
+import com.aidenPersonal.avyBuddy.services.RouteService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -25,6 +32,9 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 @RestController
 public class RouteDatabaseController {
 
+    @Autowired
+    private RouteService routeService;
+
     /**
      * This helper method makes an {@code ObjectNode} that represents the route that
      * is passed to it.
@@ -37,19 +47,21 @@ public class RouteDatabaseController {
      * @return The {@code ObjectNode} that represents the passed in route.
      */
     @SuppressWarnings("deprecation")
-    private static ObjectNode makeRouteNode(final Route route, final ObjectMapper mapper, final int svgWidth) {
+    private static ObjectNode makeRouteNode(final Route route,
+            final ObjectMapper mapper, final int svgWidth) {
         final ObjectNode routeNode = mapper.createObjectNode();
         routeNode.put("name", route.getName());
         routeNode.put("id", route.getId());
         routeNode.put("region", route.getRegion());
-        final boolean[] routePositions = route.getRoutePositions();
+        final boolean[] routePositions = route.getPositionsArray();
         final ArrayNode routePositionsNode = mapper.createArrayNode();
         for (int i = 0; i < 24; i++) {
             routePositionsNode.add(routePositions[i]);
         }
         routeNode.put("positions", routePositionsNode);
-        routeNode.put("positionsSvg", SvgRoseGenerator.generateRose(svgWidth, route.getRoutePositions()));
-        routeNode.put("dateCreated", route.getDateCreated());
+        routeNode.put("positionsSvg", SvgRoseGenerator.generateRose(svgWidth, route.getPositionsArray()));
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM yyyy");
+        routeNode.put("dateCreated", formatter.format(route.getCreationTimestamp()));
         routeNode.put("description", route.getDescription());
 
         return routeNode;
@@ -69,7 +81,7 @@ public class RouteDatabaseController {
         final ObjectMapper mapper = new ObjectMapper();
         final ArrayNode routesNode = mapper.createArrayNode();
 
-        final List<Route> routes = RouteDatabase.getRoutesOrderedByRecency(region);
+        final List<Route> routes = routeService.getRoutesByRecency(region);
 
         for (final Route route : routes) {
             routesNode.add(makeRouteNode(route, mapper, svgWidth));
@@ -83,27 +95,32 @@ public class RouteDatabaseController {
      * sorted by the forecast data
      */
     @GetMapping("/getRouteListForecast")
-    public String getRouteListForecast(@RequestParam final int svgWidth, @RequestParam final String region) {
+    public ResponseEntity<Object> getRouteListForecast(@RequestParam final int svgWidth,
+            @RequestParam final String region) {
         final ObjectMapper mapper = new ObjectMapper();
         final ArrayNode routesNode = mapper.createArrayNode();
 
-        final List<Route> routes = RouteDatabase.getRoutesOrderedByForecast(region);
+        final Optional<List<Route>> routes = routeService.getRoutesByForecast(region);
+        if (!routes.isPresent()) {
+            Map<String, Object> errorBody = new HashMap<>();
+            errorBody.put("error", "The connection to the UAC Server Failed");
+            return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body(errorBody);
+        }
 
-        for (final Route route : routes) {
+        for (final Route route : routes.get()) {
             routesNode.add(makeRouteNode(route, mapper, svgWidth));
         }
 
-        return routesNode.toString();
+        return ResponseEntity.ok(routesNode.toString());
     }
 
     @GetMapping("/route/{routeId}")
     public String getRoute(@PathVariable final int routeId) {
-        final ObjectMapper mapper = new ObjectMapper();
-        try {
-            final Route route = RouteDatabase.getRoute(routeId);
-            return makeRouteNode(route, mapper, 500).toString();
-        } catch (final NullPointerException e) {
+        ObjectMapper mapper = new ObjectMapper();
+        Optional<Route> route = routeService.getRouteById(routeId);
+        if (!route.isPresent()) {
             return "{\"Error\": \"There is no such route in the database\"}";
         }
+        return makeRouteNode(route.get(), mapper, 500).toString();
     }
 }

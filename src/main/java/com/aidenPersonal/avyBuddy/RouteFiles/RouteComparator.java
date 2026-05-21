@@ -1,6 +1,5 @@
 package com.aidenPersonal.avyBuddy.RouteFiles;
 
-import java.io.IOException;
 import java.util.Comparator;
 
 import com.aidenPersonal.avyBuddy.uacData.Forecast;
@@ -11,29 +10,23 @@ import com.aidenPersonal.avyBuddy.uacData.Forecast;
  * @author Aiden Pickett
  * @version 07/02/2025
  */
-public class RouteComparator implements Comparator<Route> {
+public class RouteComparator implements Comparator<com.aidenPersonal.avyBuddy.models.Route> {
 
     int[] currentDanger;
 
     /**
-     * Constructor that takes a region to make a Forecast to sort the Routes by
+     * Constructor that takes a Forecast object to sort by
      *
-     * @param region The region to get forecast data to sort the routes by
+     * @param forecast The forecast object for that region
      */
-    RouteComparator(String region) {
-        Forecast forecast = null;
-        try {
-            forecast = new Forecast(region);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+    public RouteComparator(Forecast forecast) {
         currentDanger = forecast.getmain_rose_array();
     }
 
     @Override
-    public int compare(Route o1, Route o2) {
-        boolean[] o1Positions = o1.getRoutePositions();
-        boolean[] o2Positions = o2.getRoutePositions();
+    public int compare(com.aidenPersonal.avyBuddy.models.Route o1, com.aidenPersonal.avyBuddy.models.Route o2) {
+        boolean[] o1Positions = o1.getPositionsArray();
+        boolean[] o2Positions = o2.getPositionsArray();
 
         double o1DangerAverage = 0.0;
         double o1DangerPositions = 0.0;

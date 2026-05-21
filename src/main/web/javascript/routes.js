@@ -65,8 +65,9 @@ function loadTimeOrdredRoutes(region) {
             routeContainer.appendChild(makeRouteContainer(route));
             routeContainer.appendChild(makeDividingLine());
         });
-    }).catch((statusCode) => {
-        console.error(statusCode);
+    }).catch((errObj) => {
+        console.log("CODE: " + errObj.code);
+        console.log("MESSAGE: " + errObj.message);
     });
 }
 // Loads and fills the route listing area with a list of routes ordered
@@ -81,18 +82,24 @@ function loadSortedRoutes(region) {
             routeContainer.appendChild(makeRouteContainer(route));
             routeContainer.appendChild(makeDividingLine());
         });
-    }).catch((statusCode) => {
-        console.error(statusCode);
+    }).catch((errObj) => {
+        console.log("CODE: " + errObj.code);
+        console.log("MESSAGE: " + errObj.message);
     });
 }
 // Function that gets a list of Route objects from a given API endpoint
 // the endpoint should be one that returns a list of routes in the expected form
 function getRouteListFromEndpoint(apiEndpoint) {
-    // TODO: Check if a bad result gets returned, if so return some sort of error promise so that it renders error?
     return new Promise((resolve, reject) => {
         fetch(apiEndpoint).then(async (response) => {
-            if (response.status != 200) { // If not good data, reject promise with status code
-                reject(response.status);
+            if (!response.ok) { // If not good data, reject promise with status code
+                const data = await response.json();
+                if (data["error"]) {
+                    reject({ code: response.status, message: data["error"] });
+                }
+                else {
+                    reject({ code: response.status, message: response.statusText });
+                }
             }
             else {
                 const data = await response.json();
@@ -104,7 +111,7 @@ function getRouteListFromEndpoint(apiEndpoint) {
                 resolve(routeList); // If good data, fulfill with route list
             }
         }).catch(() => {
-            reject(404);
+            reject({ code: "", message: "The request failed due to a network error" });
         });
     });
 }

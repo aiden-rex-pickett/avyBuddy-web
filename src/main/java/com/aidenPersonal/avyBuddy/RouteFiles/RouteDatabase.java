@@ -205,8 +205,6 @@ public class RouteDatabase {
                 routes.add(route);
             }
 
-            routes.sort(new RouteComparator(region));
-
             dbConnection.close();
 
             return routes;

@@ -23,7 +23,7 @@ public class Route {
     @Nonnull
     @ManyToOne
     @JoinColumn(name = "account_id")
-    private Account account_id;
+    private Account accountId;
     @Nonnull
     private String name;
     @Nonnull
@@ -34,7 +34,7 @@ public class Route {
     private Integer positions;
     @CreationTimestamp
     @Nonnull
-    private LocalDateTime creation_timestamp;
+    private LocalDateTime creationTimestamp;
 
     public Route() {
     }
@@ -44,7 +44,15 @@ public class Route {
         this.region = region;
         this.description = description;
         this.positions = positions;
-        this.account_id = account;
+        this.accountId = account;
+    }
+
+    public Account getAccountId() {
+        return accountId;
+    }
+
+    public void setAccountId(Account account_id) {
+        this.accountId = account_id;
     }
 
     @Override
@@ -92,12 +100,12 @@ public class Route {
         this.positions = positions;
     }
 
-    public LocalDateTime getCreation_timestamp() {
-        return creation_timestamp;
+    public LocalDateTime getCreationTimestamp() {
+        return creationTimestamp;
     }
 
-    public void setCreation_timestamp(LocalDateTime date_created) {
-        this.creation_timestamp = date_created;
+    public void setCreationTimestamp(LocalDateTime date_created) {
+        this.creationTimestamp = date_created;
     }
 
     public boolean[] getPositionsArray() {

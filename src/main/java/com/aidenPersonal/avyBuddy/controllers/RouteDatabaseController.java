@@ -88,7 +88,7 @@ public class RouteDatabaseController {
         routeNode.put("positions", routePositionsNode);
         routeNode.put("positionsSvg", SvgRoseGenerator.generateRose(svgWidth, route.getPositionsArray()));
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM yyyy");
-        routeNode.put("dateCreated", formatter.format(route.getCreation_timestamp()));
+        routeNode.put("dateCreated", formatter.format(route.getCreationTimestamp()));
         routeNode.put("description", route.getDescription());
 
         return routeNode;
@@ -108,9 +108,9 @@ public class RouteDatabaseController {
         final ObjectMapper mapper = new ObjectMapper();
         final ArrayNode routesNode = mapper.createArrayNode();
 
-        final List<Route> routes = RouteDatabase.getRoutesOrderedByRecency(region);
+        final List<com.aidenPersonal.avyBuddy.models.Route> routes = routeService.getRoutesByRecency(region);
 
-        for (final Route route : routes) {
+        for (final com.aidenPersonal.avyBuddy.models.Route route : routes) {
             routesNode.add(makeRouteNode(route, mapper, svgWidth));
         }
 

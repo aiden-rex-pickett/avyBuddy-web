@@ -1,8 +1,11 @@
 package com.aidenPersonal.avyBuddy.services;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 import com.aidenPersonal.avyBuddy.models.Route;
@@ -22,5 +25,10 @@ public class RouteService {
         } else {
             return Optional.empty();
         }
+    }
+
+    @Transactional
+    public List<Route> getRoutesByRecency(String region) {
+        return routeRepo.getRoutesByRegion(region, Sort.by(Direction.DESC, "creationTimestamp"));
     }
 }

@@ -23,7 +23,7 @@ public class DatabaseTester implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         Account user1 = new Account("Aiden", "ARPLING@GMAIL.COM");
-        Thread.sleep(30000);
+        Thread.sleep(3000);
         Account user2 = new Account("ARBLINGUS", "ARPLING@GMAIL.COM");
         userRepo.save(user1);
         userRepo.save(user2);

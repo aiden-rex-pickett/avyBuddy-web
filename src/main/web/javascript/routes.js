@@ -65,6 +65,8 @@ function loadTimeOrdredRoutes(region) {
             routeContainer.appendChild(makeRouteContainer(route));
             routeContainer.appendChild(makeDividingLine());
         });
+    }).catch((statusCode) => {
+        console.error(statusCode);
     });
 }
 // Loads and fills the route listing area with a list of routes ordered
@@ -79,31 +81,32 @@ function loadSortedRoutes(region) {
             routeContainer.appendChild(makeRouteContainer(route));
             routeContainer.appendChild(makeDividingLine());
         });
+    }).catch((statusCode) => {
+        console.error(statusCode);
     });
 }
-// Async function that gets a list of Route objects from a given API endpoint
-// the endpoint should be one that returns a route in the expected form
-async function getRouteListFromEndpoint(apiEndpoint) {
-    let result = await fetch(apiEndpoint).then(response => {
-        if (!response.ok) {
-            return response.status;
-        }
-        return response.json().then(serverArray => {
-            let routeList = new Array(serverArray.length);
-            for (let i = 0; i < routeList.length; i++) {
-                const currRoute = serverArray[i];
-                routeList[i] = new Route(currRoute["id"], currRoute["name"], currRoute["region"], currRoute["positions"], currRoute["positionsSvg"], currRoute["dateCreated"], currRoute["description"]);
+// Function that gets a list of Route objects from a given API endpoint
+// the endpoint should be one that returns a list of routes in the expected form
+function getRouteListFromEndpoint(apiEndpoint) {
+    // TODO: Check if a bad result gets returned, if so return some sort of error promise so that it renders error?
+    return new Promise((resolve, reject) => {
+        fetch(apiEndpoint).then(async (response) => {
+            if (response.status != 200) { // If not good data, reject promise with status code
+                reject(response.status);
             }
-            return routeList;
-        })
-            .catch(() => 1);
+            else {
+                const data = await response.json();
+                let routeList = new Array(data.length);
+                for (let i = 0; i < routeList.length; i++) {
+                    const currRoute = data[i];
+                    routeList[i] = new Route(currRoute["id"], currRoute["name"], currRoute["region"], currRoute["positions"], currRoute["positionsSvg"], currRoute["dateCreated"], currRoute["description"]);
+                }
+                resolve(routeList); // If good data, fulfill with route list
+            }
+        }).catch(() => {
+            reject(404);
+        });
     });
-    if (Array.isArray(result)) {
-        return result;
-    }
-    else {
-        console.error(result);
-    }
 }
 // Creates and returns a html element which holds all 
 // the route information for a single route

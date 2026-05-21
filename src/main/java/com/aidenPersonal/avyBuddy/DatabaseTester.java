@@ -24,16 +24,24 @@ public class DatabaseTester implements CommandLineRunner {
     public void run(String... args) throws Exception {
         Account user1 = new Account("Aiden", "ARPLING@GMAIL.COM");
         Thread.sleep(3000);
-        Account user2 = new Account("ARBLINGUS", "ARPLING@GMAIL.COM");
         userRepo.save(user1);
+        Route r = new Route("TEST01", "salt-lake", "This is a description for TEST01", 1234, user1);
+        routeRepo.save(r);
+
+
+        Account user2 = new Account("ARBLINGUS", "YABADABA");
         userRepo.save(user2);
+        r = new Route("TEST02", "salt-lake", "This is a description for TEST02", 2345, user2);
+        routeRepo.save(r);
+        Thread.sleep(4000);
+        r = new Route("TEST03", "salt-lake", "This is a description for TEST03", 3456, user2);
+        routeRepo.save(r);
+
+        r = new Route("TEST04", "salt-lake", "This is a description for TEST04", 4567, user1);
 
         List<Account> users = userRepo.findAll();
         for (Account u : users) {
             System.out.println(u);
         }
-
-        Route r = new Route("TEST01", "salt-lake", "This is a description for TEST01", 1234, users.get(0));
-        routeRepo.save(r);
     }
 }

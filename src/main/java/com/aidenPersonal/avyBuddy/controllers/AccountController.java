@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class AccountController {
 
+    // TODO: Use environment variable instead here
     private final String dburl = "jdbc:sqlite:C:/Users/ka7nq/webProjects/avyBuddy/src/main/resources/database.db";
     private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
@@ -23,6 +24,7 @@ public class AccountController {
             var connection = DriverManager.getConnection(dburl);
             var statement = connection.createStatement();
 
+            // TODO: Make service and repository and all that to do this the spring way instead
             String sql = "INSERT INTO accounts (username, password) VALUES ('" + username + "', '" + password + "');";
 
             statement.execute(sql);

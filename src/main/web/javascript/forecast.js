@@ -1,5 +1,4 @@
 //Main forcast fetch for the forecast page
-//TODO: Make selection region selection + disclaimer that full forecast should be read
 
 const apiEndpoint = "/apis/forecast"
 const queryParams = {

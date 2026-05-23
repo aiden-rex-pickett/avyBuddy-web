@@ -109,7 +109,7 @@ function makeErrorContainer(errObj): HTMLElement {
     errorMessageHeader.textContent = "Oh no!"
 
     const errorCodeInfo = document.createElement("p");
-    errorCodeInfo.textContent = "There was a " + errObj.code + " error when attempting to sort by the forecast";
+    errorCodeInfo.textContent = "There was a " + errObj.code + " error when attempting to get the routes";
 
     const errorMessageInfo = document.createElement("p");
     errorMessageInfo.textContent = errObj.message

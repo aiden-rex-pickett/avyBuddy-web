@@ -4,6 +4,19 @@ html{
     overflow-x: hidden;
 }
 
+.inlineLink {
+    color: #030f21; /* Matches your dominant dark blue */
+    text-decoration: none;
+    font-weight: 600; /* Makes them pop slightly from regular text */
+    border-bottom: 1px solid transparent;
+    transition: all 0.2s ease-in-out;
+}
+
+.inlineLink:hover, .inlineLink:focus {
+    color: #030f21;
+    opacity: 0.8; /* Subtle visual feedback */
+}
+
 .svg{
     background-color: #030f21;
 }
@@ -155,4 +168,11 @@ body{
 .footer{
     margin: 5px;
     font-weight: lighter;
+}
+
+.bottomTextWrap {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 0.5rem;
 }

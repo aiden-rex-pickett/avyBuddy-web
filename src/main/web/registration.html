@@ -1,10 +1,11 @@
+<!DOCTYPE html>
 <html lang="en">
 	<head>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<title>avyBuddy</title>
 		<link rel="stylesheet" href="/css/main.css">
-		<link rel="stylesheet" href="/css/forecast.css">
+		<link rel="stylesheet" href="/css/registration.css">
 		<link rel="preconnect" href="https://fonts.googleapis.com">
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 		<link href="https://fonts.googleapis.com/css2?family=Arvo:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
@@ -13,7 +14,7 @@
 		<header>
 			<div class="main-header-wrap">
 				<a href="/" class="logo">
-					<img src="/avyBuddyAiLogo.jpg" alt="Logo">
+					<img src="/avyBuddyAiLogo.jpg" alt="logo">
 				</a>
 				<a href='#' id="menuOpen" class="open-menu-button">
 					<svg class="open-menu-button" fill="#FFFFF0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50" width="50px" height="50px"><path id="menuOpen" d="M 5 8 A 2.0002 2.0002 0 1 0 5 12 L 45 12 A 2.0002 2.0002 0 1 0 45 8 L 5 8 z M 5 23 A 2.0002 2.0002 0 1 0 5 27 L 45 27 A 2.0002 2.0002 0 1 0 45 23 L 5 23 z M 5 38 A 2.0002 2.0002 0 1 0 5 42 L 45 42 A 2.0002 2.0002 0 1 0 45 38 L 5 38 z"/></svg>
@@ -38,28 +39,16 @@
 				</nav>
 			</div>
 		</header>
-		<div class="headerWrap" style="height: 100px; display: flex;">
-			<h1 style="padding-right: 0" class="forecastHeader">Today's Forecast For</h1>
-			<div id="regionHoverDiv" style="align-items: center">
-				<h1 style="padding-left: 0; background-color: rgb(117, 186, 223); border-radius: 30px;" class='forecastHeader' id='regionTitle'>
-					&nbsp;Salt Lake:
-				</h1>
-				<div id="regionTitleWrapper">
-					<ul id="regionList"></ul>
-				</div>
-			</div>
+		<div class="formWrapper">
+			<h1>AvyBuddy Registration</h1>
+			<form action="/apis/register" method="POST">
+				<label for="username">Username:</label>
+				<input type="text" id="username" class="textIn" name="username">
+				<label for="password">Password:</label>
+				<input type="password" id="password" class="textIn" name="password">
+				<input type="submit" class="routeButton">
+			</form>
 		</div>
-    <div style="display: flex; justify-content: center;">
-      <p><strong style="font-weight: 900;">Disclaimer: </strong>The original UAC Forecast should be read in full. this is not a replacement, simply a reference.</p>
-    </div>
-		<div class="forecastAreaMain">
-			<div class="mainRoseSvg" id="mainRoseSvg"><svg class="svgActual"></svg></div>
-			<div class="forecastBottomLine"><p id="bottomLineText"></p></div>
-		</div>
-		<div class="problemArea" id="problemArea">
-			<h1 class="problemHeaderMain" style="font-size: 3em">Avalanche Problems:</h1>
-		</div>
-		<script src="/javascript/forecast.js"></script>
 		<footer>
 			<div class="main-footer-wrap">
 				<h4 class="footer">Designed, built, and maintained by Aiden Pickett</h4>
@@ -67,6 +56,6 @@
 				<h5 class="footer" style="margin-top: 10px">All forecast data is provided by the Utah Avalanche Center</h5>
 			</div>
 		</footer>
-		<script src="/javascript/buttons.js">></script>
+		<script src="/javascript/buttons.js"></script>
 	</body>
 </html>

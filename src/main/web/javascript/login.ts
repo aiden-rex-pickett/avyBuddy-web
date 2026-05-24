@@ -1,4 +1,5 @@
 const loginForm = document.getElementById('loginForm')
+const errorSpace = document.getElementById('errorSpace')
 
 loginForm.addEventListener('submit', async (event) => {
     event.preventDefault();
@@ -21,9 +22,10 @@ loginForm.addEventListener('submit', async (event) => {
                 window.location.href = "/"
             }
         } else {
-            alert('Invalid credentials!');
+            errorSpace.textContent = "Invalid Username or Password"
+            errorSpace.style.display = "block"
         }
     } catch (error) {
-        console.error('Network error:', error);
+        console.error(error)
     }
 })

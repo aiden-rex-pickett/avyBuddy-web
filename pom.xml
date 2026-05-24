@@ -58,6 +58,7 @@
             <artifactId>spring-security-crypto</artifactId>
         </dependency>
 
+        <!-- JPA Hookup for database things -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
@@ -69,9 +70,16 @@
 			<artifactId>sqlite-jdbc</artifactId>
 		</dependency>
 
+        <!-- ORM dialect for sqlite -->
         <dependency>
 			<groupId>org.hibernate.orm</groupId>
 			<artifactId>hibernate-community-dialects</artifactId>
+        </dependency>
+
+        <!-- Spring security for login/logout, sessions, etc. -->
+        <dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
         </dependency>
 
 	</dependencies>

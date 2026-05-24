@@ -8,7 +8,7 @@ import com.aidenPersonal.avyBuddy.models.Account;
 import com.aidenPersonal.avyBuddy.repositories.AccountRepository;;
 
 @Service
-public class AccountService {
+public class CustomAccountService {
     @Autowired
     private AccountRepository accountRepo;
 

@@ -5,9 +5,10 @@ class PageRoute {
     positions: boolean[];
     positionsSVG: string;
     dateCreated: string;
-    description: string
+    description: string;
+    accountUsername: string;
 
-    constructor(id: number, name: string, region: string, positions: boolean[], positionsSVG: string, dateCreated: string, description: string) {
+    constructor(id: number, name: string, region: string, positions: boolean[], positionsSVG: string, dateCreated: string, description: string, accountUsername: string) {
         this.id = id;
         this.name = name;
         this.region = region;
@@ -15,6 +16,7 @@ class PageRoute {
         this.positionsSVG = positionsSVG;
         this.dateCreated = dateCreated;
         this.description = description;
+        this.accountUsername = accountUsername
     }
 }
 
@@ -23,14 +25,14 @@ fetch(path).then(response => response.json()).then(json => {
     if (json["Error"] != undefined) {
         loadErrorPage(window.location.pathname.replace("/route/", ""))
     } else {
-        const route = new PageRoute(json["id"], json["name"], json["region"], json["positions"], json["positionsSvg"], json["dateCreated"], json["description"]);
+        const route = new PageRoute(json["id"], json["name"], json["region"], json["positions"], json["positionsSvg"], json["dateCreated"], json["description"], json["accountUsername"]);
         loadRoutePage(route);
     }
 }).catch(err => { console.error(err) })
 
 const main = document.querySelector("main");
 
-function loadRoutePage(route: Route) {
+function loadRoutePage(route: PageRoute) {
     const routeHeaderWrap = document.createElement("div");
     routeHeaderWrap.classList.add("routeHeaderWrap");
 
@@ -45,8 +47,8 @@ function loadRoutePage(route: Route) {
     routeRegionHtml.classList.add("topline");
     routeRegionHtml.innerHTML = "For the <strong>" + route.region + "</strong> region"
 
-    const routeCreationDate = document.createElement("p");
-    routeCreationDate.textContent = "Created on " + route.dateCreated;
+    const routeCreationInformation = document.createElement("p");
+    routeCreationInformation.innerHTML = 'Created on ' + route.dateCreated + ', by <a class="register-link" href="/account/' + route.accountUsername + '" + >' + route.accountUsername + "</a>";
 
     const dividingLine = document.createElement("hr");
 
@@ -63,7 +65,7 @@ function loadRoutePage(route: Route) {
 
     routeHeader.appendChild(routeTitle);
     routeHeader.appendChild(routeRegionHtml);
-    routeHeader.appendChild(routeCreationDate);
+    routeHeader.appendChild(routeCreationInformation);
     routeHeader.appendChild(dividingLine);
 
     routeHeaderWrap.appendChild(routeHeader);

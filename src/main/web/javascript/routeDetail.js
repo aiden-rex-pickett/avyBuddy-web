@@ -6,7 +6,8 @@ class PageRoute {
     positionsSVG;
     dateCreated;
     description;
-    constructor(id, name, region, positions, positionsSVG, dateCreated, description) {
+    accountUsername;
+    constructor(id, name, region, positions, positionsSVG, dateCreated, description, accountUsername) {
         this.id = id;
         this.name = name;
         this.region = region;
@@ -14,6 +15,7 @@ class PageRoute {
         this.positionsSVG = positionsSVG;
         this.dateCreated = dateCreated;
         this.description = description;
+        this.accountUsername = accountUsername;
     }
 }
 const path = "/apis" + window.location.pathname;
@@ -22,7 +24,7 @@ fetch(path).then(response => response.json()).then(json => {
         loadErrorPage(window.location.pathname.replace("/route/", ""));
     }
     else {
-        const route = new PageRoute(json["id"], json["name"], json["region"], json["positions"], json["positionsSvg"], json["dateCreated"], json["description"]);
+        const route = new PageRoute(json["id"], json["name"], json["region"], json["positions"], json["positionsSvg"], json["dateCreated"], json["description"], json["accountUsername"]);
         loadRoutePage(route);
     }
 }).catch(err => { console.error(err); });
@@ -38,8 +40,8 @@ function loadRoutePage(route) {
     const routeRegionHtml = document.createElement("p");
     routeRegionHtml.classList.add("topline");
     routeRegionHtml.innerHTML = "For the <strong>" + route.region + "</strong> region";
-    const routeCreationDate = document.createElement("p");
-    routeCreationDate.textContent = "Created on " + route.dateCreated;
+    const routeCreationInformation = document.createElement("p");
+    routeCreationInformation.innerHTML = 'Created on ' + route.dateCreated + ', by <a class="register-link" href="/account/' + route.accountUsername + '" + >' + route.accountUsername + "</a>";
     const dividingLine = document.createElement("hr");
     const backButtonWrap = document.createElement("div");
     backButtonWrap.classList.add("backButtonWrap");
@@ -51,7 +53,7 @@ function loadRoutePage(route) {
     backButtonWrap.appendChild(backButton);
     routeHeader.appendChild(routeTitle);
     routeHeader.appendChild(routeRegionHtml);
-    routeHeader.appendChild(routeCreationDate);
+    routeHeader.appendChild(routeCreationInformation);
     routeHeader.appendChild(dividingLine);
     routeHeaderWrap.appendChild(routeHeader);
     routeHeaderWrap.appendChild(backButtonWrap);

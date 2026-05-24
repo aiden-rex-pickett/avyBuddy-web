@@ -16,7 +16,7 @@ window.addEventListener('pageshow', (event) => {
 fetch("/apis/status").then((response) => response.json()).then((data) => {
     if (data["loggedIn"] && data["loggedIn"] == true) {
         accountLink.textContent = data["username"]
-        accountLink.href = data["username"]
+        accountLink.href = "/account/" + data["username"]
     }
 })
 

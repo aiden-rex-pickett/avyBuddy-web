@@ -52,6 +52,7 @@ public class RouteDatabaseController {
         final ObjectNode routeNode = mapper.createObjectNode();
         routeNode.put("name", route.getName());
         routeNode.put("id", route.getId());
+        routeNode.put("accountUsername", route.getAccountId().getUsername());
         routeNode.put("region", route.getRegion());
         final boolean[] routePositions = route.getPositionsArray();
         final ArrayNode routePositionsNode = mapper.createArrayNode();

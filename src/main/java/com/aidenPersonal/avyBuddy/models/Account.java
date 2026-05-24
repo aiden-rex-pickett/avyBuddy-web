@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import org.hibernate.annotations.CreationTimestamp;
 
 import jakarta.annotation.Nonnull;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -19,6 +20,7 @@ public class Account {
     @Nonnull
     private Integer id;
     @Nonnull
+    @Column(unique = true, nullable = false)
     private String username;
     @Nonnull
     private String passwordHash;

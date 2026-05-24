@@ -21,7 +21,7 @@ public class SecurityConfig {
 
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/forecast", "/getRouteListRecency", "/getRouteListForecast", "/route/*",
-                                "/login", "/register")
+                                "/login", "/register", "/status")
                         .permitAll()
                         .anyRequest().authenticated())
 

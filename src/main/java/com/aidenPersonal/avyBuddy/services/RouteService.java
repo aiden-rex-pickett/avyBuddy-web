@@ -10,11 +10,12 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 import com.aidenPersonal.avyBuddy.RouteFiles.RouteComparator;
+import com.aidenPersonal.avyBuddy.models.Account;
 import com.aidenPersonal.avyBuddy.models.Route;
 import com.aidenPersonal.avyBuddy.repositories.RouteRepository;
 import com.aidenPersonal.avyBuddy.uacData.Forecast;
 
-import jakarta.transaction.Transactional;;
+import jakarta.transaction.Transactional;
 
 @Service
 public class RouteService {
@@ -46,5 +47,10 @@ public class RouteService {
         } catch (Exception e) {
             return Optional.empty();
         }
+    }
+
+    @Transactional
+    public List<Route> getRoutesByUsername(Account account) {
+        return routeRepo.getRoutesByAccountId(account, Sort.by(Direction.DESC, "creationTimestamp"));
     }
 }

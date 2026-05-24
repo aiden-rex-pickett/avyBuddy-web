@@ -1,6 +1,9 @@
 package com.aidenPersonal.avyBuddy.controllers;
 
+import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -9,9 +12,11 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.aidenPersonal.avyBuddy.models.Account;
 import com.aidenPersonal.avyBuddy.services.AccountService;
 
 @Controller
@@ -45,5 +50,19 @@ public class AccountController {
         return ResponseEntity.ok(Map.of(
                 "loggedIn", true,
                 "username", userDetails.getUsername()));
+    }
+
+    @GetMapping("/account/{username}")
+    public ResponseEntity<?> getAccount(@PathVariable final String username) {
+        Optional<Account> account = accountService.getAccountByUsername(username);
+        if (account.isEmpty()) {
+            Map<String, Object> errorBody = new HashMap<>();
+            errorBody.put("Error", "User not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorBody);
+        }
+        Map<String, Object> response = new HashMap<>();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM yyyy");
+        response.put("creationDate", formatter.format(account.get().getCreation_timestamp()));
+        return ResponseEntity.ok(response);
     }
 }

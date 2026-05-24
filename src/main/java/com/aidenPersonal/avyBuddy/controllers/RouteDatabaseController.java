@@ -15,7 +15,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.aidenPersonal.avyBuddy.imageHandling.SvgRoseGenerator;
+import com.aidenPersonal.avyBuddy.models.Account;
 import com.aidenPersonal.avyBuddy.models.Route;
+import com.aidenPersonal.avyBuddy.services.AccountService;
 import com.aidenPersonal.avyBuddy.services.RouteService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -34,6 +36,9 @@ public class RouteDatabaseController {
 
     @Autowired
     private RouteService routeService;
+
+    @Autowired
+    private AccountService accountService;
 
     /**
      * This helper method makes an {@code ObjectNode} that represents the route that
@@ -96,7 +101,7 @@ public class RouteDatabaseController {
      * sorted by the forecast data
      */
     @GetMapping("/getRouteListForecast")
-    public ResponseEntity<Object> getRouteListForecast(@RequestParam final int svgWidth,
+    public ResponseEntity<?> getRouteListForecast(@RequestParam final int svgWidth,
             @RequestParam final String region) {
         final ObjectMapper mapper = new ObjectMapper();
         final ArrayNode routesNode = mapper.createArrayNode();
@@ -109,6 +114,25 @@ public class RouteDatabaseController {
         }
 
         for (final Route route : routes.get()) {
+            routesNode.add(makeRouteNode(route, mapper, svgWidth));
+        }
+
+        return ResponseEntity.ok(routesNode.toString());
+    }
+
+    @GetMapping("/getRouteListAccount")
+    public ResponseEntity<?> getRouteListAccount(@RequestParam final int svgWidth,
+            @RequestParam final String username) {
+        final ObjectMapper mapper = new ObjectMapper();
+        final ArrayNode routesNode = mapper.createArrayNode();
+
+        Optional<Account> account = accountService.getAccountByUsername(username);
+        if (accountService.getAccountByUsername(username).isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("There is no user with the username " + username);
+        }
+        final List<Route> routes = routeService.getRoutesByUsername(account.get());
+
+        for (final Route route : routes) {
             routesNode.add(makeRouteNode(route, mapper, svgWidth));
         }
 

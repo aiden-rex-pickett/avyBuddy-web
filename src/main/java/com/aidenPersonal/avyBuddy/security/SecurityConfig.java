@@ -17,11 +17,14 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                // TODO: Make so that it only takes requests from the nginx server like only
+                // from the same host
                 .csrf(csrf -> csrf.disable())
 
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/forecast", "/getRouteListRecency", "/getRouteListForecast", "/route/*",
-                                "/login", "/register", "/status")
+                        .requestMatchers("/forecast", "/getRouteListRecency", "/getRouteListForecast",
+                                "/getRouteListAccount", "/route/*",
+                                "/login", "/register", "/status", "/account/*")
                         .permitAll()
                         .anyRequest().authenticated())
 

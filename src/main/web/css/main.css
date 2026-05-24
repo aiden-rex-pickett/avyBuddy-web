@@ -4,19 +4,6 @@ html{
     overflow-x: hidden;
 }
 
-.inlineLink {
-    color: #030f21; /* Matches your dominant dark blue */
-    text-decoration: none;
-    font-weight: 600; /* Makes them pop slightly from regular text */
-    border-bottom: 1px solid transparent;
-    transition: all 0.2s ease-in-out;
-}
-
-.inlineLink:hover, .inlineLink:focus {
-    color: #030f21;
-    opacity: 0.8; /* Subtle visual feedback */
-}
-
 .svg{
     background-color: #030f21;
 }
@@ -208,5 +195,30 @@ body{
 }
 
 .login-link:hover::after {
+    width: 100%;
+}
+
+.register-link {
+    color: #030f21;
+    font-weight: 600;
+    text-decoration: none;
+    position: relative;
+    margin-right: 1.5rem; 
+    padding-bottom: 4px;
+}
+
+/* Animated underline effect */
+.register-link::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: 0;
+    left: 0;
+    background-color: #030f21;
+    transition: width 0.3s ease;
+}
+
+.register-link:hover::after {
     width: 100%;
 }

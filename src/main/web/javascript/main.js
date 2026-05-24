@@ -2,6 +2,8 @@ const buttonOpen = document.getElementById("menuOpen");
 const buttonClose = document.getElementById("menuClose");
 const sidebar = document.getElementById("sidebarId");
 const accountLink = document.getElementById("header-login");
+const logout = document.getElementById("header-logout");
+
 
 buttonOpen.addEventListener('click', () => sidebar.style.display = 'block');
 buttonClose.addEventListener('click', () => sidebar.style.display = 'none');
@@ -13,10 +15,16 @@ window.addEventListener('pageshow', (event) => {
     }
 })
 
+logout.addEventListener('click', (event) => {
+    event.preventDefault();
+    fetch("/apis/logout").finally(window.location.reload())
+})
+
 fetch("/apis/status").then((response) => response.json()).then((data) => {
     if (data["loggedIn"] && data["loggedIn"] == true) {
         accountLink.textContent = data["username"]
         accountLink.href = "/account/" + data["username"]
+        logout.style.display = "block"
     }
 })
 

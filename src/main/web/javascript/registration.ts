@@ -1,7 +1,7 @@
-const loginForm = document.getElementById('loginForm')
-const errorAreaLogin = document.getElementById('errorSpace')
+const registerForm = document.getElementById('registerForm')
+const errorAreaRegistration = document.getElementById('errorSpace')
 
-loginForm.addEventListener('submit', async (event) => {
+registerForm.addEventListener('submit', async (event) => {
     event.preventDefault();
 
     const formData = new URLSearchParams();
@@ -9,7 +9,7 @@ loginForm.addEventListener('submit', async (event) => {
     formData.append('password', (document.getElementById('password') as HTMLInputElement).value)
 
     try {
-        const response = await fetch('/apis/login', {
+        const response = await fetch('/apis/register', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: formData.toString(),
@@ -22,8 +22,8 @@ loginForm.addEventListener('submit', async (event) => {
                 window.location.href = "/"
             }
         } else {
-            errorAreaLogin.textContent = "Invalid Username or Password"
-            errorAreaLogin.style.display = "block"
+            errorAreaRegistration.textContent = "Username already in use!"
+            errorAreaRegistration.style.display = "block"
         }
     } catch (error) {
         console.error(error)

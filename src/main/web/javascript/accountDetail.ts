@@ -120,14 +120,10 @@ function makeErrorContainerAccount(errObj): HTMLElement {
     const errorMessageHeader = document.createElement("h1");
     errorMessageHeader.textContent = "Oh no!"
 
-    const errorCodeInfo = document.createElement("p");
-    errorCodeInfo.textContent = "There was a " + errObj.code + " error when attempting to get the routes";
-
     const errorMessageInfo = document.createElement("p");
     errorMessageInfo.textContent = errObj.message
 
     errorMessageContainer.appendChild(errorMessageHeader)
-    errorMessageContainer.appendChild(errorCodeInfo)
     errorMessageContainer.appendChild(errorMessageInfo)
 
     return errorMessageContainer
@@ -140,8 +136,8 @@ function getRouteListFromEndpointAccount(apiEndpoint: URL): Promise<RouteAccount
         fetch(apiEndpoint).then(async (response) => { // When we have recevied a response from fetch
             if (!response.ok) { // If not good data, reject promise with status code
                 const data = await response.json();
-                if (data["error"]) {
-                    reject({ code: response.status, message: data["error"] })
+                if (data["Error"]) {
+                    reject({ code: response.status, message: data["Error"] })
                 } else {
                     reject({ code: response.status, message: response.statusText })
                 }
@@ -155,7 +151,8 @@ function getRouteListFromEndpointAccount(apiEndpoint: URL): Promise<RouteAccount
                 resolve(routeList); // If good data, fulfill with route list
             }
         }).catch(() => { // Only if catastrophic fetch failure
-            reject({ code: "", message: "The request failed due to a network error" })
+                accountDateElement.style.display = "none"
+            reject({ code: "", message: "The user does not exist" })
         });
     })
 }

@@ -22,7 +22,7 @@ const accountDateElement = document.getElementById("accountDate");
 const accountName = getAccountNameFromUrl();
 fillAccountInformation();
 loadTimeOrdredRoutesForAccount();
-const routeContainerAccount = document.querySelector("#routeContainer");
+const routeContainerAccount = document.getElementById("routeContainer");
 function getAccountNameFromUrl() {
     let urlAccount = window.location.pathname.split("/").pop();
     urlAccount = urlAccount.trim();
@@ -97,12 +97,9 @@ function makeErrorContainerAccount(errObj) {
     errorMessageContainer.classList.add("errorMessageContainer");
     const errorMessageHeader = document.createElement("h1");
     errorMessageHeader.textContent = "Oh no!";
-    const errorCodeInfo = document.createElement("p");
-    errorCodeInfo.textContent = "There was a " + errObj.code + " error when attempting to get the routes";
     const errorMessageInfo = document.createElement("p");
     errorMessageInfo.textContent = errObj.message;
     errorMessageContainer.appendChild(errorMessageHeader);
-    errorMessageContainer.appendChild(errorCodeInfo);
     errorMessageContainer.appendChild(errorMessageInfo);
     return errorMessageContainer;
 }
@@ -113,8 +110,8 @@ function getRouteListFromEndpointAccount(apiEndpoint) {
         fetch(apiEndpoint).then(async (response) => {
             if (!response.ok) { // If not good data, reject promise with status code
                 const data = await response.json();
-                if (data["error"]) {
-                    reject({ code: response.status, message: data["error"] });
+                if (data["Error"]) {
+                    reject({ code: response.status, message: data["Error"] });
                 }
                 else {
                     reject({ code: response.status, message: response.statusText });
@@ -130,7 +127,8 @@ function getRouteListFromEndpointAccount(apiEndpoint) {
                 resolve(routeList); // If good data, fulfill with route list
             }
         }).catch(() => {
-            reject({ code: "", message: "The request failed due to a network error" });
+            accountDateElement.style.display = "none";
+            reject({ code: "", message: "The user does not exist" });
         });
     });
 }

@@ -57,7 +57,7 @@ public class AccountController {
         Optional<Account> account = accountService.getAccountByUsername(username);
         if (account.isEmpty()) {
             Map<String, Object> errorBody = new HashMap<>();
-            errorBody.put("Error", "User not found");
+            errorBody.put("error", "There is no user with the name " + username);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorBody);
         }
         Map<String, Object> response = new HashMap<>();

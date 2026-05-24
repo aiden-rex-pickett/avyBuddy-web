@@ -107,7 +107,7 @@ public class RouteDatabaseController {
         final ArrayNode routesNode = mapper.createArrayNode();
 
         final Optional<List<Route>> routes = routeService.getRoutesByForecast(region);
-        if (!routes.isPresent()) {
+        if (routes.isEmpty()) {
             Map<String, Object> errorBody = new HashMap<>();
             errorBody.put("error", "The connection to the UAC Server Failed");
             return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body(errorBody);

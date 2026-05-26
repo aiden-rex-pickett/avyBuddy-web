@@ -2,9 +2,6 @@
     padding: 15px;
     margin: 0;
     font-size: 3em;
-
-    transition-timing-function: cubic-bezier(0, 0.73, 0.45, 1.15);
-    transition-duration: 600ms;
 }
 
 .headerWrap{
@@ -14,14 +11,31 @@
 
 .regionTitleWrapper{
     position: relative;
-    z-index: 1000;
+    z-index: 10000;
     max-height: 0;
     overflow: hidden;
     background-color: rgb(117, 186, 223);
-    transition: max-height 0.4s cubic-bezier(0, 0.73, 0.45, 1.15);
+    transition: all 0.6s cubic-bezier(0, 0.73, 0.45, 1.15);
+}
+
+#regionHoverDiv:hover .regionTitleWrapper{
+    max-height: 600px;
+}
+
+#regionHoverDiv:hover #regionTitle {
+    background-color: whitesmoke;
+}
+
+#regionTitle {
+    padding-left: 0;
+    background-color: rgb(117, 186, 223);
+    border-radius: 30px;
+    transition: all 0.6s cubic-bezier(0, 0.73, 0.45, 1.15);
 }
 
 .regionOption{
+    margin: 0;
+    padding: 10 0 10 0;
     transition: background-color, color 0.6s cubic-bezier(0, 0.73, 0.45, 1.15);
 }
 

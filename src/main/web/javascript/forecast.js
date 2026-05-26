@@ -114,16 +114,6 @@ function createProblemDom(problem) {
     return [problemDiv, problemTitle];
 }
 
-regionHoverDiv.addEventListener('mouseenter', function () {
-    regionTitle.style.backgroundColor = "#bbd2e9"
-    toggleRegionPanel();
-})
-
-regionHoverDiv.addEventListener('mouseleave', function () {
-    regionTitle.style.backgroundColor = "rgb(117, 186, 223)"
-    toggleRegionPanel();
-})
-
 function setupTabsTransition(){
     regionTitleWrapper.classList.add('regionTitleWrapper');
     
@@ -145,14 +135,3 @@ function setupTabsTransition(){
 }
 
 setupTabsTransition();
-
-function toggleRegionPanel() {
-    if (regionTitleWrapper.style.maxHeight) {
-        regionTitleWrapper.style.maxHeight = null;
-        regionHoverDiv.style.maxHeight = 100;
-    } else {
-        regionTitleWrapper.style.maxHeight = 500;
-        regionHoverDiv.style.maxHeight = 600;
-    }
-}
-

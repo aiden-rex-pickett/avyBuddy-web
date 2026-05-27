@@ -66,8 +66,18 @@ form {
   transition: all 0.4s cubic-bezier(0, 0.73, 0.45, 1.15);
 }
 
+#regionOptions h2 {
+  width: 122px;
+  transition: all 0.4s cubic-bezier(0, 0.73, 0.45, 1.15);
+}
+
+#regionOptions h2:hover {
+    background-color: #030f21;
+    color: #bbd2e9;
+}
+
 #regionWrapper:hover #regionOptions {
-  max-height: 700px;
+  max-height: 900px;
   border-radius: 0 0 5px 5px;
 }
 
@@ -116,6 +126,12 @@ input[type="submit"]{
     transition-duration: 400ms;
     transition-property: background-color, scale, color;
     font-size: 1.4em;
+}
+
+input[type="submit"]:hover {
+    background-color: rgb(117, 186, 223);
+    color: #030f21;
+    scale: 1.05;
 }
 
 textarea {

@@ -77,7 +77,7 @@ form {
 
 input[type="text"] {
     field-sizing: content;
-    min-width: 200px;
+    min-width: 280px;
     padding: 12px 16px;
     margin: 8px 0 8px 0;
     box-sizing: border-box;
@@ -141,4 +141,21 @@ textarea {
 /* Optional: Add a subtle focus state if you want it to react when clicked */
 textarea:focus {
   box-shadow: 0 0 5px rgba(255, 255, 255, 0.2); 
+}
+
+.rose-segment path.rose-segment-clicked {
+  fill: rgb(117, 186, 223);
+}
+
+.rose-segment path {
+  fill: white;
+  transition: all 0.3s ease;
+}
+
+.rose-segment path:hover {
+  fill: rgb(117, 186, 223);
+}
+
+.rose-segment-clicked {
+  fill: rgb(117, 186, 223);
 }

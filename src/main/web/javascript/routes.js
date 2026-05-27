@@ -26,6 +26,8 @@ class Route {
 const currentRegionDiv = document.getElementById("regionButton");
 // The HTML element where the route sections will be injected into
 const routeContainer = document.querySelector("#routeContainer");
+const addRouteButton = document.getElementById("addRoute");
+addRouteButton.addEventListener("click", () => window.location.href = "/addRoute");
 // The region for the page
 const region = getRegionFromUrl();
 setupRegionSelector();

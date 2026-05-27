@@ -31,6 +31,9 @@ const currentRegionDiv: HTMLDivElement = document.getElementById("regionButton")
 // The HTML element where the route sections will be injected into
 const routeContainer: HTMLElement = document.querySelector("#routeContainer")
 
+const addRouteButton: HTMLElement = document.getElementById("addRoute")
+addRouteButton.addEventListener("click", () => window.location.href = "/addRoute")
+
 // The region for the page
 const region = getRegionFromUrl();
 

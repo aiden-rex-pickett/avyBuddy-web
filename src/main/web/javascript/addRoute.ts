@@ -34,18 +34,18 @@ submitButton.addEventListener("click", (event) => {
     const form = new FormData(document.getElementById("addRouteForm") as HTMLFormElement)
 
     const name = form.get("name")
-    if (!name){
+    if (!name) {
         raiseError("Route must have a name")
         return;
     }
 
     const description = form.get("description")
-    if (!description){
+    if (!description) {
         raiseError("Route must have a description")
         return;
     }
 
-    if (positionsInteger == 0){
+    if (positionsInteger == 0) {
         raiseError("Route must pass through at least one position on the rose")
         return;
     }
@@ -55,14 +55,33 @@ submitButton.addEventListener("click", (event) => {
         return;
     }
 
-    form.append("positions", positionsInteger.toString())
-
     const parameters = {
         name: name,
         description: description,
         positions: positionsInteger,
-        region: selectedRegion.textContent,
+        region: selectedRegion.textContent.split(" ").join("-").toLowerCase(),
     }
+
+    fetch("/apis/addRoute", {
+        method: "PUT",
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(parameters),
+    }).then(response => {
+        if (response.status == 401) {
+            raiseError("You must be logged in to create a route")
+            return;
+        } else if (!response.ok) {
+            raiseError("Server Error. Code " + response.status + ", " + response.statusText)
+            return;
+        } else {
+            clearError();
+        }
+    }).catch(err => {
+        raiseError("Fetch Error: " + err)
+        return;
+    })
 
     console.log(parameters)
 });
@@ -95,8 +114,13 @@ function setupRegionSelectorAddRoute() {
     })
 }
 
-function raiseError(err: string){
-    const errorParagraph = document.getElementById("errorText")
+const errorParagraph = document.getElementById("errorText")
+function raiseError(err: string) {
     errorParagraph.textContent = err
     errorParagraph.style.display = "block"
+}
+
+function clearError() {
+    errorParagraph.textContent = ""
+    errorParagraph.style.display = "none"
 }

@@ -39,13 +39,35 @@ submitButton.addEventListener("click", (event) => {
         raiseError("Route must have a region");
         return;
     }
-    form.append("positions", positionsInteger.toString());
     const parameters = {
         name: name,
         description: description,
         positions: positionsInteger,
-        region: selectedRegion.textContent,
+        region: selectedRegion.textContent.split(" ").join("-").toLowerCase(),
     };
+    fetch("/apis/addRoute", {
+        method: "PUT",
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(parameters),
+    }).then(response => {
+        if (response.status == 401) {
+            raiseError("You must be logged in to create a route");
+            return;
+        }
+        else if (!response.ok) {
+            raiseError("Server Error. Code " + response.status + ", " + response.statusText);
+            return;
+        }
+        else {
+            clearError();
+            alert("YAY!");
+        }
+    }).catch(err => {
+        raiseError("Fetch Error: " + err);
+        return;
+    });
     console.log(parameters);
 });
 function setupPositionsSelector() {
@@ -74,8 +96,12 @@ function setupRegionSelectorAddRoute() {
         });
     });
 }
+const errorParagraph = document.getElementById("errorText");
 function raiseError(err) {
-    const errorParagraph = document.getElementById("errorText");
     errorParagraph.textContent = err;
     errorParagraph.style.display = "block";
+}
+function clearError() {
+    errorParagraph.textContent = "";
+    errorParagraph.style.display = "none";
 }

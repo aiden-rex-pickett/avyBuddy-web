@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -39,39 +41,6 @@ public class RouteDatabaseController {
 
     @Autowired
     private AccountService accountService;
-
-    /**
-     * This helper method makes an {@code ObjectNode} that represents the route that
-     * is passed to it.
-     *
-     * @param route    The route to be represented
-     * @param mapper   The {@code ObjectMapper} to be used to create the
-     *                 {@code ObjectNode}
-     * @param svgWidth The width of the svg that shows the route positions on the
-     *                 frontend
-     * @return The {@code ObjectNode} that represents the passed in route.
-     */
-    @SuppressWarnings("deprecation")
-    private static ObjectNode makeRouteNode(final Route route,
-            final ObjectMapper mapper, final int svgWidth) {
-        final ObjectNode routeNode = mapper.createObjectNode();
-        routeNode.put("name", route.getName());
-        routeNode.put("id", route.getId());
-        routeNode.put("accountUsername", route.getAccountId().getUsername());
-        routeNode.put("region", route.getRegion());
-        final boolean[] routePositions = route.getPositionsArray();
-        final ArrayNode routePositionsNode = mapper.createArrayNode();
-        for (int i = 0; i < 24; i++) {
-            routePositionsNode.add(routePositions[i]);
-        }
-        routeNode.put("positions", routePositionsNode);
-        routeNode.put("positionsSvg", SvgRoseGenerator.generateRose(svgWidth, route.getPositionsArray()));
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM yyyy");
-        routeNode.put("dateCreated", formatter.format(route.getCreationTimestamp()));
-        routeNode.put("description", route.getDescription());
-
-        return routeNode;
-    }
 
     /**
      * This controller returns the top-{@code numRoutes} most recent routes in the
@@ -147,5 +116,49 @@ public class RouteDatabaseController {
             return "{\"Error\": \"There is no such route in the database\"}";
         }
         return makeRouteNode(route.get(), mapper, 500).toString();
+    }
+
+    private record RouteDTO(String name, String description, int positions, String region) {
+    }
+
+    @PutMapping("/addRoute")
+    public ResponseEntity<?> addRoute(@RequestBody RouteDTO route) {
+        if (!routeService.addRoute(route.name(), route.description(), route.positions(), route.region())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        route
+    }
+
+    /**
+     * This helper method makes an {@code ObjectNode} that represents the route that
+     * is passed to it.
+     *
+     * @param route    The route to be represented
+     * @param mapper   The {@code ObjectMapper} to be used to create the
+     *                 {@code ObjectNode}
+     * @param svgWidth The width of the svg that shows the route positions on the
+     *                 frontend
+     * @return The {@code ObjectNode} that represents the passed in route.
+     */
+    @SuppressWarnings("deprecation")
+    private static ObjectNode makeRouteNode(final Route route,
+            final ObjectMapper mapper, final int svgWidth) {
+        final ObjectNode routeNode = mapper.createObjectNode();
+        routeNode.put("name", route.getName());
+        routeNode.put("id", route.getId());
+        routeNode.put("accountUsername", route.getAccountId().getUsername());
+        routeNode.put("region", route.getRegion());
+        final boolean[] routePositions = route.getPositionsArray();
+        final ArrayNode routePositionsNode = mapper.createArrayNode();
+        for (int i = 0; i < 24; i++) {
+            routePositionsNode.add(routePositions[i]);
+        }
+        routeNode.put("positions", routePositionsNode);
+        routeNode.put("positionsSvg", SvgRoseGenerator.generateRose(svgWidth, route.getPositionsArray()));
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM yyyy");
+        routeNode.put("dateCreated", formatter.format(route.getCreationTimestamp()));
+        routeNode.put("description", route.getDescription());
+
+        return routeNode;
     }
 }

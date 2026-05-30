@@ -7,6 +7,9 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import com.aidenPersonal.avyBuddy.RouteFiles.RouteComparator;
@@ -52,5 +55,20 @@ public class RouteService {
     @Transactional
     public List<Route> getRoutesByUsername(Account account) {
         return routeRepo.getRoutesByAccountId(account, Sort.by(Direction.DESC, "creationTimestamp"));
+    }
+
+    @Transactional
+    public boolean addRoute(String name, String description, int positions, String region) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated()) {
+            return false;
+        }
+        UserDetails userDetails = (UserDetails) auth.getPrincipal();
+        String username = userDetails.getUsername();
+        System.out.println(username);
+        return true;
+        // TODO: Actually add to database here, get User object by username first, then
+        // make a route with the constructor, and then actually construct it and save
+        // it.
     }
 }

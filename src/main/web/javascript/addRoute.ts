@@ -12,6 +12,8 @@ const submitButton = document.getElementById("formSubmit")
 
 const exitButton = document.getElementById("exitButton")
 
+const selectedRegion = document.getElementById("region")
+
 var positionsInteger = 0;
 
 setupPositionsSelector();
@@ -31,7 +33,38 @@ submitButton.addEventListener("click", (event) => {
 
     const form = new FormData(document.getElementById("addRouteForm") as HTMLFormElement)
 
+    const name = form.get("name")
+    if (!name){
+        raiseError("Route must have a name")
+        return;
+    }
+
+    const description = form.get("description")
+    if (!description){
+        raiseError("Route must have a description")
+        return;
+    }
+
+    if (positionsInteger == 0){
+        raiseError("Route must pass through at least one position on the rose")
+        return;
+    }
+
+    if (!(selectedRegion.textContent)) {
+        raiseError("Route must have a region")
+        return;
+    }
+
     form.append("positions", positionsInteger.toString())
+
+    const parameters = {
+        name: name,
+        description: description,
+        positions: positionsInteger,
+        region: selectedRegion.textContent,
+    }
+
+    console.log(parameters)
 });
 
 function setupPositionsSelector() {
@@ -44,7 +77,6 @@ function setupPositionsSelector() {
             } else {
                 positionsInteger &= ~(1 << +pos.id)
             }
-            console.log(positionsInteger)
         })
     })
 }
@@ -61,4 +93,10 @@ function setupRegionSelectorAddRoute() {
             currentRegion.textContent = region
         })
     })
+}
+
+function raiseError(err: string){
+    const errorParagraph = document.getElementById("errorText")
+    errorParagraph.textContent = err
+    errorParagraph.style.display = "block"
 }

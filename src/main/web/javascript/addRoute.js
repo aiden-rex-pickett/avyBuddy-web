@@ -8,6 +8,7 @@
 const validRegionsAddRoute = ["Salt Lake", "Ogden", "Uintas", "Logan", "Provo", "Skyline", "Moab", "Abajos"];
 const submitButton = document.getElementById("formSubmit");
 const exitButton = document.getElementById("exitButton");
+const selectedRegion = document.getElementById("region");
 var positionsInteger = 0;
 setupPositionsSelector();
 setupRegionSelectorAddRoute();
@@ -20,7 +21,32 @@ exitButton.addEventListener("click", () => {
 submitButton.addEventListener("click", (event) => {
     event.preventDefault();
     const form = new FormData(document.getElementById("addRouteForm"));
+    const name = form.get("name");
+    if (!name) {
+        raiseError("Route must have a name");
+        return;
+    }
+    const description = form.get("description");
+    if (!description) {
+        raiseError("Route must have a description");
+        return;
+    }
+    if (positionsInteger == 0) {
+        raiseError("Route must pass through at least one position on the rose");
+        return;
+    }
+    if (!(selectedRegion.textContent)) {
+        raiseError("Route must have a region");
+        return;
+    }
     form.append("positions", positionsInteger.toString());
+    const parameters = {
+        name: name,
+        description: description,
+        positions: positionsInteger,
+        region: selectedRegion.textContent,
+    };
+    console.log(parameters);
 });
 function setupPositionsSelector() {
     const positions = document.querySelectorAll(".rose-segment");
@@ -33,7 +59,6 @@ function setupPositionsSelector() {
             else {
                 positionsInteger &= ~(1 << +pos.id);
             }
-            console.log(positionsInteger);
         });
     });
 }
@@ -48,4 +73,9 @@ function setupRegionSelectorAddRoute() {
             currentRegion.textContent = region;
         });
     });
+}
+function raiseError(err) {
+    const errorParagraph = document.getElementById("errorText");
+    errorParagraph.textContent = err;
+    errorParagraph.style.display = "block";
 }

@@ -46,7 +46,7 @@
 			<form id="addRouteForm" class="columnWrap">
 				<div id="upperWrap" class="rowWrap">
 					<div id="leftWrap" class="rowWrap">
-						<input type="text" id="name" name="name" placeholder="Route Name">
+						<input type="text" id="name" name="name" placeholder="Route Name" required>
 						<div id="regionWrapper">
 							<h1 id="region">salt-lake</h1>
 							<ul id="regionOptions">
@@ -59,9 +59,9 @@
 				</div>
 				<div id="lowerWrap" class="rowWrap">
 					<div class="columnWrap">
-						<textarea id="description" name="description" placeholder="Route Description"></textarea>
+						<textarea id="description" name="description" placeholder="Route Description" required></textarea>
 						<input id="formSubmit" type="submit">
-						<p id="errorText"></p>
+						<p id="errorText" style="display: none; color: #A61C1C;"></p>
 					</div>
 					<svg id="positionsRose" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:jfreesvg="http://www.jfree.org/jfreesvg/svg" width="500" height="500" text-rendering="auto" shape-rendering="auto">
 

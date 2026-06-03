@@ -22,8 +22,7 @@ function getRoutePositions(): string {
 }
 
 exitButton.addEventListener("click", () => {
-    // TODO: Have this dynamically change based on what route is selected
-    window.location.href = "/routes/salt-lake"
+    window.location.href = "/routes/" + selectedRegion.textContent.split(" ").join("-").toLowerCase()
 })
 
 submitButton.addEventListener("click", (event) => {

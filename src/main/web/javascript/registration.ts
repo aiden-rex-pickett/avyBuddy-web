@@ -11,16 +11,15 @@ registerForm.addEventListener('submit', async (event) => {
     try {
         const response = await fetch('/apis/register', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            headers: {
+                'X-XSRF-TOKEN': getCsrfTokenRegistration(),
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
             body: formData.toString(),
         });
 
         if (response.ok) {
-            if (document.referrer && !document.referrer.includes('/login')) {
-                window.history.back();
-            } else {
-                window.location.href = "/"
-            }
+            window.location.href = "/account/" + (document.getElementById('username') as HTMLInputElement).value
         } else {
             errorAreaRegistration.textContent = "Username already in use!"
             errorAreaRegistration.style.display = "block"
@@ -29,3 +28,9 @@ registerForm.addEventListener('submit', async (event) => {
         console.error(error)
     }
 })
+function getCsrfTokenRegistration() {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; XSRF-TOKEN=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+    return '';
+}

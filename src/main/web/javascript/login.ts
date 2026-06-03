@@ -11,7 +11,10 @@ loginForm.addEventListener('submit', async (event) => {
     try {
         const response = await fetch('/apis/login', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            headers: {
+                'X-XSRF-TOKEN': getCsrfTokenLogin(),
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
             body: formData.toString(),
         });
 
@@ -29,3 +32,10 @@ loginForm.addEventListener('submit', async (event) => {
         console.error(error)
     }
 })
+
+function getCsrfTokenLogin() {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; XSRF-TOKEN=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+    return '';
+}

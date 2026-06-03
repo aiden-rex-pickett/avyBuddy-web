@@ -22,15 +22,15 @@ public class DatabaseTester implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        Optional<Account> user = accountRepo.findById(2);
-
-        if (user.isPresent()) {
-            for (int i = 0; i < 24; i++) {
-                Route r = new Route("TEST" + i, "salt-lake",
-                        "This is a nice description for this test route, it is very fun and cool.", 1 << i, user.get());
-                routeRepo.save(r);
-                Thread.sleep(200);
-            }
-        }
+    //     Optional<Account> user = accountRepo.findById(2);
+    //
+    //     if (user.isPresent()) {
+    //         for (int i = 0; i < 24; i++) {
+    //             Route r = new Route("TEST" + i, "salt-lake",
+    //                     "This is a nice description for this test route, it is very fun and cool.", 1 << i, user.get());
+    //             routeRepo.save(r);
+    //             Thread.sleep(200);
+    //         }
+    //     }
     }
 }

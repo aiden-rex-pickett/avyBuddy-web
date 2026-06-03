@@ -30,6 +30,8 @@ fetch(path).then(response => response.json()).then(json => {
 }).catch(err => { console.error(err); });
 const main = document.querySelector("main");
 function loadRoutePage(route) {
+    // TODO: Add edit and delete route buttons, but only if the user owns the route.
+    // Check by hitting status and comparing the username to the one in the account username.
     const routeHeaderWrap = document.createElement("div");
     routeHeaderWrap.classList.add("routeHeaderWrap");
     const routeHeader = document.createElement("div");

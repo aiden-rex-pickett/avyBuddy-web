@@ -130,6 +130,12 @@ public class RouteDatabaseController {
         return ResponseEntity.status(HttpStatus.OK).body(id);
     }
 
+    // TODO: Delete endpoint, validates that the token sent with the request is
+    // associated with the user who owns the route. if not, invalid.
+
+    // TODO: Edit endpoint, validates that the token sent with the request is
+    // associated with the user who owns the route. if not, invalid.
+
     /**
      * This helper method makes an {@code ObjectNode} that represents the route that
      * is passed to it.

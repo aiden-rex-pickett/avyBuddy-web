@@ -1,6 +1,3 @@
-// TODO: Populate region option dropdown
-//         - Maybe then have the exit button go to that specific routes page?
-
 // HACK: This could possibly get out of sync with the map of valid
 // regions in the nginx config, the backend, and routes.ts maybe 
 // look into this and find some way to do the check of if we are on
@@ -25,6 +22,7 @@ function getRoutePositions(): string {
 }
 
 exitButton.addEventListener("click", () => {
+    // TODO: Have this dynamically change based on what route is selected
     window.location.href = "/routes/salt-lake"
 })
 
@@ -68,7 +66,7 @@ submitButton.addEventListener("click", (event) => {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(parameters),
-    }).then(response => {
+    }).then(async response => {
         if (response.status == 401) {
             raiseError("You must be logged in to create a route")
             return;
@@ -77,6 +75,12 @@ submitButton.addEventListener("click", (event) => {
             return;
         } else {
             clearError();
+            const routeId: number = parseInt(await response.text())
+            if (routeId > 0) {
+                window.location.href = "/route/" + routeId
+                return;
+            }
+            raiseError("Invalid Account attempting to create route")
         }
     }).catch(err => {
         raiseError("Fetch Error: " + err)

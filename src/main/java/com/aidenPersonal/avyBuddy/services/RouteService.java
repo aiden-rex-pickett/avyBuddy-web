@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import com.aidenPersonal.avyBuddy.RouteFiles.RouteComparator;
 import com.aidenPersonal.avyBuddy.models.Account;
 import com.aidenPersonal.avyBuddy.models.Route;
+import com.aidenPersonal.avyBuddy.repositories.AccountRepository;
 import com.aidenPersonal.avyBuddy.repositories.RouteRepository;
 import com.aidenPersonal.avyBuddy.uacData.Forecast;
 
@@ -24,6 +25,9 @@ import jakarta.transaction.Transactional;
 public class RouteService {
     @Autowired
     private RouteRepository routeRepo;
+
+    @Autowired
+    private AccountRepository accountRepo;
 
     @Transactional
     public Optional<Route> getRouteById(Integer id) {
@@ -58,17 +62,22 @@ public class RouteService {
     }
 
     @Transactional
-    public boolean addRoute(String name, String description, int positions, String region) {
+    public int addRoute(String name, String description, int positions, String region) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth == null || !auth.isAuthenticated()) {
-            return false;
+            return -1;
         }
+
         UserDetails userDetails = (UserDetails) auth.getPrincipal();
         String username = userDetails.getUsername();
-        System.out.println(username);
-        return true;
-        // TODO: Actually add to database here, get User object by username first, then
-        // make a route with the constructor, and then actually construct it and save
-        // it.
+        Optional<Account> userAccount = accountRepo.findByUsername(username);
+        if (userAccount.isEmpty()) {
+            return -1;
+        }
+
+        Route newRoute = new Route(name, region, description, positions, userAccount.get());
+        routeRepo.save(newRoute);
+
+        return newRoute.getId();
     }
 }

@@ -123,10 +123,11 @@ public class RouteDatabaseController {
 
     @PutMapping("/addRoute")
     public ResponseEntity<?> addRoute(@RequestBody RouteDTO route) {
-        if (!routeService.addRoute(route.name(), route.description(), route.positions(), route.region())) {
+        int id = routeService.addRoute(route.name(), route.description(), route.positions(), route.region());
+        if (id < 1) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        route
+        return ResponseEntity.status(HttpStatus.OK).body(id);
     }
 
     /**

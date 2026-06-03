@@ -17,7 +17,13 @@ window.addEventListener('pageshow', (event) => {
 
 logout.addEventListener('click', (event) => {
     event.preventDefault();
-    fetch("/apis/logout").finally(window.location.reload())
+    fetch("/apis/logout", {
+        method: 'POST',
+        headers: {
+            'X-XSRF-TOKEN': getCsrfTokenMain(),
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+    }).finally(window.location.reload())
 })
 
 fetch("/apis/status").then((response) => response.json()).then((data) => {
@@ -28,3 +34,9 @@ fetch("/apis/status").then((response) => response.json()).then((data) => {
     }
 })
 
+function getCsrfTokenMain() {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; XSRF-TOKEN=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+    return '';
+}

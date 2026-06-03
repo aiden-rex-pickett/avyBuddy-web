@@ -48,7 +48,6 @@ submitButton.addEventListener("click", (event) => {
         headers: {
             'Content-Type': 'application/json',
             'X-XSRF-TOKEN': getCsrfTokenAddRoute(),
-            // 'Content-Type': 'application/x-www-form-urlencoded'
         },
         body: JSON.stringify(parameters),
     }).then(async (response) => {
@@ -78,7 +77,7 @@ submitButton.addEventListener("click", (event) => {
 function setupPositionsSelector() {
     const positions = document.querySelectorAll(".rose-segment");
     positions.forEach(pos => {
-        pos.addEventListener("click", (event) => {
+        pos.addEventListener("click", () => {
             pos.children[0].classList.toggle("rose-segment-clicked");
             if (pos.children[0].classList.contains("rose-segment-clicked")) {
                 positionsInteger |= 1 << +pos.id;

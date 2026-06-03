@@ -93,7 +93,7 @@ submitButton.addEventListener("click", (event) => {
 function setupPositionsSelector() {
     const positions = document.querySelectorAll(".rose-segment") as unknown as Element[]
     positions.forEach(pos => {
-        pos.addEventListener("click", (event) => {
+        pos.addEventListener("click", () => {
             pos.children[0].classList.toggle("rose-segment-clicked")
             if (pos.children[0].classList.contains("rose-segment-clicked")) {
                 positionsInteger |= 1 << +pos.id

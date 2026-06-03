@@ -46,7 +46,9 @@ submitButton.addEventListener("click", (event) => {
     fetch("/apis/addRoute", {
         method: "PUT",
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'X-XSRF-TOKEN': getCsrfTokenAddRoute(),
+            // 'Content-Type': 'application/x-www-form-urlencoded'
         },
         body: JSON.stringify(parameters),
     }).then(async (response) => {
@@ -107,4 +109,11 @@ function raiseError(err) {
 function clearError() {
     errorParagraph.textContent = "";
     errorParagraph.style.display = "none";
+}
+function getCsrfTokenAddRoute() {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; XSRF-TOKEN=`);
+    if (parts.length === 2)
+        return parts.pop().split(';').shift();
+    return '';
 }

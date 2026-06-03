@@ -28,6 +28,7 @@ registerForm.addEventListener('submit', async (event) => {
         console.error(error)
     }
 })
+
 function getCsrfTokenRegistration() {
     const value = `; ${document.cookie}`;
     const parts = value.split(`; XSRF-TOKEN=`);

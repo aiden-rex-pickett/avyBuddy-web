@@ -46,7 +46,8 @@ input[type="password"]:focus {
     border-color: #bbd2e9;     /* Highlights border on click/tap */
     box-shadow: 0 0 8px rgba(187, 210, 233, 0.4); /* Subtle modern glow */
 }
-.routeButton{
+
+input[type="submit"] {
     height: 50%;
     width: 15%;
     min-width: 100px;
@@ -60,4 +61,10 @@ input[type="password"]:focus {
     transition-duration: 400ms;
     transition-property: background-color, scale, color;
     font-size: 1.4em;
+}
+
+input[type="submit"]:hover {
+    background-color: rgb(117, 186, 223);
+    color: #030f21;
+    scale: 1.05;
 }

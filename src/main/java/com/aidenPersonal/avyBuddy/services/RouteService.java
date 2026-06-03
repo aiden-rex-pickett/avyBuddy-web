@@ -7,11 +7,15 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import com.aidenPersonal.avyBuddy.RouteFiles.RouteComparator;
 import com.aidenPersonal.avyBuddy.models.Account;
 import com.aidenPersonal.avyBuddy.models.Route;
+import com.aidenPersonal.avyBuddy.repositories.AccountRepository;
 import com.aidenPersonal.avyBuddy.repositories.RouteRepository;
 import com.aidenPersonal.avyBuddy.uacData.Forecast;
 
@@ -21,6 +25,9 @@ import jakarta.transaction.Transactional;
 public class RouteService {
     @Autowired
     private RouteRepository routeRepo;
+
+    @Autowired
+    private AccountRepository accountRepo;
 
     @Transactional
     public Optional<Route> getRouteById(Integer id) {
@@ -52,5 +59,25 @@ public class RouteService {
     @Transactional
     public List<Route> getRoutesByUsername(Account account) {
         return routeRepo.getRoutesByAccountId(account, Sort.by(Direction.DESC, "creationTimestamp"));
+    }
+
+    @Transactional
+    public int addRoute(String name, String description, int positions, String region) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated()) {
+            return -1;
+        }
+
+        UserDetails userDetails = (UserDetails) auth.getPrincipal();
+        String username = userDetails.getUsername();
+        Optional<Account> userAccount = accountRepo.findByUsername(username);
+        if (userAccount.isEmpty()) {
+            return -1;
+        }
+
+        Route newRoute = new Route(name, region, description, positions, userAccount.get());
+        routeRepo.save(newRoute);
+
+        return newRoute.getId();
     }
 }

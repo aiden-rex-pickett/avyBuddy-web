@@ -1,0 +1,177 @@
+form {
+  margin: 50px;
+}
+
+.rowWrap {
+  display: flex;
+  flex-direction: row;
+}
+
+.columnWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+#leftWrap {
+  align-items: center;
+  gap: 3rem;
+}
+
+#upperWrap {
+  justify-content: space-between;
+  max-height: 70px;
+  align-items: center;
+}
+
+#upperWrap svg {
+  transition-timing-function: cubic-bezier(0.61,-0.03, 0.05, 0.9);
+  transition-duration: 600ms;
+}
+
+#upperWrap svg:hover {
+  transform: scale(1.3);
+}
+
+#lowerWrap {
+  justify-content: space-between;
+}
+
+#region {
+  margin: 0;
+  padding: 15px;
+  padding-left: 10px;
+  background-color: rgb(117, 186, 223);
+  border-radius: 30px;
+  transition: all 0.4s cubic-bezier(0, 0.73, 0.45, 1.15);
+}
+
+#regionOptions {
+  position: relative;
+  z-index: 1000;
+  max-height: 0;
+  overflow: hidden;
+  background-color: rgb(117, 186, 223);
+  margin: 0;
+  border-radius: 5px
+}
+
+#regionOptions h2 {
+  margin: 0;
+  padding: 10 0 10 0;
+}
+
+#regionOptions{
+  position: relative;
+  transition: all 0.4s cubic-bezier(0, 0.73, 0.45, 1.15);
+}
+
+#regionOptions h2 {
+  width: 122px;
+  transition: all 0.4s cubic-bezier(0, 0.73, 0.45, 1.15);
+}
+
+#regionOptions h2:hover {
+    background-color: #030f21;
+    color: #bbd2e9;
+}
+
+#regionWrapper:hover #regionOptions {
+  max-height: 900px;
+  border-radius: 0 0 5px 5px;
+}
+
+#regionWrapper:hover #region {
+  border-radius: 5px 5px 0 0;
+}
+
+input[type="text"] {
+    field-sizing: content;
+    min-width: 280px;
+    padding: 12px 16px;
+    margin: 8px 0 8px 0;
+    box-sizing: border-box;
+    
+    /* Color Palette Integration */
+    background-color: #030f21; /* Dark blue background */
+    color: #bbd2e9;            /* Light text color from button */
+    border: 2px solid #030f21;  /* Blends with background initially */
+    border-radius: 6px;        /* Smooth, modern rounded corners */
+    
+    /* Typography & Effects */
+    font-family: inherit;      /* Keeps font consistent with the form */
+    font-size: 36px;
+    transition: all 0.3s ease; /* Smooth transition for focus effect */
+    outline: none;
+}
+
+/* Sleek Focus State */
+input[type="text"]:focus {
+    border-color: #bbd2e9;     /* Highlights border on click/tap */
+    box-shadow: 0 0 8px rgba(187, 210, 233, 0.4); /* Subtle modern glow */
+}
+
+input[type="submit"]{
+    height: 60px;
+    width: fit-content;
+    min-width: 100px;
+    padding: 10 0 10 0;
+    background-color: #030f21;
+    color: #bbd2e9;
+    font-family: "Arvo";
+    word-spacing: 0.12em;
+    border: none;
+    border-radius: 10%;
+    transition: cubic-bezier(0.42, 0.04, 0.41, 1.06);
+    transition-duration: 400ms;
+    transition-property: background-color, scale, color;
+    font-size: 1.4em;
+}
+
+input[type="submit"]:hover {
+    background-color: rgb(117, 186, 223);
+    color: #030f21;
+    scale: 1.05;
+}
+
+textarea {
+  /* 1. Set a large, fixed size */
+  width: 500px;         /* Adjust this width to fit your layout */
+  field-sizing: content;
+  min-height: 4rem;
+  resize: none;         /* Disables the user's ability to resize the box */
+  
+  /* 2. Match the "salt-lake" input styling */
+  background-color: #030f21; /* Matches that dark blue background */
+  color: whitesmoke;            /* White text color for typing */
+  border: none;              /* Removes the default harsh border */
+  border-radius: 6px;       /* Gives it those smooth, rounded corners */
+  
+  /* 3. Polish the text padding and font */
+  padding: 15px;             /* Keeps text away from the edges */
+  font-family: inherit;      /* Ensures it uses the same font as the rest of your app */
+  font-size: 16px;           /* Prevents iOS/browsers from zooming in on focus */
+  outline: none;             /* Removes the default glow when clicked */
+}
+
+/* Optional: Add a subtle focus state if you want it to react when clicked */
+textarea:focus {
+  box-shadow: 0 0 5px rgba(255, 255, 255, 0.2); 
+}
+
+.rose-segment path.rose-segment-clicked {
+  fill: rgb(117, 186, 223);
+}
+
+.rose-segment path {
+  fill: white;
+  transition: all 0.3s ease;
+}
+
+.rose-segment path:hover {
+  fill: rgb(117, 186, 223);
+}
+
+.rose-segment-clicked {
+  fill: rgb(117, 186, 223);
+}

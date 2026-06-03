@@ -1,7 +1,8 @@
-// HACK: This could possibly get out of sync with the map of valid regions in the nginx config
-// maybe look into this and find some way to do the check of if we are on a valid page without
-// this list, maybe by some huristic about the state of the dom to see the differences between 
-// a valid and invalid page idk
+// HACK: This could possibly get out of sync with the map of valid
+// regions in the nginx config, the backend, and addRoute.ts maybe 
+// look into this and find some way to do the check of if we are on
+// a valid page without this list, maybe by some huristic about the
+// state of the dom to see the differences between a valid and invalid page idk
 const validRegions = ["Salt Lake", "Ogden", "Uintas", "Logan", "Provo", "Skyline", "Moab", "Abajos"]
 
 // Simple struct-like container for a single route object, for use in constructing the route sections
@@ -30,6 +31,9 @@ const currentRegionDiv: HTMLDivElement = document.getElementById("regionButton")
 
 // The HTML element where the route sections will be injected into
 const routeContainer: HTMLElement = document.querySelector("#routeContainer")
+
+const addRouteButton: HTMLElement = document.getElementById("addRoute")
+addRouteButton.addEventListener("click", () => window.location.href = "/addRoute")
 
 // The region for the page
 const region = getRegionFromUrl();

@@ -89,4 +89,15 @@ public class RouteService {
         }
         return false;
     }
+
+    @Transactional
+    public void editRoute(int id, RouteDTO routeInfo) {
+        Route route = routeRepo.getReferenceById(id);
+        route.setName(routeInfo.name());
+        route.setDescription(routeInfo.description());
+        route.setPositions(routeInfo.positions());
+        route.setRegion(routeInfo.region());
+        routeRepo.save(route);
+    }
+
 }

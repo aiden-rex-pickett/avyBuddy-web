@@ -22,6 +22,7 @@ import com.aidenPersonal.avyBuddy.imageHandling.SvgRoseGenerator;
 import com.aidenPersonal.avyBuddy.models.Account;
 import com.aidenPersonal.avyBuddy.models.Route;
 import com.aidenPersonal.avyBuddy.services.AccountService;
+import com.aidenPersonal.avyBuddy.services.RouteDTO;
 import com.aidenPersonal.avyBuddy.services.RouteService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -120,9 +121,6 @@ public class RouteController {
         return makeRouteNode(route.get(), mapper, 500).toString();
     }
 
-    private record RouteDTO(String name, String description, int positions, String region) {
-    }
-
     @PostMapping("/addRoute")
     public ResponseEntity<?> addRoute(@RequestBody RouteDTO route) {
         int id = routeService.addRoute(route.name(), route.description(), route.positions(), route.region());
@@ -132,8 +130,6 @@ public class RouteController {
         return ResponseEntity.status(HttpStatus.OK).body(id);
     }
 
-    // TODO: Delete endpoint, validates that the token sent with the request is
-    // associated with the user who owns the route. if not, invalid.
     @DeleteMapping("/deleteRoute/{routeId}")
     public ResponseEntity<?> deleteRoute(@PathVariable int routeId) {
         if (routeService.deleteRoute(routeId)) {
@@ -142,11 +138,10 @@ public class RouteController {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
 
-    // TODO: Edit endpoint, validates that the token sent with the request is
-    // associated with the user who owns the route. if not, invalid.
     @PutMapping("/editRoute/{routeId}}")
     public ResponseEntity<?> editRoute(@PathVariable int routeId, @RequestBody RouteDTO route) {
-        return null;
+        routeService.editRoute(routeId, route);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     /**

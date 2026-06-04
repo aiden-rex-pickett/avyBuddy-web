@@ -138,7 +138,7 @@ public class RouteController {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
 
-    @PutMapping("/editRoute/{routeId}}")
+    @PutMapping("/editRoute/{routeId}")
     public ResponseEntity<?> editRoute(@PathVariable int routeId, @RequestBody RouteDTO route) {
         routeService.editRoute(routeId, route);
         return ResponseEntity.status(HttpStatus.OK).build();

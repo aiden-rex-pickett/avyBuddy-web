@@ -19,17 +19,17 @@ class PageRoute {
     }
 }
 const path = "/apis" + window.location.pathname;
-fetch(path).then(response => response.json()).then(json => {
+fetch(path).then(response => response.json()).then(async (json) => {
     if (json["Error"] != undefined) {
         loadErrorPage(window.location.pathname.replace("/route/", ""));
     }
     else {
         const route = new PageRoute(json["id"], json["name"], json["region"], json["positions"], json["positionsSvg"], json["dateCreated"], json["description"], json["accountUsername"]);
-        loadRoutePage(route);
+        await loadRoutePage(route);
     }
 }).catch(err => { console.error(err); });
 const main = document.querySelector("main");
-function loadRoutePage(route) {
+async function loadRoutePage(route) {
     // TODO: Add edit and delete route buttons, but only if the user owns the route.
     // Check by hitting status and comparing the username to the one in the account username.
     const routeHeaderWrap = document.createElement("div");
@@ -62,13 +62,29 @@ function loadRoutePage(route) {
     main.appendChild(routeHeaderWrap);
     const routeDescriptionWrap = document.createElement("div");
     routeDescriptionWrap.classList.add("routeDescription");
+    const routeDesciptionTextWrap = document.createElement("div");
+    routeDesciptionTextWrap.classList.add("routeDescriptionLeft");
     const routeDescription = document.createElement("p");
     routeDescription.textContent = route.description;
+    const routeDescriptionButtonWrap = document.createElement("div");
+    routeDescriptionButtonWrap.classList.add("buttonWrap");
+    const editButton = document.createElement("button");
+    editButton.textContent = "Edit Route";
+    editButton.classList.add("backButton");
+    const deleteButton = document.createElement("a");
+    deleteButton.textContent = "Delete Route";
+    deleteButton.classList.add("backButton");
+    if (await ownsRoute(route.accountUsername)) {
+        routeDescriptionButtonWrap.appendChild(editButton);
+        routeDescriptionButtonWrap.appendChild(deleteButton);
+    }
+    routeDesciptionTextWrap.appendChild(routeDescription);
+    routeDesciptionTextWrap.appendChild(routeDescriptionButtonWrap);
     const routeRoseWrap = document.createElement("div");
     routeRoseWrap.classList.add("mainRoseSvg");
     routeRoseWrap.id = "mainRoseSvg";
     routeRoseWrap.innerHTML = route.positionsSVG;
-    routeDescriptionWrap.appendChild(routeDescription);
+    routeDescriptionWrap.appendChild(routeDesciptionTextWrap);
     routeDescriptionWrap.appendChild(routeRoseWrap);
     main.appendChild(routeDescriptionWrap);
 }
@@ -91,4 +107,14 @@ function loadErrorPage(invalidRouteName) {
     errorMessageWrapper.appendChild(errorMessage);
     errorMessageWrapper.appendChild(returnButtonWrapper);
     main.appendChild(errorMessageWrapper);
+}
+async function ownsRoute(username) {
+    return await fetch("/apis/status").then(response => response.json()).then(data => {
+        if (data["loggedIn"] && data["username"] == username) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    });
 }

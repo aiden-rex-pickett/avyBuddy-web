@@ -32,7 +32,14 @@ main {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: stretch;
+}
+
+.routeDescriptionLeft {
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .routeDescription p {
@@ -100,4 +107,28 @@ hr {
     background-color: #030f21;
     color: #bbd2e9;
     scale: 1.05;
+}
+
+.buttonWrap a, .buttonWrap button{
+  margin-left: 16px;
+  display: inline-block;
+  background-color: #8cbbe3; 
+  color: #000000;            
+  font-family: inherit;      
+  font-size: 1.8rem;         
+  padding: 8px 16px;         
+  border-radius: 12px;       
+  border: none;              
+  text-decoration: none;     
+  cursor: pointer;           
+  transition: background-color 0.2s ease; 
+  transition: cubic-bezier(0.42, 0.04, 0.41, 1.06);
+  transition-duration: 400ms;
+  text-align: center;
+}
+
+.buttonWrap a:hover, .buttonWrap button:hover{
+  background-color: #030f21;
+  color: #bbd2e9;
+  scale: 1.05;
 }

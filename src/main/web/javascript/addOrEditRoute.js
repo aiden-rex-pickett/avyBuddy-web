@@ -8,10 +8,26 @@ const submitButton = document.getElementById("formSubmit");
 const exitButton = document.getElementById("exitButton");
 const selectedRegion = document.getElementById("region");
 var positionsInteger = 0;
+var editId = -1;
 setupPositionsSelector();
 setupRegionSelectorAddRoute();
-function getRoutePositions() {
-    return null;
+if (sessionStorage.getItem("name") != null) {
+    editId = parseInt(window.location.pathname.split("/").pop());
+    document.getElementById("name").value = sessionStorage.getItem("name");
+    document.getElementById("description").value = sessionStorage.getItem("description");
+    const positions = parseInt(sessionStorage.getItem("positions"));
+    positionsInteger = positions;
+    fillRose();
+    selectedRegion.textContent = sessionStorage.getItem("region");
+    sessionStorage.clear();
+}
+function fillRose() {
+    for (var id = 0; id < 24; id++) {
+        if (((positionsInteger >> id) & 1) == 1) {
+            const segment = document.getElementById(id + "");
+            segment.children[0].classList.toggle("rose-segment-clicked");
+        }
+    }
 }
 exitButton.addEventListener("click", () => {
     window.location.href = "/routes/" + selectedRegion.textContent.split(" ").join("-").toLowerCase();
@@ -43,8 +59,18 @@ submitButton.addEventListener("click", (event) => {
         positions: positionsInteger,
         region: selectedRegion.textContent.split(" ").join("-").toLowerCase(),
     };
-    fetch("/apis/addRoute", {
-        method: "PUT",
+    var url;
+    var method;
+    if (editId > 0) {
+        url = "/apis/editRoute/" + editId;
+        method = "PUT";
+    }
+    else {
+        url = "/apis/addRoute";
+        method = "POST";
+    }
+    fetch(url, {
+        method: method,
         headers: {
             'Content-Type': 'application/json',
             'X-XSRF-TOKEN': getCsrfTokenAddRoute(),
@@ -52,7 +78,7 @@ submitButton.addEventListener("click", (event) => {
         body: JSON.stringify(parameters),
     }).then(async (response) => {
         if (response.status == 401) {
-            raiseError("You must be logged in to create a route");
+            raiseError("You must be logged in");
             return;
         }
         else if (!response.ok) {
@@ -66,7 +92,7 @@ submitButton.addEventListener("click", (event) => {
                 window.location.href = "/route/" + routeId;
                 return;
             }
-            raiseError("Invalid Account attempting to create route");
+            raiseError("Invalid Account attempting to create or edit route");
         }
     }).catch(err => {
         raiseError("Fetch Error: " + err);

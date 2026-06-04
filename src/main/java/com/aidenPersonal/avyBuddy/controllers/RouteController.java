@@ -9,8 +9,10 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -20,6 +22,7 @@ import com.aidenPersonal.avyBuddy.imageHandling.SvgRoseGenerator;
 import com.aidenPersonal.avyBuddy.models.Account;
 import com.aidenPersonal.avyBuddy.models.Route;
 import com.aidenPersonal.avyBuddy.services.AccountService;
+import com.aidenPersonal.avyBuddy.services.RouteDTO;
 import com.aidenPersonal.avyBuddy.services.RouteService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -34,7 +37,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
  * @version 5/19/25
  */
 @RestController
-public class RouteDatabaseController {
+public class RouteController {
 
     @Autowired
     private RouteService routeService;
@@ -118,16 +121,27 @@ public class RouteDatabaseController {
         return makeRouteNode(route.get(), mapper, 500).toString();
     }
 
-    private record RouteDTO(String name, String description, int positions, String region) {
-    }
-
-    @PutMapping("/addRoute")
+    @PostMapping("/addRoute")
     public ResponseEntity<?> addRoute(@RequestBody RouteDTO route) {
         int id = routeService.addRoute(route.name(), route.description(), route.positions(), route.region());
         if (id < 1) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         return ResponseEntity.status(HttpStatus.OK).body(id);
+    }
+
+    @DeleteMapping("/deleteRoute/{routeId}")
+    public ResponseEntity<?> deleteRoute(@PathVariable int routeId) {
+        if (routeService.deleteRoute(routeId)) {
+            return ResponseEntity.status(HttpStatus.OK).build();
+        }
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    }
+
+    @PutMapping("/editRoute/{routeId}")
+    public ResponseEntity<?> editRoute(@PathVariable int routeId, @RequestBody RouteDTO route) {
+        routeService.editRoute(routeId, route);
+        return ResponseEntity.status(HttpStatus.OK).body(routeId);
     }
 
     /**
@@ -141,7 +155,6 @@ public class RouteDatabaseController {
      *                 frontend
      * @return The {@code ObjectNode} that represents the passed in route.
      */
-    @SuppressWarnings("deprecation")
     private static ObjectNode makeRouteNode(final Route route,
             final ObjectMapper mapper, final int svgWidth) {
         final ObjectNode routeNode = mapper.createObjectNode();
@@ -149,12 +162,8 @@ public class RouteDatabaseController {
         routeNode.put("id", route.getId());
         routeNode.put("accountUsername", route.getAccountId().getUsername());
         routeNode.put("region", route.getRegion());
-        final boolean[] routePositions = route.getPositionsArray();
-        final ArrayNode routePositionsNode = mapper.createArrayNode();
-        for (int i = 0; i < 24; i++) {
-            routePositionsNode.add(routePositions[i]);
-        }
-        routeNode.put("positions", routePositionsNode);
+        final int routePositions = route.getPositions();
+        routeNode.put("positions", routePositions);
         routeNode.put("positionsSvg", SvgRoseGenerator.generateRose(svgWidth, route.getPositionsArray()));
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM yyyy");
         routeNode.put("dateCreated", formatter.format(route.getCreationTimestamp()));

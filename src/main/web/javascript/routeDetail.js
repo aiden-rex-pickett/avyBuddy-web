@@ -18,13 +18,14 @@ class PageRoute {
         this.accountUsername = accountUsername;
     }
 }
+var route;
 const path = "/apis" + window.location.pathname;
 fetch(path).then(response => response.json()).then(async (json) => {
     if (json["Error"] != undefined) {
         loadErrorPage(window.location.pathname.replace("/route/", ""));
     }
     else {
-        const route = new PageRoute(json["id"], json["name"], json["region"], json["positions"], json["positionsSvg"], json["dateCreated"], json["description"], json["accountUsername"]);
+        route = new PageRoute(json["id"], json["name"], json["region"], json["positions"], json["positionsSvg"], json["dateCreated"], json["description"], json["accountUsername"]);
         await loadRoutePage(route);
     }
 }).catch(err => { console.error(err); });
@@ -74,6 +75,7 @@ async function loadRoutePage(route) {
     const deleteButton = document.createElement("a");
     deleteButton.textContent = "Delete Route";
     deleteButton.classList.add("backButton");
+    deleteButton.addEventListener("click", deleteRoute);
     if (await ownsRoute(route.accountUsername)) {
         routeDescriptionButtonWrap.appendChild(editButton);
         routeDescriptionButtonWrap.appendChild(deleteButton);
@@ -117,4 +119,31 @@ async function ownsRoute(username) {
             return false;
         }
     });
+}
+function deleteRoute() {
+    const conf = confirm("Are you sure you want to delete?");
+    if (!conf) {
+        return;
+    }
+    fetch("/apis/deleteRoute/" + route.id, {
+        method: "DELETE",
+        headers: {
+            'X-XSRF-TOKEN': getCsrfTokenDetail(),
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+    }).then(response => {
+        if (response.status == 200) {
+            window.location.href = "/routes/" + route.region;
+        }
+        else {
+            alert("Route Deletion failed: " + response.statusText);
+        }
+    });
+}
+function getCsrfTokenDetail() {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; XSRF-TOKEN=`);
+    if (parts.length === 2)
+        return parts.pop().split(';').shift();
+    return '';
 }

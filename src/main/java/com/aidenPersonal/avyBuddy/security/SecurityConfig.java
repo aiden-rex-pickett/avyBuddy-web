@@ -34,7 +34,6 @@ public class SecurityConfig {
                         .access((authentication, context) -> {
                             String remoteAddress = context.getRequest().getRemoteAddr();
                             boolean isLocalhost = "127.0.0.1".equals(remoteAddress) || "::1".equals(remoteAddress);
-                            System.out.println(isLocalhost);
                             return new AuthorizationDecision(isLocalhost);
                         })
                         .anyRequest().authenticated())

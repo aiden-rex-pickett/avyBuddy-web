@@ -44,11 +44,10 @@ submitButton.addEventListener("click", (event) => {
         region: selectedRegion.textContent.split(" ").join("-").toLowerCase(),
     };
     fetch("/apis/addRoute", {
-        method: "PUT",
+        method: "POST",
         headers: {
             'Content-Type': 'application/json',
             'X-XSRF-TOKEN': getCsrfTokenAddRoute(),
-            // 'Content-Type': 'application/x-www-form-urlencoded'
         },
         body: JSON.stringify(parameters),
     }).then(async (response) => {

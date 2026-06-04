@@ -60,7 +60,7 @@ submitButton.addEventListener("click", (event) => {
     }
 
     fetch("/apis/addRoute", {
-        method: "PUT",
+        method: "POST",
         headers: {
             'Content-Type': 'application/json',
             'X-XSRF-TOKEN': getCsrfTokenAddRoute(),

@@ -80,4 +80,13 @@ public class RouteService {
 
         return newRoute.getId();
     }
+
+    @Transactional
+    public boolean deleteRoute(int id) {
+        if (routeRepo.existsById(id)) {
+            routeRepo.deleteById(id);
+            return true;
+        }
+        return false;
+    }
 }

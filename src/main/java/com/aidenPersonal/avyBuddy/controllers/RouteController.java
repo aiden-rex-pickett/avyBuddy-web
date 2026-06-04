@@ -141,7 +141,7 @@ public class RouteController {
     @PutMapping("/editRoute/{routeId}")
     public ResponseEntity<?> editRoute(@PathVariable int routeId, @RequestBody RouteDTO route) {
         routeService.editRoute(routeId, route);
-        return ResponseEntity.status(HttpStatus.OK).build();
+        return ResponseEntity.status(HttpStatus.OK).body(routeId);
     }
 
     /**
@@ -155,7 +155,6 @@ public class RouteController {
      *                 frontend
      * @return The {@code ObjectNode} that represents the passed in route.
      */
-    @SuppressWarnings("deprecation")
     private static ObjectNode makeRouteNode(final Route route,
             final ObjectMapper mapper, final int svgWidth) {
         final ObjectNode routeNode = mapper.createObjectNode();
@@ -163,12 +162,8 @@ public class RouteController {
         routeNode.put("id", route.getId());
         routeNode.put("accountUsername", route.getAccountId().getUsername());
         routeNode.put("region", route.getRegion());
-        final boolean[] routePositions = route.getPositionsArray();
-        final ArrayNode routePositionsNode = mapper.createArrayNode();
-        for (int i = 0; i < 24; i++) {
-            routePositionsNode.add(routePositions[i]);
-        }
-        routeNode.put("positions", routePositionsNode);
+        final int routePositions = route.getPositions();
+        routeNode.put("positions", routePositions);
         routeNode.put("positionsSvg", SvgRoseGenerator.generateRose(svgWidth, route.getPositionsArray()));
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM yyyy");
         routeNode.put("dateCreated", formatter.format(route.getCreationTimestamp()));

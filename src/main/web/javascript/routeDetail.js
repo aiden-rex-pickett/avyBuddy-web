@@ -31,8 +31,6 @@ fetch(path).then(response => response.json()).then(async (json) => {
 }).catch(err => { console.error(err); });
 const main = document.querySelector("main");
 async function loadRoutePage(route) {
-    // TODO: Add edit and delete route buttons, but only if the user owns the route.
-    // Check by hitting status and comparing the username to the one in the account username.
     const routeHeaderWrap = document.createElement("div");
     routeHeaderWrap.classList.add("routeHeaderWrap");
     const routeHeader = document.createElement("div");
@@ -72,6 +70,7 @@ async function loadRoutePage(route) {
     const editButton = document.createElement("button");
     editButton.textContent = "Edit Route";
     editButton.classList.add("backButton");
+    editButton.addEventListener("click", editRoute);
     const deleteButton = document.createElement("a");
     deleteButton.textContent = "Delete Route";
     deleteButton.classList.add("backButton");
@@ -139,6 +138,14 @@ function deleteRoute() {
             alert("Route Deletion failed: " + response.statusText);
         }
     });
+}
+function editRoute() {
+    sessionStorage.setItem("name", route.name);
+    sessionStorage.setItem("description", route.description);
+    sessionStorage.setItem("positions", "" + route.positions);
+    sessionStorage.setItem("region", route.region);
+    window.location.href = "/editRoute/" + route.id;
+    // Control flow passes off to addOrEditRoute.ts from here
 }
 function getCsrfTokenDetail() {
     const value = `; ${document.cookie}`;

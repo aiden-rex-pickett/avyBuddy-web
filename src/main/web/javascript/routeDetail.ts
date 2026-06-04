@@ -2,13 +2,13 @@ class PageRoute {
     name: string;
     id: number;
     region: string;
-    positions: boolean[];
+    positions: number;
     positionsSVG: string;
     dateCreated: string;
     description: string;
     accountUsername: string;
 
-    constructor(id: number, name: string, region: string, positions: boolean[], positionsSVG: string, dateCreated: string, description: string, accountUsername: string) {
+    constructor(id: number, name: string, region: string, positions: number, positionsSVG: string, dateCreated: string, description: string, accountUsername: string) {
         this.id = id;
         this.name = name;
         this.region = region;
@@ -35,8 +35,6 @@ fetch(path).then(response => response.json()).then(async json => {
 const main = document.querySelector("main");
 
 async function loadRoutePage(route: PageRoute) {
-    // TODO: Add edit and delete route buttons, but only if the user owns the route.
-    // Check by hitting status and comparing the username to the one in the account username.
     const routeHeaderWrap = document.createElement("div");
     routeHeaderWrap.classList.add("routeHeaderWrap");
 
@@ -92,6 +90,7 @@ async function loadRoutePage(route: PageRoute) {
     const editButton = document.createElement("button");
     editButton.textContent = "Edit Route"
     editButton.classList.add("backButton")
+    editButton.addEventListener("click", editRoute)
     const deleteButton = document.createElement("a");
     deleteButton.textContent = "Delete Route"
     deleteButton.classList.add("backButton")
@@ -171,6 +170,15 @@ function deleteRoute() {
             alert("Route Deletion failed: " + response.statusText)
         }
     })
+}
+
+function editRoute() {
+    sessionStorage.setItem("name", route.name)
+    sessionStorage.setItem("description", route.description)
+    sessionStorage.setItem("positions", "" + route.positions)
+    sessionStorage.setItem("region", route.region)
+    window.location.href = "/editRoute/" + route.id
+    // Control flow passes off to addOrEditRoute.ts from here
 }
 
 function getCsrfTokenDetail() {

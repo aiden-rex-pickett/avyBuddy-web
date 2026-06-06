@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -22,8 +21,6 @@ import com.aidenPersonal.avyBuddy.services.AccountService;
 @Controller
 public class AccountController {
 
-    @Value("${DOMAIN}:localhost:8080")
-    private String domain;
 
     private final AccountService accountService;
 

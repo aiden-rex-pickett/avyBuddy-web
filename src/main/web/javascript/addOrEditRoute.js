@@ -32,9 +32,16 @@ function fillRose() {
         }
     }
 }
-exitButton.addEventListener("click", () => {
-    window.location.href = "/routes/" + selectedRegion.textContent.split(" ").join("-").toLowerCase();
-});
+if (editId > 0) {
+    exitButton.addEventListener("click", () => {
+        window.location.href = "/route/" + editId;
+    });
+}
+else {
+    exitButton.addEventListener("click", () => {
+        window.location.href = "/routes/" + selectedRegion.textContent.split(" ").join("-").toLowerCase();
+    });
+}
 submitButton.addEventListener("click", (event) => {
     event.preventDefault();
     const form = new FormData(document.getElementById("addRouteForm"));

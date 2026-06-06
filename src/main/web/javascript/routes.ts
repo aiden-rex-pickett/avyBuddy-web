@@ -33,7 +33,10 @@ const currentRegionDiv: HTMLDivElement = document.getElementById("regionButton")
 const routeContainer: HTMLElement = document.querySelector("#routeContainer")
 
 const addRouteButton: HTMLElement = document.getElementById("addRoute")
-addRouteButton.addEventListener("click", () => window.location.href = "/addRoute")
+addRouteButton.addEventListener("click", () => {
+    sessionStorage.setItem("previousPageRegion", makePretty(region))
+    window.location.href = "/addRoute"
+})
 
 // The region for the page
 const region = getRegionFromUrl();

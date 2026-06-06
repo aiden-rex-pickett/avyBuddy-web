@@ -19,8 +19,11 @@ if (sessionStorage.getItem("name") != null) {
     positionsInteger = positions;
     fillRose();
     selectedRegion.textContent = sessionStorage.getItem("region");
-    sessionStorage.clear();
 }
+else if (sessionStorage.getItem("previousPageRegion") != null) {
+    selectedRegion.textContent = sessionStorage.getItem("previousPageRegion");
+}
+sessionStorage.clear();
 function fillRose() {
     for (var id = 0; id < 24; id++) {
         if (((positionsInteger >> id) & 1) == 1) {

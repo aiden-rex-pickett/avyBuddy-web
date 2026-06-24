@@ -1,5 +1,5 @@
 # This project is now dead, as it is finished
-### [avybuddy.tech](avybuddy.tech)
+### [avybuddy.tech](https://avybuddy.tech)
 
 The new and better avyBuddy repository. Hopefully we dont have to change again.
 

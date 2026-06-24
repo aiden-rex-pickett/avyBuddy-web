@@ -1,3 +1,6 @@
+# This project is now dead, as it is finished
+### avybuddy.tech
+
 The new and better avyBuddy repository. Hopefully we dont have to change again.
 
 I started with everything from the old respository and a finally working springboot connection to the frontend. It has been a journey.

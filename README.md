@@ -1,5 +1,6 @@
 # This project is now dead, as it is finished
 ### [avybuddy.tech](https://avybuddy.tech)
+# Functionality is currently broken for anything that interacts with UAC data as they refuse to give me an API token :(
 
 The new and better avyBuddy repository. Hopefully we dont have to change again.
 
